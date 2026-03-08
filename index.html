@@ -7,6 +7,34 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+import { getDatabase, ref, set, get, push, onValue, remove, update, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCXUhD5fNk_8qqMkcjZ16imlwe3qM3Mcf8",
+  authDomain: "cuanie-9d2d3.firebaseapp.com",
+  databaseURL: "https://cuanie-9d2d3-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "cuanie-9d2d3",
+  storageBucket: "cuanie-9d2d3.firebasestorage.app",
+  messagingSenderId: "218255882332",
+  appId: "1:218255882332:web:af5267ba648be3edf40e99"
+};
+
+const _app = initializeApp(firebaseConfig);
+const _db  = getDatabase(_app);
+
+/* Expose to global so main script can use */
+window.FB = {
+  db: _db,
+  ref, set, get, push, onValue, remove, update, serverTimestamp
+};
+
+/* Signal ready */
+window.dispatchEvent(new Event('fb-ready'));
+</script>
 <style>
 :root{--bg:#08080d;--s1:#0f0f17;--s2:#16161f;--s3:#1e1e2a;--b1:#252535;--b2:#2e2e42;--ac:#6c4ef2;--ac2:#9b72f5;--gold:#e8b84b;--tx:#dddded;--tx2:#9494aa;--ok:#1ec99a;--err:#e8546a;--warn:#f59e0b}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -380,10 +408,141 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 .img-preview-item img{width:60px;height:60px;border-radius:7px;object-fit:cover;border:1px solid var(--b2)}
 .img-preview-item .rm-img{position:absolute;top:-5px;right:-5px;background:var(--err);border:none;color:#fff;width:17px;height:17px;border-radius:50%;cursor:pointer;font-size:.65rem;display:flex;align-items:center;justify-content:center}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:480px){nav{padding:0 1.1rem}.auth-card{padding:1.8rem 1.2rem}.panel{padding:1.2rem}.dash{padding-left:1rem;padding-right:1rem}}
+/* ══ LOADING OVERLAY ══ */
+.loading-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;transition:opacity .4s}
+.loading-overlay.hidden{opacity:0;pointer-events:none}
+.loading-spinner{width:40px;height:40px;border:3px solid var(--b2);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}
+.loading-text{font-family:'Syne',sans-serif;font-size:.85rem;color:var(--tx2);letter-spacing:1px}
+.online-indicator{position:fixed;bottom:1rem;left:1rem;display:flex;align-items:center;gap:6px;background:rgba(30,201,154,.08);border:1px solid rgba(30,201,154,.2);color:var(--ok);padding:4px 10px;border-radius:5px;font-size:.72rem;z-index:50;font-family:'Syne',sans-serif;user-select:none;pointer-events:none}
+.online-indicator.offline{background:rgba(232,84,106,.08);border-color:rgba(232,84,106,.2);color:var(--err)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+
+/* ══ PROFILE PANEL ══ */
+.profile-btn{position:relative;width:36px;height:36px;border-radius:8px;border:1px solid var(--b2);background:var(--s2);cursor:pointer;overflow:hidden;display:none;align-items:center;justify-content:center;transition:border-color .2s;flex-shrink:0}
+.profile-btn:hover{border-color:var(--ac2)}
+.profile-btn img{width:100%;height:100%;object-fit:cover}
+.profile-btn .pb-init{font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;color:var(--tx)}
+.profile-panel-bg{position:fixed;inset:0;z-index:250;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .25s}
+.profile-panel-bg.show{opacity:1;pointer-events:all}
+.profile-panel{position:fixed;top:0;right:-340px;width:320px;height:100vh;background:var(--s1);border-left:1px solid var(--b1);z-index:300;transition:right .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto}
+.profile-panel.open{right:0}
+.pp-hd{padding:1.2rem 1.4rem;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;user-select:none}
+.pp-hd h3{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700}
+.pp-cls{background:none;border:1px solid var(--b2);color:var(--tx2);width:28px;height:28px;border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.pp-cls:hover{border-color:var(--err);color:var(--err)}
+.pp-avatar{display:flex;flex-direction:column;align-items:center;padding:1.6rem 1.4rem 1rem;border-bottom:1px solid var(--b1)}
+.pp-av-wrap{position:relative;width:80px;height:80px;margin-bottom:1rem}
+.pp-av-img{width:80px;height:80px;border-radius:16px;object-fit:cover;border:2px solid var(--b2);background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:700;color:#fff;overflow:hidden}
+.pp-av-img img{width:100%;height:100%;object-fit:cover}
+.pp-av-edit{position:absolute;bottom:-5px;right:-5px;width:26px;height:26px;border-radius:50%;background:var(--ac);border:2px solid var(--s1);cursor:pointer;display:none;align-items:center;justify-content:center;transition:background .2s}
+.pp-av-edit:hover{background:var(--ac2)}
+.pp-av-edit.show{display:flex}
+.pp-name{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:3px;user-select:none}
+.pp-role-chip{font-size:.7rem;font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:1px;padding:2px 9px;border-radius:12px;font-weight:700;user-select:none}
+.pp-role-chip.member{background:rgba(108,78,242,.15);color:var(--ac2)}
+.pp-role-chip.admin{background:rgba(232,184,75,.15);color:var(--gold)}
+.pp-role-chip.leader{background:rgba(232,84,106,.15);color:var(--err)}
+.pp-body{padding:1.2rem 1.4rem;display:flex;flex-direction:column;gap:1rem;flex:1}
+.pp-section{background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:1rem}
+.pp-section h4{font-family:'Syne',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:2px;color:var(--tx2);margin-bottom:.7rem;user-select:none}
+.pp-field{margin-bottom:.7rem}
+.pp-field:last-child{margin-bottom:0}
+.pp-field label{display:block;font-size:.73rem;color:var(--tx2);margin-bottom:4px;user-select:none}
+.pp-field .val{font-size:.86rem;color:var(--tx);font-weight:500}
+.pp-field input,.pp-field textarea{width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:5px;padding:.5rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none;transition:border-color .2s}
+.pp-field textarea{resize:vertical;min-height:70px;line-height:1.5}
+.pp-field input:focus,.pp-field textarea:focus{border-color:var(--ac)}
+.pp-save-btn{width:100%;padding:.65rem;background:var(--ac);border:none;border-radius:6px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .2s}
+.pp-save-btn:hover{background:#7b60f4}
+.pp-code-box{background:var(--s1);border:1px dashed var(--ac);border-radius:6px;padding:.6rem .85rem;font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;letter-spacing:6px;color:var(--ac2);text-align:center;cursor:pointer;transition:background .2s;user-select:all}
+.pp-code-box:hover{background:rgba(108,78,242,.06)}
+.pp-game-role{display:inline-flex;align-items:center;gap:5px;background:rgba(108,78,242,.08);border:1px solid rgba(108,78,242,.2);color:var(--ac2);padding:3px 10px;border-radius:12px;font-size:.78rem;font-weight:500;margin-top:4px}
+
+/* ══ STICKER SYSTEM ══ */
+.sticker-panel{position:fixed;bottom:5.5rem;left:50%;transform:translateX(-50%);background:var(--s1);border:1px solid var(--b2);border-radius:12px;z-index:200;width:min(380px,95vw);box-shadow:0 16px 48px rgba(0,0,0,.4);display:none}
+.sticker-panel.show{display:flex;flex-direction:column}
+.sticker-hd{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;border-bottom:1px solid var(--b1);user-select:none}
+.sticker-hd h4{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700}
+.sticker-tabs{display:flex;gap:4px;padding:.6rem .75rem;border-bottom:1px solid var(--b1);user-select:none}
+.sticker-tab{padding:.35rem .75rem;border-radius:5px;border:none;background:none;color:var(--tx2);font-family:'DM Sans',sans-serif;font-size:.78rem;cursor:pointer;transition:all .2s}
+.sticker-tab.active{background:var(--s3);color:var(--tx)}
+.sticker-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:.75rem;max-height:200px;overflow-y:auto}
+.sticker-item{aspect-ratio:1;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all .2s;background:var(--s2);display:flex;align-items:center;justify-content:center}
+.sticker-item:hover{border-color:var(--ac);transform:scale(1.05)}
+.sticker-item img{width:100%;height:100%;object-fit:cover}
+.sticker-item .stk-add{font-size:1.4rem;color:var(--tx2)}
+.sticker-upload-area{padding:.75rem;border-top:1px solid var(--b1)}
+.sticker-upload-btn{width:100%;padding:.6rem;background:rgba(108,78,242,.07);border:1px dashed rgba(108,78,242,.3);border-radius:6px;color:var(--ac2);font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.sticker-upload-btn:hover{background:rgba(108,78,242,.14)}
+.msg-sticker{width:100px;height:100px;border-radius:10px;object-fit:cover;cursor:zoom-in;margin-top:5px;transition:transform .2s}
+.msg-sticker:hover{transform:scale(1.08)}
+.sticker-save-btn{position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:4px;padding:2px 7px;font-size:.65rem;cursor:pointer;opacity:0;transition:opacity .2s;font-family:'DM Sans',sans-serif}
+.msg-sticker-wrap{position:relative;display:inline-block}
+.msg-sticker-wrap:hover .sticker-save-btn{opacity:1}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:768px){
+  nav{padding:0 1rem}
+  .auth-card{padding:1.6rem 1.1rem;max-width:100%}
+  .auth-screen{padding:4.5rem .8rem 2rem}
+  .tab-row{grid-template-columns:repeat(2,1fr)}
+  .panel{padding:1.1rem}
+  .dash{padding:4.5rem .9rem 3rem;max-width:100%}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .info-wrap{padding:4.5rem .9rem 3rem;max-width:100%}
+  .form-wrap{padding:4.5rem .9rem 3rem;max-width:100%}
+  .hero{padding:5rem 1rem 3rem}
+  .hero h1{font-size:clamp(2rem,8vw,3.5rem);letter-spacing:-1px}
+  .hero-cta{gap:.5rem}
+  .btn-p,.btn-s{padding:.65rem 1.2rem;font-size:.84rem}
+  .about{padding:3rem .9rem;max-width:100%}
+  .about-grid{grid-template-columns:1fr}
+  .dtable{font-size:.78rem}
+  .dtable th,.dtable td{padding:.5rem .6rem}
+  .member-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+  .chat-msgs{padding:.9rem}
+  .chat-input-area{padding:.7rem .9rem}
+  .chat-header{padding:.65rem .9rem}
+  .profile-panel{width:100%;right:-100%}
+  .profile-panel.open{right:0}
+  .sticker-panel{bottom:4.5rem}
+  .wa-menu{max-width:100%;width:calc(100vw - 2rem)}
+  .modal-box{padding:1.8rem 1.2rem}
+  .sb-ft .clink{font-size:.78rem;padding:.5rem .7rem}
+}
+@media(max-width:480px){
+  nav{padding:0 .85rem}
+  .dash-top{gap:.65rem}
+  .dash-top h2{font-size:1.15rem}
+  .stat .v{font-size:1.35rem}
+  .hero h1{font-size:2rem;letter-spacing:-.5px}
+  .form-block{padding:1.2rem}
+  .dtable thead{display:none}
+  .dtable tr{display:flex;flex-wrap:wrap;padding:.6rem;border-bottom:1px solid var(--b1)}
+  .dtable td{border:none;padding:.2rem .3rem;font-size:.78rem}
+  .dtable td:first-child{font-weight:600;width:100%;font-size:.84rem}
+  .code-cell{font-size:.72rem;letter-spacing:1px}
+  .chat-input-hints{gap:.6rem;font-size:.67rem}
+  .hero-cta{flex-direction:column;align-items:stretch}
+  .hero-cta .btn-p,.hero-cta .btn-s{justify-content:center}
+}
+
 </style>
 </head>
 <body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px">
+    <div style="width:10px;height:10px;border-radius:50%;background:var(--ac);animation:blink 2s infinite"></div>Cuanie
+  </div>
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loadingText">Menghubungkan ke server...</div>
+</div>
+<div class="online-indicator" id="onlineIndicator">
+  <div style="width:6px;height:6px;border-radius:50%;background:currentColor"></div>
+  <span id="onlineLabel">Online</span>
+</div>
 
 <!-- NAV -->
 <nav>
@@ -393,6 +552,9 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
       <div class="av"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
       <span id="navName">—</span>
     </div>
+    <button class="profile-btn" id="navProfileBtn" onclick="openProfilePanel()" title="Profil saya">
+      <span class="pb-init" id="navProfileInit">?</span>
+    </button>
     <button class="hbg" id="hbg" onclick="toggleSB()"><span></span><span></span><span></span></button>
   </div>
 </nav>
@@ -749,9 +911,14 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Team Chat &nbsp;<span class="chat-online-dot"></span><span class="chat-online-count" id="chatOnlineCount"></span>
       </h3>
-      <button class="logout-btn" style="font-size:.76rem" onclick="showPg(D.role==='admin'?'admin':D.role==='leader'?'leader':'member')">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>Kembali
-      </button>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="act-btn" onclick="showPg(D.role==='admin'?'admin':D.role==='leader'?'leader':'member')" style="font-size:.75rem;padding:4px 10px">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg> Dashboard
+        </button>
+        <button class="act-btn" onclick="showPg('home')" style="font-size:.75rem;padding:4px 10px">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> Home
+        </button>
+      </div>
     </div>
     <div class="chat-msgs" id="chatMsgs"></div>
     <!-- Mention nav buttons -->
@@ -764,7 +931,10 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
         <button class="chat-input-btn chat-img-btn" onclick="triggerImgUpload()" title="Kirim gambar">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
         </button>
-        <textarea class="chat-input-box" id="chatInput" placeholder="Ketik pesan... (@nama untuk mention, .gambar untuk bot)" rows="1"
+        <button class="chat-input-btn chat-img-btn" onclick="toggleStickerPanel()" title="Stiker" id="stickerBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        </button>
+        <textarea class="chat-input-box" id="chatInput" placeholder="Ketik pesan... (@nama untuk mention, .kata untuk bot gambar)" rows="1"
           onkeydown="chatKeyDown(event)" oninput="chatInputChange(this)"></textarea>
         <button class="chat-input-btn chat-send-btn" onclick="sendChatMsg()" title="Kirim">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
@@ -881,33 +1051,139 @@ const WA_MSGS = {
 };
 
 /* ══ STATE ══ */
+const DEFAULT_QUESTIONS = [
+  {id:1,text:'Nama lengkap kamu?',type:'text'},
+  {id:2,text:'Umur kamu?',type:'number'},
+  {id:3,text:'Game apa yang kamu mainkan dan berapa jam per hari?',type:'textarea'},
+  {id:4,text:'Alasan ingin bergabung dengan Cuanie?',type:'textarea'},
+  {id:5,text:'Skill yang kamu bawa untuk tim?',type:'textarea'},
+  {id:6,text:'Nomor WhatsApp aktif kamu?',type:'text'}
+];
+
 const D = {
-  regOpen:   JSON.parse(localStorage.getItem('c_reg') ?? 'true'),
-  questions: JSON.parse(localStorage.getItem('c_q')   || 'null') || [
-    {id:1,text:'Nama lengkap kamu?',type:'text'},
-    {id:2,text:'Umur kamu?',type:'number'},
-    {id:3,text:'Game apa yang kamu mainkan dan berapa jam per hari?',type:'textarea'},
-    {id:4,text:'Alasan ingin bergabung dengan Cuanie?',type:'textarea'},
-    {id:5,text:'Skill yang kamu bawa untuk tim?',type:'textarea'},
-    {id:6,text:'Nomor WhatsApp aktif kamu?',type:'text'}
-  ],
-  /* members: [{id,name,email,code,gamertag,status:'pending'|'active'|'kicked',date}] */
-  members: JSON.parse(localStorage.getItem('c_members') || '[]'),
-  events:  JSON.parse(localStorage.getItem('c_events')  || '[]'), /* [{title,body}] */
-  rules:   JSON.parse(localStorage.getItem('c_rules')   || '[]'),
+  regOpen:   true,
+  questions: DEFAULT_QUESTIONS,
+  members:   [],
+  events:    [],
+  rules:     [],
   user: null, role: null, email: null
 };
 
-/* active editing context for block builders */
-let _editCtx = null; // 'admin' or 'leader'
+let _editCtx = null;
+let _fbReady  = false;
+
+/* ══ FIREBASE HELPERS ══ */
+function fbRef(path)      { return FB.ref(FB.db, path); }
+function fbSet(path, val) { return FB.set(fbRef(path), val); }
+function fbGet(path)      { return FB.get(fbRef(path)); }
+function fbPush(path,val) { return FB.push(fbRef(path), val); }
+function fbUpdate(path,v) { return FB.update(fbRef(path), v); }
+function fbRemove(path)   { return FB.remove(fbRef(path)); }
+function fbOn(path, cb)   { FB.onValue(fbRef(path), snap => cb(snap.val())); }
+
+/* Images stored as compressed base64 in Realtime DB — 100% free */
+
+function compressBase64(base64, quality, maxWidth) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => resolve(base64);
+    img.src = base64;
+  });
+}
 
 /* ══ INIT ══ */
-window.onload = () => {
-  applyReg();
-  renderPubPages();
-  if (typeof google !== 'undefined' && google.accounts)
-    google.accounts.id.initialize({client_id:G_ID, callback:onGoogleResp});
-};
+function bootApp() {
+  // Show loading state
+  showLoadingOverlay(true);
+
+  // Load all data from Firebase in parallel
+  Promise.all([
+    fbGet('settings/regOpen'),
+    fbGet('settings/questions'),
+    fbGet('members'),
+    fbGet('events'),
+    fbGet('rules'),
+    fbGet('settings/pixabayKey'),
+  ]).then(([regSnap, qSnap, memSnap, evSnap, ruSnap, pkSnap]) => {
+    D.regOpen   = regSnap.val() !== null ? regSnap.val() : true;
+    D.questions = qSnap.val()   || DEFAULT_QUESTIONS;
+    D.members   = memSnap.val() ? Object.values(memSnap.val()) : [];
+    D.events    = evSnap.val()  ? Object.values(evSnap.val())  : [];
+    D.rules     = ruSnap.val()  ? Object.values(ruSnap.val())  : [];
+    BOT_PIXABAY_KEY = pkSnap.val() || localStorage.getItem('c_pxkey') || '';
+
+    await loadProfilesFromFB();
+    await loadStickersFromFB();
+    applyReg();
+    renderPubPages();
+    setupRealtimeListeners();
+    showLoadingOverlay(false);
+    if (typeof google !== 'undefined' && google.accounts)
+      google.accounts.id.initialize({client_id:G_ID, callback:onGoogleResp});
+  }).catch(err => {
+    console.error('Firebase load error:', err);
+    // Fallback to localStorage
+    D.regOpen   = JSON.parse(localStorage.getItem('c_reg') ?? 'true');
+    D.questions = JSON.parse(localStorage.getItem('c_q') || 'null') || DEFAULT_QUESTIONS;
+    D.members   = JSON.parse(localStorage.getItem('c_members') || '[]');
+    D.events    = JSON.parse(localStorage.getItem('c_events')  || '[]');
+    D.rules     = JSON.parse(localStorage.getItem('c_rules')   || '[]');
+    applyReg(); renderPubPages(); showLoadingOverlay(false);
+    toast('Mode offline — data lokal digunakan','warn');
+  });
+}
+
+function setupRealtimeListeners() {
+  // Members — realtime sync
+  fbOn('members', val => {
+    D.members = val ? Object.values(val) : [];
+    renderPubMembers();
+    if (D.role === 'admin') renderMemberTable('adminMemberTbody', document.getElementById('adminMemberSearch')?.value);
+    if (D.role === 'leader') renderMemberTable('leaderMemberTbody', document.getElementById('leaderMemberSearch')?.value);
+    refreshDash();
+  });
+
+  // Chat — realtime
+  fbOn('chat', val => {
+    if (!val) { CHAT.msgs = []; }
+    else {
+      const newMsgs = Object.values(val).sort((a,b) => a.ts - b.ts);
+      // Count new mentions
+      const oldLen = CHAT.msgs.length;
+      CHAT.msgs = newMsgs;
+      if (document.getElementById('page-chat')?.classList.contains('active')) {
+        renderChat();
+      } else {
+        // Count unread mentions while away
+        const newer = newMsgs.slice(oldLen);
+        newer.forEach(m => {
+          if (m.mentions && (m.mentions.includes(D.user) || m.mentions.includes('everyone')) && m.name !== D.user) {
+            CHAT.unread++;
+          }
+        });
+        updateChatBadge();
+      }
+    }
+  });
+
+  // Settings
+  fbOn('settings/regOpen', val => { if (val !== null) { D.regOpen = val; applyReg(); } });
+  fbOn('settings/questions', val => { if (val) D.questions = val; });
+  fbOn('events', val => { D.events = val ? Object.values(val) : []; renderPubBlocks('events'); });
+  fbOn('rules',  val => { D.rules  = val ? Object.values(val) : []; renderPubBlocks('rules'); });
+}
+
+window.addEventListener('fb-ready', () => { _fbReady = true; bootApp(); });
+// If Firebase is slow or blocked, boot after 4s anyway
+setTimeout(() => { if (!_fbReady) { console.warn('Firebase timeout, using localStorage'); D.regOpen=JSON.parse(localStorage.getItem('c_reg')?? 'true'); D.questions=JSON.parse(localStorage.getItem('c_q')||'null')||DEFAULT_QUESTIONS; D.members=JSON.parse(localStorage.getItem('c_members')||'[]'); D.events=JSON.parse(localStorage.getItem('c_events')||'[]'); D.rules=JSON.parse(localStorage.getItem('c_rules')||'[]'); applyReg(); renderPubPages(); showLoadingOverlay(false); } }, 4000);
 
 /* ══ REG STATUS ══ */
 function applyReg() {
@@ -935,7 +1211,7 @@ function checkEmailRegistered(email) {
 
 function setReg(v) {
   D.regOpen = v;
-  localStorage.setItem('c_reg', JSON.stringify(v));
+  fbSet('settings/regOpen', v).catch(()=>localStorage.setItem('c_reg', JSON.stringify(v)));
   applyReg();
   toast(v ? 'Pendaftaran dibuka' : 'Pendaftaran ditutup', v ? 'success' : 'error');
 }
@@ -1042,7 +1318,8 @@ function showGoogleButtonFallback() {
     const input = prompt('Masukkan nama atau email kamu:','nama@gmail.com');
     if (!input) return;
     const em = input.includes('@') ? input : input+'@cuanie.guest';
-    const nm = input.includes('@') ? input.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) : input;
+    const fullNm = input.includes('@') ? input.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) : input;
+  const nm = fullNm.split(' ')[0];
     setGuestUser(nm, em);
   }
 }
@@ -1051,14 +1328,16 @@ function fallbackGuest() {
   const input = prompt('Masukkan nama atau email kamu:','nama@gmail.com');
   if (!input) return;
   const em = input.includes('@') ? input : input+'@cuanie.guest';
-  const nm = input.includes('@') ? input.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) : input;
+  const fullNm = input.includes('@') ? input.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) : input;
+  const nm = fullNm.split(' ')[0];
   setGuestUser(nm, em);
 }
 
 function onGoogleResp(resp) {
   try {
     const p = JSON.parse(atob(resp.credential.split('.')[1]));
-    const nm = p.name || p.given_name || p.email.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+    const fullName = p.name || p.given_name || p.email.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+    const nm = fullName.split(' ')[0]; // Ambil nama pertama saja
     const em = p.email || '';
     setGuestUser(nm, em);
   } catch { toast('Login gagal, coba lagi','error'); }
@@ -1117,23 +1396,23 @@ function loginAs(role) {
     document.getElementById('memberWelcome').innerHTML = `${mem.name} <span class="r-tag member">Member</span>`;
     document.getElementById('mId').textContent = String(D.members.filter(m=>m.status==='active').indexOf(mem)+1).padStart(2,'0');
     document.getElementById('mGametag').textContent = mem.gamertag || '—';
-    updateNav(); showPg('member'); showChatSidebarLink(); checkChatNotifs(); toast('Selamat datang, '+mem.name,'success');
+    updateNav(); showPg('member'); showChatSidebarLink(); showProfileBtn(); checkChatNotifs(); toast('Selamat datang, '+mem.name,'success');
 
   } else if (role === 'admin') {
     if (document.getElementById('adminUser').value.trim()!=='admin'||document.getElementById('adminPass').value!=='admin123')
       { toast('Kredensial salah','error'); return; }
     D.user='Admin'; D.role='admin';
-    renderAdminPanel(); updateNav(); showPg('admin'); showChatSidebarLink(); checkChatNotifs(); toast('Masuk sebagai Admin','success');
+    renderAdminPanel(); updateNav(); showPg('admin'); showChatSidebarLink(); showProfileBtn(); checkChatNotifs(); toast('Masuk sebagai Admin','success');
 
   } else if (role === 'leader') {
     if (document.getElementById('leaderPass').value!=='leader@cuanie')
       { toast('Password leader salah','error'); return; }
     D.user='Leader'; D.role='leader';
-    renderLeaderPanel(); updateNav(); showPg('leader'); showChatSidebarLink(); checkChatNotifs(); toast('Masuk sebagai Leader','success');
+    renderLeaderPanel(); updateNav(); showPg('leader'); showChatSidebarLink(); showProfileBtn(); checkChatNotifs(); toast('Masuk sebagai Leader','success');
   }
 }
 
-function logout() { D.user=null; D.role=null; D.email=null; updateNav(); const cl=document.getElementById('sb-chat-link'); if(cl) cl.style.display='none'; showPg('home'); toast('Berhasil keluar','success'); }
+function logout() { D.user=null; D.role=null; D.email=null; updateNav(); const cl=document.getElementById('sb-chat-link'); if(cl) cl.style.display='none'; const pb=document.getElementById('navProfileBtn'); if(pb) pb.style.display='none'; showPg('home'); toast('Berhasil keluar','success'); }
 
 /* ══ FORM ══ */
 function renderForm() {
@@ -1332,7 +1611,10 @@ function renderQB() {
 }
 function addQ(){D.questions.push({id:Date.now(),text:'',type:'text'});renderQB();}
 function delQ(i){D.questions.splice(i,1);renderQB();}
-function saveQ(){localStorage.setItem('c_q',JSON.stringify(D.questions));toast('Pertanyaan disimpan','success');}
+function saveQ(){
+  fbSet('settings/questions', D.questions).catch(()=>localStorage.setItem('c_q',JSON.stringify(D.questions)));
+  toast('Pertanyaan disimpan','success');
+}
 
 /* ══ BLOCK BUILDER (events/rules) ══ */
 function renderBlockBuilder(type, ctx) {
@@ -1360,7 +1642,9 @@ function delBlock(type,i,ctx) {
   renderBlockBuilder(type, ctx);
 }
 function saveBlocks(type, ctx) {
-  localStorage.setItem('c_'+type, JSON.stringify(D[type]));
+  const obj = {};
+  D[type].forEach((b,i) => { obj['b'+i] = b; });
+  fbSet(type, obj).catch(()=>localStorage.setItem('c_'+type, JSON.stringify(D[type])));
   renderPubBlocks(type);
   toast((type==='events'?'Event':'Peraturan') + ' berhasil disimpan','success');
 }
@@ -1376,7 +1660,12 @@ function sendWA(key) {
 }
 
 /* ══ SAVE ══ */
-function saveMembers() { localStorage.setItem('c_members', JSON.stringify(D.members)); }
+function saveMembers() {
+  // Save to Firebase as object keyed by member id
+  const obj = {};
+  D.members.forEach((m,i) => { obj[m.id || ('m'+i)] = m; m.id = m.id || ('m'+i); });
+  fbSet('members', obj).catch(()=>localStorage.setItem('c_members', JSON.stringify(D.members)));
+}
 
 /* ══ UTILS ══ */
 function cap(s) { return s.charAt(0).toUpperCase()+s.slice(1); }
@@ -1404,7 +1693,19 @@ const CHAT = {
   mentionPtr: -1,           // which mention we're currently at
 };
 
-function saveChat() { localStorage.setItem('c_chat', JSON.stringify(CHAT.msgs.slice(-500))); }
+function saveChat() {
+  // Last message only — the listener will rebuild CHAT.msgs
+  // We only push new messages via sendChatMsg; saveChat is a no-op now
+}
+async function pushChatMsg(msg) {
+  try {
+    await fbPush('chat', msg);
+  } catch(e) {
+    console.error('Chat push error:', e);
+    CHAT.msgs.push(msg);
+    renderChat();
+  }
+}
 
 function goToChat() {
   if (!D.role || D.role === 'guest') { toast('Login dulu untuk akses chat','warn'); return; }
@@ -1464,16 +1765,19 @@ function buildMsgHTML(m, idx, isMentionMe) {
 
   let bodyHTML = '';
   if (m.text) {
-    bodyHTML += `<div class="chat-bubble">${renderMsgText(m.text)}</div>`;
+    bodyHTML += '<div class="chat-bubble">'+renderMsgText(m.text)+'</div>';
+  }
+  if (m.sticker) {
+    bodyHTML += '<div class="msg-sticker-wrap"><img src="'+m.sticker+'" class="msg-sticker" onclick="openImgZoom(\''+m.sticker+'\')"/><button class="sticker-save-btn" onclick="saveSticker(\''+m.sticker+'\')">💾 Simpan</button></div>';
   }
   if (m.images && m.images.length) {
     m.images.forEach(src => {
-      bodyHTML += `<img src="${src}" class="msg-img-attach" onclick="openImgZoom('${src}')" loading="lazy"/>`;
+      bodyHTML += '<img src="'+src+'" class="msg-img-attach" onclick="openImgZoom(\''+src+'\')" loading="lazy"/>';
     });
   }
   if (m.botImgs && m.botImgs.length) {
     m.botImgs.forEach(src => {
-      bodyHTML += `<img src="${src}" class="chat-bubble bot-img" onclick="openImgZoom('${src}')" loading="lazy" onerror="this.style.display='none'"/>`;
+      bodyHTML += '<img src="'+src+'" class="chat-bubble bot-img" onclick="openImgZoom(\''+src+'\')" loading="lazy" onerror="this.style.display=\'none\'"/>';
     });
   }
 
@@ -1484,8 +1788,10 @@ function buildMsgHTML(m, idx, isMentionMe) {
 
   const replyHTML = m.replyTo ? `<div style="background:var(--s3);border-left:2px solid var(--ac);border-radius:4px;padding:4px 8px;margin-bottom:5px;font-size:.77rem;color:var(--tx2);cursor:pointer" onclick="scrollToMsg(${m.replyTo.idx})"><span style="color:var(--ac2);font-weight:600">${m.replyTo.name}</span>: ${m.replyTo.text.slice(0,60)}${m.replyTo.text.length>60?'...':''}</div>` : '';
 
-  return `<div class="chat-msg${isMentionMe?' mention-me':''}" id="msg-${idx}" data-idx="${idx}">
-    <div class="msg-av ${m.bot?'bot':roleClass}">${m.bot?'🤖':initials}</div>
+  const prof = m.email ? getProfile(m.email) : null;
+  const avHTML = (prof && prof.avatar) ? '<img src="'+prof.avatar+'" style="width:32px;height:32px;border-radius:7px;object-fit:cover;flex-shrink:0;margin-top:2px"/>' : '<div class="msg-av '+(m.bot?'bot':roleClass)+'">'+(m.bot?'🤖':initials)+'</div>';
+  return '<div class="chat-msg'+(isMentionMe?' mention-me':'')+'" id="msg-'+idx+'" data-idx="'+idx+'">' +
+    avHTML +
     <div class="msg-right">
       <div class="msg-meta">
         <span class="msg-name ${m.bot?'bot':roleClass}" onclick="mentionUser('${m.name}')">${m.name}</span>
@@ -1608,6 +1914,7 @@ function sendChatMsg() {
     id: Date.now(),
     ts: Date.now(),
     name: D.user,
+    email: D.email || null,
     role: D.role,
     text: text || null,
     images: CHAT.pendingImgs.length ? [...CHAT.pendingImgs] : null,
@@ -1639,44 +1946,46 @@ function sendChatMsg() {
 }
 
 /* Bot command — search image */
+/* Bot uses Pixabay API - set key via admin settings or use Unsplash */
+let BOT_PIXABAY_KEY = localStorage.getItem('c_pxkey') || '';
+
 async function handleBotCommand(query) {
-  const botTypingId = 'bot-typing-' + Date.now();
-  // Show typing indicator
-  const typingMsg = {
-    id: Date.now(),
-    ts: Date.now(),
-    name: 'CuanieBot',
-    role: 'bot',
-    bot: true,
-    text: null,
-    images: null,
-    _typing: true,
-    _botTypingId: botTypingId
-  };
+  // Show typing indicator msg
+  const typingMsg = { id: Date.now(), ts: Date.now(), name: 'CuanieBot', role:'bot', bot:true, text:'⏳ Mencari gambar...', images:null, _typing:true };
   CHAT.msgs.push(typingMsg);
   renderChat();
-
-  // Use multiple free image sources
-  const sources = [
-    `https://source.unsplash.com/400x300/?${encodeURIComponent(query)}&t=${Date.now()}`,
-    `https://picsum.photos/seed/${encodeURIComponent(query)}/400/300`,
-  ];
-
-  // Remove typing msg
+  await new Promise(r => setTimeout(r, 900));
   CHAT.msgs = CHAT.msgs.filter(m => !m._typing);
 
-  // Add bot response
+  let botImgs = [];
+  let sourceLabel = '';
+
+  if (BOT_PIXABAY_KEY) {
+    // Pixabay API (best quality, needs key)
+    try {
+      const resp = await fetch(`https://pixabay.com/api/?key=${BOT_PIXABAY_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=3&safesearch=true&order=popular`);
+      const data = await resp.json();
+      if (data.hits && data.hits.length) {
+        botImgs = data.hits.slice(0,3).map(h => h.webformatURL);
+        sourceLabel = 'Pixabay';
+      }
+    } catch(e) { console.warn('Pixabay err:', e); }
+  }
+
+  if (!botImgs.length) {
+    // Unsplash source URLs — no key needed, works as random image by keyword
+    const seeds = [Date.now(), Date.now()+1, Date.now()+2];
+    botImgs = [
+      `https://source.unsplash.com/400x280/?${encodeURIComponent(query)},${seeds[0]}`,
+      `https://source.unsplash.com/400x280/?${encodeURIComponent(query)},${seeds[1]}`,
+    ];
+    sourceLabel = 'Unsplash';
+  }
+
   const botMsg = {
-    id: Date.now(),
-    ts: Date.now(),
-    name: 'CuanieBot',
-    role: 'bot',
-    bot: true,
-    text: `🔍 Hasil pencarian: *${query}*`,
-    botImgs: sources,
-    images: null,
-    mentions: null,
-    replyTo: null
+    id: Date.now(), ts: Date.now(), name: 'CuanieBot', role:'bot', bot:true,
+    text: `🔍 *${query}* — via ${sourceLabel}`,
+    botImgs, images:null, mentions:null, replyTo:null
   };
   CHAT.msgs.push(botMsg);
   saveChat();
@@ -1693,8 +2002,9 @@ function handleImgUpload(input) {
   if (!files.length) return;
   files.forEach(file => {
     const reader = new FileReader();
-    reader.onload = e => {
-      CHAT.pendingImgs.push(e.target.result);
+    reader.onload = async e => {
+      const c = await compressBase64(e.target.result, 0.72, 800);
+      CHAT.pendingImgs.push(c);
       renderImgPreview();
     };
     reader.readAsDataURL(file);
@@ -1800,9 +2110,18 @@ function chatKeyDown(e) {
 
 function deleteMsg(idx) {
   if (!confirm('Hapus pesan ini?')) return;
-  CHAT.msgs.splice(idx, 1);
-  saveChat();
-  renderChat();
+  const msg = CHAT.msgs[idx];
+  if (msg && msg.id) {
+    FB.get(FB.ref(FB.db, 'chat')).then(snap => {
+      const val = snap.val();
+      if (val) {
+        Object.entries(val).forEach(function(entry) {
+          var k = entry[0]; var m = entry[1];
+          if (m.id === msg.id) FB.remove(FB.ref(FB.db, 'chat/' + k));
+        });
+      }
+    });
+  }
 }
 
 function updateOnlineCount() {
@@ -1821,17 +2140,329 @@ function showChatSidebarLink() {
 
 /* Check notifications on load */
 function checkChatNotifs() {
-  if (!D.user) return;
-  const notifs = JSON.parse(localStorage.getItem('c_notifs') || '{}');
-  const mine = notifs[D.user] || 0;
-  if (mine > 0) {
-    CHAT.unread = mine;
+  if (CHAT.unread > 0) {
+    toast('Kamu ada ' + CHAT.unread + ' mention baru!', 'warn');
     updateChatBadge();
-    // Clear after reading
-    notifs[D.user] = 0;
-    localStorage.setItem('c_notifs', JSON.stringify(notifs));
-    toast(`Kamu ada ${mine} mention baru!`, 'warn');
   }
+}
+
+
+function showLoadingOverlay(show, text) {
+  const el = document.getElementById('loadingOverlay');
+  if (!el) return;
+  if (show) {
+    el.classList.remove('hidden');
+    if (text) document.getElementById('loadingText').textContent = text;
+  } else {
+    el.classList.add('hidden');
+  }
+}
+
+function updateOnlineStatus(online) {
+  const el = document.getElementById('onlineIndicator');
+  const lbl = document.getElementById('onlineLabel');
+  if (!el || !lbl) return;
+  el.className = 'online-indicator' + (online ? '' : ' offline');
+  lbl.textContent = online ? 'Online' : 'Offline';
+}
+
+// Monitor connection
+if (typeof FB !== 'undefined') {
+  FB.onValue(FB.ref(FB.db, '.info/connected'), snap => updateOnlineStatus(snap.val() === true));
+}
+window.addEventListener('online', () => updateOnlineStatus(true));
+window.addEventListener('offline', () => updateOnlineStatus(false));
+
+</script>
+
+<!-- PROFILE PANEL -->
+<div class="profile-panel-bg" id="profilePanelBg" onclick="closeProfilePanel()"></div>
+<div class="profile-panel" id="profilePanel">
+  <div class="pp-hd">
+    <h3>Profil Saya</h3>
+    <button class="pp-cls" onclick="closeProfilePanel()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="pp-avatar">
+    <div class="pp-av-wrap">
+      <div class="pp-av-img" id="ppAvImg"><span id="ppAvInit">?</span></div>
+      <button class="pp-av-edit" id="ppAvEdit" onclick="triggerAvatarUpload()" title="Ubah foto profil">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </button>
+    </div>
+    <div class="pp-name" id="ppName">—</div>
+    <div class="pp-role-chip member" id="ppRoleChip">Member</div>
+    <input type="file" id="avatarUploadInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)"/>
+  </div>
+  <div class="pp-body">
+    <!-- Member code (self only) -->
+    <div class="pp-section" id="ppCodeSection" style="display:none">
+      <h4>Kode Member</h4>
+      <div class="pp-code-box" id="ppCodeBox" onclick="copyCode(this.textContent.trim())" title="Klik untuk salin">——</div>
+      <p style="font-size:.71rem;color:var(--tx2);margin-top:.5rem;text-align:center">Klik untuk salin • Jangan dibagikan</p>
+    </div>
+    <!-- Bio (member editable) -->
+    <div class="pp-section" id="ppBioSection" style="display:none">
+      <h4>Bio</h4>
+      <div class="pp-field">
+        <textarea id="ppBioInput" placeholder="Tulis bio singkat tentang dirimu..." maxlength="200"></textarea>
+      </div>
+      <div class="pp-field">
+        <label>Role dalam Game (Minecraft, dll)</label>
+        <input type="text" id="ppGameRoleInput" placeholder="Misal: Redstoner, Farmer, Builder..."/>
+      </div>
+      <button class="pp-save-btn" onclick="saveBio()">Simpan Bio</button>
+    </div>
+    <!-- Admin: edit selected member avatar & info -->
+    <div class="pp-section" id="ppAdminSection" style="display:none">
+      <h4>Edit Member (Admin/Leader)</h4>
+      <div class="pp-field">
+        <label>Pilih Member</label>
+        <select id="ppMemberSelect" onchange="loadSelectedMember(this.value)" style="width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:5px;padding:.5rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none">
+          <option value="">— Pilih Member —</option>
+        </select>
+      </div>
+      <div id="ppMemberEditArea" style="display:none">
+        <div class="pp-field">
+          <label>Foto Profil Member</label>
+          <div style="display:flex;gap:.7rem;align-items:center;margin-top:4px">
+            <div id="ppMemberAvPreview" style="width:44px;height:44px;border-radius:8px;background:var(--s3);border:1px solid var(--b2);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:var(--tx2)">?</div>
+            <button class="pp-save-btn" style="flex:1" onclick="triggerMemberAvatarUpload()">Upload Foto</button>
+          </div>
+          <input type="file" id="memberAvatarInput" accept="image/*" style="display:none" onchange="handleMemberAvatarUpload(this)"/>
+        </div>
+        <button class="pp-save-btn" onclick="saveMemberEdit()">Simpan Perubahan</button>
+      </div>
+    </div>
+    <!-- Bot Pixabay Key (admin only) -->
+    <div class="pp-section" id="ppBotKeySection" style="display:none">
+      <h4>Bot Image API Key</h4>
+      <div class="pp-field">
+        <label>Pixabay API Key (opsional — gratis di pixabay.com/api)</label>
+        <input type="text" id="ppPixabayKey" placeholder="Paste API key Pixabay..." value=""/>
+      </div>
+      <button class="pp-save-btn" onclick="saveBotKey()">Simpan Key</button>
+      <p style="font-size:.7rem;color:var(--tx2);margin-top:.5rem">Tanpa key, bot tetap berfungsi pakai Unsplash</p>
+    </div>
+    <!-- Member info display (read-only for others) -->
+    <div class="pp-section" id="ppInfoDisplay">
+      <h4>Informasi</h4>
+      <div class="pp-field"><label>Status</label><div class="val" id="ppStatusVal">—</div></div>
+      <div class="pp-field" id="ppGameRoleDisplay" style="display:none"><label>Role Game</label><div class="pp-game-role" id="ppGameRoleVal">—</div></div>
+      <div class="pp-field" id="ppBioDisplay" style="display:none"><label>Bio</label><div class="val" style="font-size:.83rem;line-height:1.6;color:var(--tx2)" id="ppBioVal">—</div></div>
+      <div class="pp-field"><label>Bergabung</label><div class="val" id="ppJoinDate">—</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- STICKER PANEL -->
+<div class="sticker-panel" id="stickerPanel">
+  <div class="sticker-hd">
+    <h4>🎨 Stiker</h4>
+    <button onclick="closeStickerPanel()" style="background:none;border:none;color:var(--tx2);cursor:pointer;font-size:1rem">✕</button>
+  </div>
+  <div class="sticker-tabs">
+    <button class="sticker-tab active" onclick="switchStickerTab('saved',this)">Tersimpan</button>
+    <button class="sticker-tab" onclick="switchStickerTab('community',this)">Komunitas</button>
+  </div>
+  <div class="sticker-grid" id="stickerGrid"></div>
+  <div class="sticker-upload-area">
+    <button class="sticker-upload-btn" onclick="triggerStickerUpload()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Upload Stiker Custom
+    </button>
+    <input type="file" id="stickerUploadInput" accept="image/*" style="display:none" onchange="handleStickerUpload(this)"/>
+  </div>
+</div>
+
+<script>
+
+/* PROFILE SYSTEM */
+const PROFILES = {};
+async function loadProfilesFromFB() {
+  try { const snap = await fbGet('profiles'); if (snap.val()) Object.assign(PROFILES, snap.val()); } catch(e) {}
+}
+function saveProfiles() {
+  fbSet('profiles', PROFILES).catch(()=>localStorage.setItem('c_profiles', JSON.stringify(PROFILES)));
+}
+function getProfile(email) {
+  if (!PROFILES[email]) PROFILES[email] = { avatar: null, bio: '', gameRole: '', joinDate: '' };
+  return PROFILES[email];
+}
+function openProfilePanel() {
+  if (!D.user || !D.role) { toast('Login dahulu','warn'); return; }
+  populateProfilePanel();
+  document.getElementById('profilePanel').classList.add('open');
+  document.getElementById('profilePanelBg').classList.add('show');
+}
+function closeProfilePanel() {
+  document.getElementById('profilePanel').classList.remove('open');
+  document.getElementById('profilePanelBg').classList.remove('show');
+}
+function populateProfilePanel() {
+  const prof = D.email ? getProfile(D.email) : {};
+  const mem = D.members ? D.members.find(m => m.email === D.email) : null;
+  document.getElementById('ppName').textContent = D.user || '---';
+  const chip = document.getElementById('ppRoleChip');
+  chip.textContent = D.role === 'admin' ? 'Admin' : D.role === 'leader' ? 'Leader' : 'Member';
+  chip.className = 'pp-role-chip ' + (D.role || 'member');
+  refreshProfileAvatar(D.email);
+  const codeSection = document.getElementById('ppCodeSection');
+  if (D.role === 'member' && mem) {
+    codeSection.style.display = 'block';
+    document.getElementById('ppCodeBox').textContent = mem.code || '------';
+  } else codeSection.style.display = 'none';
+  document.getElementById('ppBioSection').style.display = 'block';
+  document.getElementById('ppBioInput').value = prof.bio || '';
+  document.getElementById('ppGameRoleInput').value = prof.gameRole || '';
+  const adminSection = document.getElementById('ppAdminSection');
+  if (D.role === 'admin' || D.role === 'leader') {
+    adminSection.style.display = 'block';
+    populateMemberSelectList();
+  } else adminSection.style.display = 'none';
+  const botSection = document.getElementById('ppBotKeySection');
+  if (D.role === 'admin' || D.role === 'leader') {
+    botSection.style.display = 'block';
+    document.getElementById('ppPixabayKey').value = BOT_PIXABAY_KEY || '';
+  } else botSection.style.display = 'none';
+  const editBtn = document.getElementById('ppAvEdit');
+  if (D.role === 'admin' || D.role === 'leader') editBtn.classList.add('show');
+  else editBtn.classList.remove('show');
+  document.getElementById('ppStatusVal').textContent = D.role === 'admin' ? 'Admin' : D.role === 'leader' ? 'Leader' : 'Aktif';
+  const gameRoleDisplay = document.getElementById('ppGameRoleDisplay');
+  if (prof.gameRole) { gameRoleDisplay.style.display = 'block'; document.getElementById('ppGameRoleVal').textContent = prof.gameRole; }
+  else gameRoleDisplay.style.display = 'none';
+  const bioDisplay = document.getElementById('ppBioDisplay');
+  if (prof.bio) { bioDisplay.style.display = 'block'; document.getElementById('ppBioVal').textContent = prof.bio; }
+  else bioDisplay.style.display = 'none';
+  document.getElementById('ppJoinDate').textContent = mem ? (mem.date || '-') : '-';
+}
+function refreshProfileAvatar(email) {
+  const prof = email ? getProfile(email) : {};
+  const initials = (D.user || '?').split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
+  const navInit = document.getElementById('navProfileInit');
+  if (navInit) navInit.innerHTML = prof.avatar ? '<img src="'+prof.avatar+'" style="width:100%;height:100%;object-fit:cover"/>' : initials;
+  const ppAv = document.getElementById('ppAvImg');
+  if (ppAv) ppAv.innerHTML = prof.avatar ? '<img src="'+prof.avatar+'" style="width:100%;height:100%;object-fit:cover"/>' : '<span style="font-size:1.6rem;font-weight:700">'+initials+'</span>';
+}
+function saveBio() {
+  if (!D.email) return;
+  const prof = getProfile(D.email);
+  prof.bio = document.getElementById('ppBioInput').value.trim();
+  prof.gameRole = document.getElementById('ppGameRoleInput').value.trim();
+  saveProfiles(); populateProfilePanel(); toast('Bio tersimpan', 'success');
+}
+function saveBotKey() {
+  const key = document.getElementById('ppPixabayKey').value.trim();
+  BOT_PIXABAY_KEY = key; fbSet('settings/pixabayKey', key).catch(()=>localStorage.setItem('c_pxkey', key));
+  toast(key ? 'API key Pixabay tersimpan' : 'API key dihapus', 'success');
+}
+function triggerAvatarUpload() {
+  if (D.role !== 'admin' && D.role !== 'leader') { toast('Hanya Admin/Leader yang bisa ubah foto profil', 'warn'); return; }
+  document.getElementById('avatarUploadInput').click();
+}
+function handleAvatarUpload(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    const prof = getProfile(D.email);
+    prof.avatar = await compressBase64(e.target.result, 0.7, 300);
+    saveProfiles(); refreshProfileAvatar(D.email); toast('Foto profil diperbarui', 'success');
+  };
+  reader.readAsDataURL(file); input.value = '';
+}
+function populateMemberSelectList() {
+  const sel = document.getElementById('ppMemberSelect'); if (!sel) return;
+  const active = D.members.filter(m => m.status === 'active');
+  sel.innerHTML = '<option value="">-- Pilih Member --</option>' + active.map(m => '<option value="'+m.email+'">'+m.name+'</option>').join('');
+  document.getElementById('ppMemberEditArea').style.display = 'none';
+}
+let _selectedMemberEmail = null;
+function loadSelectedMember(email) {
+  _selectedMemberEmail = email;
+  const area = document.getElementById('ppMemberEditArea');
+  if (!email) { area.style.display = 'none'; return; }
+  area.style.display = 'block';
+  const prof = getProfile(email);
+  const mem = D.members.find(m => m.email === email);
+  const init = mem ? mem.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase() : '?';
+  const prevEl = document.getElementById('ppMemberAvPreview');
+  prevEl.innerHTML = prof.avatar ? '<img src="'+prof.avatar+'" style="width:100%;height:100%;object-fit:cover"/>' : init;
+}
+function triggerMemberAvatarUpload() {
+  if (!_selectedMemberEmail) { toast('Pilih member dulu', 'warn'); return; }
+  document.getElementById('memberAvatarInput').click();
+}
+function handleMemberAvatarUpload(input) {
+  const file = input.files[0]; if (!file || !_selectedMemberEmail) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    const prof = getProfile(_selectedMemberEmail);
+    prof.avatar = await compressBase64(e.target.result, 0.7, 300);
+    saveProfiles(); loadSelectedMember(_selectedMemberEmail); toast('Foto profil member diperbarui', 'success');
+  };
+  reader.readAsDataURL(file); input.value = '';
+}
+function saveMemberEdit() { toast('Perubahan member tersimpan', 'success'); }
+function showProfileBtn() { const btn = document.getElementById('navProfileBtn'); if (btn) btn.style.display = 'flex'; }
+
+/* STICKER SYSTEM */
+const STICKERS = {
+  my: JSON.parse(localStorage.getItem('c_stk_my') || '[]'),
+  community: []
+};
+async function loadStickersFromFB() {
+  try { const snap = await fbGet('stickers/community'); if (snap.val()) STICKERS.community = Array.isArray(snap.val()) ? snap.val() : Object.values(snap.val()); }
+  catch(e) { STICKERS.community = JSON.parse(localStorage.getItem('c_stk_com') || '[]'); }
+}
+function saveStickers() {
+  fbSet('stickers/community', STICKERS.community.slice(-100))
+    .catch(()=>localStorage.setItem('c_stk_com', JSON.stringify(STICKERS.community.slice(-100))));
+  // my stickers stay local (personal)
+  localStorage.setItem('c_stk_my', JSON.stringify(STICKERS.my.slice(-50)));
+}
+let _stickerTab = 'saved';
+function toggleStickerPanel() {
+  const p = document.getElementById('stickerPanel'); if (!p) return;
+  if (p.classList.contains('show')) closeStickerPanel();
+  else { p.classList.add('show'); renderStickerGrid(); }
+}
+function closeStickerPanel() { const p = document.getElementById('stickerPanel'); if (p) p.classList.remove('show'); }
+function switchStickerTab(tab, btn) {
+  _stickerTab = tab;
+  document.querySelectorAll('.sticker-tab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderStickerGrid();
+}
+function renderStickerGrid() {
+  const grid = document.getElementById('stickerGrid'); if (!grid) return;
+  const list = _stickerTab === 'saved' ? STICKERS.my : STICKERS.community;
+  if (!list.length) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--tx2);font-size:.8rem;padding:1.5rem">'+ (_stickerTab === 'saved' ? 'Belum ada stiker. Upload stiker custom!' : 'Belum ada stiker komunitas.') +'</div>'; return; }
+  grid.innerHTML = list.map((src, i) => '<div class="sticker-item" onclick="sendSticker(\''+_stickerTab+'\','+i+')"><img src="'+src+'" alt="stiker"/></div>').join('');
+}
+function triggerStickerUpload() { document.getElementById('stickerUploadInput').click(); }
+function handleStickerUpload(input) {
+  Array.from(input.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = async e => {
+      const compressed = await compressBase64(e.target.result, 0.75, 400);
+      STICKERS.my.push(compressed);
+      if (!STICKERS.community.includes(compressed)) STICKERS.community.push(compressed);
+      saveStickers(); renderStickerGrid(); toast('Stiker berhasil diupload!', 'success');
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+function sendSticker(tab, idx) {
+  closeStickerPanel();
+  const src = tab === 'saved' ? STICKERS.my[idx] : STICKERS.community[idx];
+  if (!src || !D.user) return;
+  const msg = { id: Date.now(), ts: Date.now(), name: D.user, role: D.role, text: null, images: null, sticker: src, mentions: null, replyTo: null, bot: false };
+  pushChatMsg(msg);
+}
+function saveSticker(src) {
+  if (!STICKERS.my.includes(src)) { STICKERS.my.push(src); saveStickers(); toast('Stiker tersimpan!', 'success'); }
+  else toast('Stiker sudah tersimpan', 'warn');
 }
 
 </script>
