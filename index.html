@@ -8,6 +8,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
+/* ── USER-SELECT: labels/headings/UI can't be copied ── */
+h1,h2,h3,h4,.sec-tag,.eyebrow,.r-tag,.chip,.nav-logo,.sb-sec,
+.panel-h h3,.stat .l,button,.tab-btn,.full-btn,.btn-p,.btn-s,
+.logout-btn,.act-btn,.del-btn,.add-q,.save-btn,.wa-opt-btn,
+.wa-menu-cls,.sb-lnk,.clink,label,.form-q label,.tgl-lbl,
+.tgl-sub,.back-link,.s-chip,.auth-head p,.auth-head h2,
+.hero-desc,.about-lead,.a-card h4,.a-card p,.info-wrap .sub,
+.m-name,.m-role,.m-tag,.google-btn,.e-block h4{
+  user-select:none;-webkit-user-select:none}
+/* selectable only where needed */
+.code-box,.selectable,.gt-input,td code,
+.form-q input,.form-q textarea,
+.field input,.q-row input,.block-title-input,
+.block-row textarea{user-select:text;-webkit-user-select:text}
+</style>
 :root{--bg:#08080d;--s1:#0f0f17;--s2:#16161f;--s3:#1e1e2a;--b1:#252535;--b2:#2e2e42;--ac:#6c4ef2;--ac2:#9b72f5;--gold:#e8b84b;--tx:#dddded;--tx2:#9494aa;--ok:#1ec99a;--err:#e8546a;--warn:#f59e0b}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -431,12 +446,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
       <!-- GUEST -->
       <div id="tab-guest">
         <div class="closed-banner" id="closedBanner">Pendaftaran sedang ditutup. Hubungi Leader untuk info lebih lanjut.</div>
-        <p style="font-size:.81rem;color:var(--tx2);margin-bottom:1.1rem;line-height:1.65;">Login dengan akun Google untuk mengisi formulir pendaftaran.</p>
-        <button class="google-btn" id="gBtn" onclick="handleGoogleLogin()">
-          <svg width="17" height="17" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-          Lanjutkan dengan Google
-        </button>
-        <p style="font-size:.75rem;color:var(--tx2);text-align:center;">Setelah login kamu akan langsung diarahkan ke formulir</p>
+        <p style="font-size:.81rem;color:var(--tx2);margin-bottom:1rem;line-height:1.65;user-select:none">Login dengan akun Google yang sudah ada di perangkat kamu untuk mengisi formulir pendaftaran.</p>
+        <!-- Google renders its button here -->
+        <div id="googleBtnContainer" style="display:flex;justify-content:center;margin-bottom:1rem;min-height:44px"></div>
+        <p style="font-size:.74rem;color:var(--tx2);text-align:center;user-select:none">Setelah login kamu akan langsung diarahkan ke formulir</p>
       </div>
       <!-- MEMBER -->
       <div id="tab-member" style="display:none;">
@@ -535,7 +548,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
     <!-- MEMBER MANAGEMENT -->
     <div class="panel">
       <div class="panel-h"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><h3>Manajemen Member</h3></div>
-      <div style="overflow-x:auto"><table class="dtable"><thead><tr><th>Nama</th><th>Email</th><th>Gamertag</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="adminMemberTbody"></tbody></table></div>
+      <input id="adminSearch" type="text" placeholder="Cari nama / gamertag / email..." oninput="filterMembers('admin',this.value)" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:5px;padding:.6rem .9rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none;margin-bottom:1rem;transition:border-color .2s" onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--b2)'"/>
+      <div style="overflow-x:auto"><table class="dtable"><thead><tr><th>Nama</th><th>Email</th><th>Kode</th><th>Gamertag</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="adminMemberTbody"></tbody></table></div>
     </div>
     <!-- EVENT EDITOR -->
     <div class="panel">
@@ -575,7 +589,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
     <!-- MEMBER MANAGEMENT -->
     <div class="panel">
       <div class="panel-h"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><h3>Manajemen Member</h3></div>
-      <div style="overflow-x:auto"><table class="dtable"><thead><tr><th>Nama</th><th>Email</th><th>Gamertag</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="leaderMemberTbody"></tbody></table></div>
+      <input id="leaderSearch" type="text" placeholder="Cari nama / gamertag / email..." oninput="filterMembers('leader',this.value)" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:5px;padding:.6rem .9rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none;margin-bottom:1rem;transition:border-color .2s" onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--b2)'"/>
+      <div style="overflow-x:auto"><table class="dtable"><thead><tr><th>Nama</th><th>Email</th><th>Kode</th><th>Gamertag</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="leaderMemberTbody"></tbody></table></div>
     </div>
     <!-- QUESTIONS -->
     <div class="panel">
@@ -610,6 +625,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
   </div>
 </div>
 
+<!-- Google One Tap container -->
+<div id="g_id_onload"
+  data-client_id="180817764003-vdkvo65it9nf6b9m9n2mvho8617pldmf.apps.googleusercontent.com"
+  data-callback="onGoogleResp"
+  data-auto_prompt="false">
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -619,11 +641,85 @@ const WA   = '6287820071566';
 
 /* ══ WA MESSAGES ══ */
 const WA_MSGS = {
-  join:       `Halo Leader Cuanie!\n\nSaya ingin mengetahui cara bergabung dengan Team Cuanie.\n\nBisakah dijelaskan persyaratan dan langkah-langkahnya?\n\nTerima kasih.`,
-  openmember: `Halo Leader Cuanie!\n\nSaya ingin bertanya, kapan kira-kira pendaftaran anggota baru akan dibuka kembali?\n\nSaya sangat tertarik untuk bergabung dengan tim ini.\n\nTerima kasih.`,
-  event:      `Halo Leader Cuanie!\n\nSaya ingin mengetahui informasi mengenai event dan turnamen yang akan datang di Team Cuanie.\n\nApakah ada jadwal yang bisa dibagikan?\n\nTerima kasih.`,
-  status:     `Halo Leader Cuanie!\n\nSaya sudah mengisi formulir pendaftaran sebelumnya dan ingin mengecek status pendaftaran saya.\n\nBisakah diinfokan perkembangannya?\n\nTerima kasih.`,
-  other:      `Halo Leader Cuanie!\n\nSaya ingin mengajukan pertanyaan mengenai Team Cuanie.\n\n[Tulis pertanyaanmu di sini]\n\nTerima kasih.`
+  join:
+`┌─────────────────────────┐
+│  🎮  TEAM CUANIE         │
+│  Pertanyaan Bergabung    │
+└─────────────────────────┘
+
+*Halo Leader Cuanie!* 👋
+
+Saya ingin mengetahui cara bergabung dengan *Team Cuanie*.
+
+*Pertanyaan saya:*
+▸ Apa saja syarat untuk bergabung?
+▸ Bagaimana proses seleksinya?
+▸ Apakah ada tes atau trial?
+
+_Terima kasih, saya tunggu balasannya_ 🙏`,
+
+  openmember:
+`┌─────────────────────────┐
+│  🎮  TEAM CUANIE         │
+│  Info Open Member        │
+└─────────────────────────┘
+
+*Halo Leader Cuanie!* 👋
+
+Saya ingin bertanya mengenai *jadwal open member* berikutnya.
+
+▸ Kapan pendaftaran dibuka lagi?
+▸ Apakah ada syarat khusus?
+▸ Bagaimana cara mendaftar saat dibuka?
+
+_Saya sangat tertarik untuk bergabung dengan tim ini_ 💪`,
+
+  event:
+`┌─────────────────────────┐
+│  🎮  TEAM CUANIE         │
+│  Info Event & Turnamen   │
+└─────────────────────────┘
+
+*Halo Leader Cuanie!* 👋
+
+Saya ingin mengetahui *event dan turnamen* yang akan datang.
+
+▸ Adakah event yang sedang berlangsung?
+▸ Jadwal latihan rutin kapan saja?
+▸ Bagaimana cara ikut berpartisipasi?
+
+_Terima kasih atas informasinya_ 🏆`,
+
+  status:
+`┌─────────────────────────┐
+│  🎮  TEAM CUANIE         │
+│  Cek Status Pendaftaran  │
+└─────────────────────────┘
+
+*Halo Leader Cuanie!* 👋
+
+Saya sudah mengisi *formulir pendaftaran* sebelumnya dan ingin mengecek status saya.
+
+▸ Apakah formulir saya sudah diterima?
+▸ Kapan proses seleksi selesai?
+▸ Ada hal lain yang perlu saya siapkan?
+
+_Terima kasih, ditunggu kabarnya_ 🙏`,
+
+  other:
+`┌─────────────────────────┐
+│  🎮  TEAM CUANIE         │
+│  Pertanyaan Umum         │
+└─────────────────────────┘
+
+*Halo Leader Cuanie!* 👋
+
+Saya ingin mengajukan pertanyaan mengenai Team Cuanie.
+
+*Pertanyaan saya:*
+▸ [Tulis pertanyaanmu di sini]
+
+_Terima kasih atas waktunya_ 🙏`
 };
 
 /* ══ STATE ══ */
@@ -646,14 +742,6 @@ const D = {
 
 /* active editing context for block builders */
 let _editCtx = null; // 'admin' or 'leader'
-
-/* ══ INIT ══ */
-window.onload = () => {
-  applyReg();
-  renderPubPages();
-  if (typeof google !== 'undefined' && google.accounts)
-    google.accounts.id.initialize({client_id:G_ID, callback:onGoogleResp});
-};
 
 /* ══ REG STATUS ══ */
 function applyReg() {
@@ -754,17 +842,28 @@ function updateNav() {
 function handleGoogleLogin() {
   if (!D.regOpen) { toast('Pendaftaran sedang ditutup','error'); return; }
   if (typeof google !== 'undefined' && google.accounts) {
-    google.accounts.id.initialize({client_id:G_ID, callback:onGoogleResp});
-    google.accounts.id.prompt(n => { if (n.isNotDisplayed()||n.isSkippedMoment()) fallbackGuest(); });
-  } else fallbackGuest();
-}
-
-function fallbackGuest() {
-  const input = prompt('Masukkan nama atau email kamu:','nama@gmail.com');
-  if (!input) return;
-  const em = input.includes('@') ? input : input+'@cuanie.guest';
-  const nm = input.includes('@') ? input.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) : input;
-  setGuestUser(nm, em);
+    google.accounts.id.initialize({client_id:G_ID, callback:onGoogleResp, use_fedcm_for_prompt:false});
+    // Render a real button in the button container
+    google.accounts.id.renderButton(
+      document.getElementById('googleBtnContainer'),
+      {theme:'filled_black', size:'large', width:346, text:'continue_with', logo_alignment:'center'}
+    );
+    // Also trigger One Tap
+    google.accounts.id.prompt(n => {
+      if (n.isNotDisplayed()||n.isSkippedMoment()) {
+        // One tap not available; button still visible
+      }
+    });
+  } else {
+    // SDK not loaded (offline/preview)
+    const input = prompt('Google SDK tidak tersedia.\nMasukkan nama atau email kamu:','nama@gmail.com');
+    if (!input) return;
+    const em = input.includes('@') ? input : input+'@cuanie.guest';
+    const nm = input.includes('@')
+      ? input.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase())
+      : input;
+    setGuestUser(nm, em);
+  }
 }
 
 function onGoogleResp(resp) {
@@ -852,20 +951,27 @@ function submitForm() {
   const tgl = now.toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   const jam = now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
 
-  let msg = `*╔══════════════════════╗*\n`;
-  msg += `*║  FORMULIR PENDAFTARAN  ║*\n`;
-  msg += `*║     TEAM CUANIE       ║*\n`;
-  msg += `*╚══════════════════════╝*\n\n`;
-  msg += `*Nama     :* ${D.user}\n`;
-  msg += `*Email    :* _${D.email}_\n`;
-  msg += `*Tanggal  :* ${tgl}\n`;
-  msg += `*Waktu    :* ${jam} WIB\n`;
-  msg += `*Status   :* _Menunggu Konfirmasi_\n\n`;
-  msg += `*━━━━━━ JAWABAN FORMULIR ━━━━━━*\n\n`;
-  ans.forEach((item,i) => { msg += `*${i+1}. ${item.q}*\n_${item.a}_\n\n`; });
-  msg += `*━━━━━━━━━━━━━━━━━━━━━━━━━━━*\n`;
-  msg += `_Pesan ini dikirim otomatis_\n_melalui web resmi Cuanie._\n\n`;
-  msg += `*Mohon balas untuk konfirmasi penerimaan.*`;
+  // Box art: semua baris sama panjang (25 karakter konten)
+  let msg = `┌───────────────────────────┐\n`;
+  msg += `│   📋 FORMULIR PENDAFTARAN  │\n`;
+  msg += `│       TEAM CUANIE         │\n`;
+  msg += `└───────────────────────────┘\n\n`;
+  msg += `*📌 INFO PENGIRIM*\n`;
+  msg += `━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  msg += `👤 *Nama     :* ${D.user}\n`;
+  msg += `📧 *Email    :* _${D.email}_\n`;
+  msg += `📅 *Tanggal  :* ${tgl}\n`;
+  msg += `⏰ *Waktu    :* ${jam} WIB\n`;
+  msg += `📊 *Status   :* _⏳ Menunggu Konfirmasi_\n\n`;
+  msg += `*📝 JAWABAN FORMULIR*\n`;
+  msg += `━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+  ans.forEach((item,i) => {
+    msg += `*${i+1}. ${item.q}*\n`;
+    msg += `   ↳ _${item.a}_\n\n`;
+  });
+  msg += `━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  msg += `✅ *Mohon balas untuk konfirmasi.*\n`;
+  msg += `_Dikirim otomatis via web Cuanie_`;
 
   const code = genCode();
   const newMember = {
@@ -891,36 +997,48 @@ function genCode() {
   return Array.from({length:6},()=>c[Math.floor(Math.random()*c.length)]).join('');
 }
 
-/* ══ MEMBER TABLE (shared by admin & leader) ══ */
-function renderMemberTable(tbodyId) {
+/* ══ MEMBER TABLE ══ */
+function renderMemberTable(tbodyId, filter='') {
   const tb = document.getElementById(tbodyId);
-  if (!D.members.length) {
-    tb.innerHTML = '<tr><td colspan="5" style="color:var(--tx2);text-align:center;padding:2rem;">Belum ada data pendaftar</td></tr>';
+  if (!tb) return;
+  const q = filter.toLowerCase();
+  const list = q
+    ? D.members.filter(m =>
+        m.name.toLowerCase().includes(q) ||
+        (m.email||'').toLowerCase().includes(q) ||
+        (m.gamertag||'').toLowerCase().includes(q))
+    : D.members;
+
+  if (!list.length) {
+    tb.innerHTML = `<tr><td colspan="6" style="color:var(--tx2);text-align:center;padding:2rem;">${q ? 'Tidak ada hasil pencarian' : 'Belum ada data pendaftar'}</td></tr>`;
     return;
   }
-  tb.innerHTML = D.members.map((m,i) => {
+  tb.innerHTML = list.map((m,_) => {
+    const i = D.members.indexOf(m);
     const statusChip = m.status==='active'
       ? `<span class="chip member">Aktif</span>`
       : m.status==='pending'
         ? `<span class="chip pending">Pending</span>`
         : `<span class="chip kicked">Dikeluarkan</span>`;
-
     const accBtn = m.status==='pending'
-      ? `<button class="act-btn ok" onclick="approveMember(${i})">Setujui</button>`
-      : '';
+      ? `<button class="act-btn ok" onclick="approveMember(${i})">Setujui</button>` : '';
     const kickBtn = m.status!=='kicked'
       ? `<button class="act-btn danger" onclick="kickMember(${i})">Keluarkan</button>`
       : `<button class="act-btn" onclick="restoreMember(${i})">Pulihkan</button>`;
-    const gtField = `<input class="gt-input" value="${m.gamertag||''}" placeholder="Gamertag" onchange="setGamertag(${i},this.value)"/>`;
-
+    const gtField = `<input class="gt-input" value="${m.gamertag||''}" placeholder="—" onchange="setGamertag(${i},this.value)"/>`;
     return `<tr>
       <td>${m.name}</td>
-      <td style="color:var(--tx2);font-size:.8rem">${m.email}</td>
+      <td style="color:var(--tx2);font-size:.79rem">${m.email}</td>
+      <td><code class="selectable">${m.code}</code></td>
       <td>${gtField}</td>
       <td>${statusChip}</td>
       <td style="display:flex;gap:5px;flex-wrap:wrap">${accBtn}${kickBtn}</td>
     </tr>`;
   }).join('');
+}
+
+function filterMembers(ctx, val) {
+  renderMemberTable(ctx==='admin' ? 'adminMemberTbody' : 'leaderMemberTbody', val);
 }
 
 function approveMember(i) {
@@ -1033,6 +1151,37 @@ function closeWAMenu(e) {
 function sendWA(key) {
   document.getElementById('waMenuBg').classList.remove('show');
   window.open(`https://wa.me/${WA}?text=${encodeURIComponent(WA_MSGS[key]||WA_MSGS.other)}`, '_blank');
+}
+
+/* ══ INIT ══ */
+window.onload = () => {
+  applyReg();
+  renderPubPages();
+  if (typeof google !== 'undefined' && google.accounts) {
+    google.accounts.id.initialize({client_id:G_ID, callback:onGoogleResp, use_fedcm_for_prompt:false});
+  }
+};
+
+// Re-render Google button every time auth page becomes visible
+const _origShowPg = window.showPg;
+function showPg(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  window.scrollTo({top:0});
+  if (id === 'auth') {
+    setTimeout(()=>{
+      if (typeof google !== 'undefined' && google.accounts) {
+        if (!D.regOpen) return;
+        google.accounts.id.initialize({client_id:G_ID, callback:onGoogleResp});
+        const c = document.getElementById('googleBtnContainer');
+        if (c) {
+          c.innerHTML = '';
+          google.accounts.id.renderButton(c,
+            {theme:'filled_black',size:'large',width:346,text:'continue_with',logo_alignment:'center'});
+        }
+      }
+    }, 100);
+  }
 }
 
 /* ══ SAVE ══ */
