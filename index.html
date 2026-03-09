@@ -721,6 +721,53 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 .ktp-gen-photo-upload:hover{border-color:var(--ac2)}
 .ktp-gen-photo-preview{width:80px;height:100px;object-fit:cover;border-radius:6px;border:2px solid var(--b2);margin:0 auto .5rem;display:block}
 
+
+/* ══ PUBLIC MEMBER GRID — KTP DISPLAY ══ */
+.pub-member-tabs{display:flex;gap:4px;margin-bottom:1rem;background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:3px}
+.pub-tab{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:.5rem;border:none;border-radius:7px;background:none;color:var(--tx2);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;transition:all .2s;-webkit-user-select:none;user-select:none}
+.pub-tab.active{background:var(--s3);color:var(--tx);font-weight:700}
+.ktp-pub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:1.5rem}
+/* Mini KTP card in grid */
+.ktp-mini{border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative}
+.ktp-mini:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.ktp-mini-ktp{background:linear-gradient(180deg,#e8e0d0,#ddd5c0);border:1px solid #bbb}
+.ktp-mini-game{background:linear-gradient(135deg,#0d0d1a,#131330);border:1px solid rgba(108,78,242,.3)}
+.ktp-mini-no-card{background:var(--s2);border:1px dashed var(--b2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;min-height:120px;color:var(--tx2);font-size:.8rem;padding:1rem}
+.ktp-mini-header-ktp{background:linear-gradient(135deg,#1a3a6e,#0d2144);padding:5px 10px;display:flex;align-items:center;gap:6px}
+.ktp-mini-header-game{background:rgba(108,78,242,.15);padding:5px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(108,78,242,.2)}
+.ktp-mini-body{padding:8px 10px;display:flex;gap:8px;align-items:flex-start}
+.ktp-mini-photo{width:48px;height:60px;border-radius:3px;object-fit:cover;flex-shrink:0;border:1px solid rgba(0,0,0,.2)}
+.ktp-mini-photo-ph{width:48px;height:60px;border-radius:3px;background:#c8d4e8;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.ktp-mini-photo-ph-dark{width:48px;height:60px;border-radius:6px;background:rgba(108,78,242,.2);border:1px solid rgba(108,78,242,.3);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.ktp-mini-fields{flex:1;min-width:0}
+.ktp-mini-name-ktp{font-size:.78rem;font-weight:800;color:#111;line-height:1.2;margin-bottom:2px}
+.ktp-mini-name-game{font-size:.78rem;font-weight:800;color:#fff;font-family:'Syne',sans-serif;line-height:1.2;margin-bottom:2px}
+.ktp-mini-field{margin-bottom:3px}
+.ktp-mini-field label{font-size:.46rem;text-transform:uppercase;letter-spacing:.5px;display:block;line-height:1}
+.ktp-mini-field label.dark{color:rgba(255,255,255,.4)}
+.ktp-mini-field label.light{color:#666}
+.ktp-mini-val{font-size:.62rem;font-weight:600;line-height:1.3}
+.ktp-mini-val.dark{color:rgba(255,255,255,.85)}
+.ktp-mini-val.light{color:#222}
+.ktp-mini-val.code{letter-spacing:2px;font-family:'Syne',sans-serif}
+.ktp-mini-footer-ktp{background:linear-gradient(135deg,#1a3a6e,#0d2144);padding:4px 10px;display:flex;justify-content:space-between;align-items:center}
+.ktp-mini-footer-game{padding:5px 10px;border-top:1px solid rgba(108,78,242,.15);display:flex;justify-content:space-between;align-items:center}
+.ktp-mini-barcode{display:flex;gap:1px;align-items:flex-end;height:12px}
+.ktp-mini-barcode span{background:rgba(255,255,255,.5);width:1.5px;border-radius:1px}
+/* Guest mini card */
+.guest-mini{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem;cursor:pointer;transition:border-color .2s}
+.guest-mini:hover{border-color:rgba(232,184,75,.4)}
+.guest-mini-av{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,rgba(232,184,75,.3),rgba(232,184,75,.1));border:1px solid rgba(232,184,75,.3);display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+
+
+/* ══ GACHA BANK ══ */
+.gacha-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:.65rem;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800;letter-spacing:1px;cursor:pointer;transition:all .2s;-webkit-user-select:none;user-select:none}
+.gacha-up{background:linear-gradient(135deg,rgba(30,201,154,.15),rgba(30,201,154,.08));border:1.5px solid rgba(30,201,154,.4);color:var(--ok)}
+.gacha-up:hover:not(:disabled){background:linear-gradient(135deg,rgba(30,201,154,.3),rgba(30,201,154,.15));transform:translateY(-1px);box-shadow:0 4px 12px rgba(30,201,154,.2)}
+.gacha-down{background:linear-gradient(135deg,rgba(232,84,106,.15),rgba(232,84,106,.08));border:1.5px solid rgba(232,84,106,.4);color:var(--err)}
+.gacha-down:hover:not(:disabled){background:linear-gradient(135deg,rgba(232,84,106,.3),rgba(232,84,106,.15));transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,84,106,.2)}
+.gacha-btn:disabled{opacity:.35;cursor:not-allowed;transform:none !important}
+
 /* ══ ANALYTICS ══ */
 .analytics-member-card{background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem 1rem;margin-bottom:.6rem;transition:border-color .2s}
 .analytics-member-card:hover{border-color:var(--b2)}
@@ -945,44 +992,47 @@ canvas{-webkit-user-select:none;user-select:none}
 @media(max-width:768px){
   /* Nav */
   nav{padding:0 .9rem 0 1.1rem;height:56px}
-  .nav-logo{font-size:1.2rem}
+  .nav-left{gap:6px}
+  .nav-logo{font-size:1.15rem}
+  .nav-online-btn{font-size:.65rem;padding:3px 8px 3px 6px;border-radius:16px}
   .hbg{width:36px;height:36px}
   .profile-btn{width:34px;height:34px}
 
-  /* Hero */
-  .hero{padding:5.5rem 1.1rem 3rem;min-height:100dvh}
-  .hero h1{font-size:clamp(1.9rem,7vw,3.2rem);letter-spacing:-1px}
-  .hero-desc{font-size:.9rem;padding:0 .5rem}
-  .hero-cta{flex-direction:column;align-items:center;gap:.7rem;width:100%;max-width:300px;margin:0 auto}
-  .hero-cta .btn-p,.hero-cta .btn-s{width:100%;justify-content:center;padding:.8rem 1.2rem;font-size:.92rem}
-
-  /* About & info */
-  .about{padding:2.5rem 1.1rem;max-width:100%}
+  /* Hero — compact so all fits without zoom */
+  .hero{padding:4.5rem 1.1rem 2rem;min-height:100dvh;justify-content:center}
+  .hero h1{font-size:clamp(1.7rem,6vw,3rem);letter-spacing:-.8px;margin-bottom:1rem}
+  .hero-desc{font-size:.87rem;padding:0 .3rem;margin-bottom:1.6rem;max-width:100%}
+  .hero-cta{flex-direction:column;align-items:stretch;gap:.6rem;width:100%;max-width:280px;margin:0 auto}
+  .hero-cta .btn-p,.hero-cta .btn-s{width:100%;justify-content:center;padding:.75rem 1rem;font-size:.9rem}
+  .about{padding:2rem 1.1rem;max-width:100%}
   .about-grid{grid-template-columns:1fr;gap:.8rem}
-  .a-card{padding:1.1rem}
-  .info-wrap{padding:5rem 1.1rem 3rem;max-width:100%}
+  .a-card{padding:1rem}
+
+  /* Info pages */
+  .info-wrap{padding:4.5rem 1.1rem 2.5rem;max-width:100%}
+  .ktp-pub-grid{grid-template-columns:1fr}
 
   /* Auth */
-  .auth-screen{padding:5rem 1rem 2rem;align-items:flex-start}
-  .auth-card{padding:1.5rem 1.1rem;border-radius:10px;max-width:100%}
-  .auth-head h2{font-size:1.3rem}
+  .auth-screen{padding:4.5rem 1rem 2rem;align-items:flex-start}
+  .auth-card{padding:1.4rem 1.1rem;border-radius:10px;max-width:100%}
+  .auth-head h2{font-size:1.25rem}
   .tab-row{grid-template-columns:repeat(2,1fr);gap:3px;border-radius:7px}
   .tab-btn{font-size:.83rem;padding:.48rem .4rem}
 
   /* Form */
-  .form-wrap{padding:5rem 1rem 3rem;max-width:100%}
-  .form-block{padding:1.1rem}
+  .form-wrap{padding:4.5rem 1rem 2.5rem;max-width:100%}
+  .form-block{padding:1rem}
 
   /* Dashboard */
-  .dash{padding:4.5rem 1rem 3rem;max-width:100%}
+  .dash{padding:4rem 1rem 2.5rem;max-width:100%}
   .dash-top{gap:.5rem;flex-wrap:wrap}
-  .dash-top h2{font-size:1.1rem}
+  .dash-top h2{font-size:1.05rem}
   .stats-row{grid-template-columns:repeat(3,1fr);gap:1px}
-  .stat{padding:.9rem .8rem}
-  .stat .v{font-size:1.4rem}
-  .stat .l{font-size:.7rem}
-  .panel{padding:1rem;border-radius:8px;margin-bottom:1rem}
-  .panel-h h3{font-size:.88rem}
+  .stat{padding:.8rem .6rem}
+  .stat .v{font-size:1.3rem}
+  .stat .l{font-size:.68rem}
+  .panel{padding:.9rem;border-radius:8px;margin-bottom:.9rem}
+  .panel-h h3{font-size:.85rem}
 
   /* Table */
   .dtable{font-size:.78rem}
@@ -1008,10 +1058,10 @@ canvas{-webkit-user-select:none;user-select:none}
   .sb-ft .clink{font-size:.8rem;padding:.52rem .7rem}
 
   /* Member grid */
-  .member-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.7rem}
+  .member-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.6rem}
 
   /* CiunTik */
-  .ciuntik-wrap{padding:4.5rem .9rem 3rem}
+  .ciuntik-wrap{padding:4rem .9rem 2.5rem}
   .ct-card{border-radius:8px}
 }
 
@@ -1216,13 +1266,27 @@ canvas{-webkit-user-select:none;user-select:none}
 <div class="page" id="page-info-members">
   <div class="info-wrap">
     <div class="sec-tag">// Info Tim</div>
-    <h2>Anggota Aktif</h2>
-    <p class="sub">Daftar anggota resmi Team Cuanie yang sedang aktif</p>
+    <h2>Anggota &amp; Tamu</h2>
+    <p class="sub">Daftar anggota resmi dan tamu Team Cuanie</p>
     <div class="member-search-wrap" style="margin-bottom:1rem">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="pubMemberSearch" placeholder="Cari nama atau gamertag..." oninput="filterPubMembers(this.value)" style="-webkit-user-select:text;user-select:text"/>
     </div>
-    <div class="member-grid" id="pubMemberGrid"><div class="empty-state">Belum ada data anggota.</div></div>
+    <!-- Tab: Member / Tamu -->
+    <div class="pub-member-tabs">
+      <button class="pub-tab active" id="pubTabMember" onclick="switchPubTab('member')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Anggota Aktif
+      </button>
+      <button class="pub-tab" id="pubTabGuest" onclick="switchPubTab('guest')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Tamu
+      </button>
+    </div>
+    <!-- Member KTP grid -->
+    <div id="pubMemberGrid" class="ktp-pub-grid"></div>
+    <!-- Guest list -->
+    <div id="pubGuestGrid" class="ktp-pub-grid" style="display:none"></div>
     <a href="#" class="back-link" onclick="showPg(getDashPage())"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>Kembali</a>
   </div>
 </div>
@@ -1491,7 +1555,7 @@ canvas{-webkit-user-select:none;user-select:none}
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Ajukan Deposit
         </button>
-        <button class="btn-s" onclick="openBankWithdraw()" style="flex:1;font-size:.84rem;padding:.6rem .9rem;min-width:120px" id="memberWithdrawBtn">
+        <button class="btn-p" onclick="openBankWithdraw()" style="flex:1;font-size:.84rem;padding:.6rem .9rem;min-width:120px" id="memberWithdrawBtn">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5,12 12,5 19,12"/></svg>
           Tarik Tunai
         </button>
@@ -2112,26 +2176,156 @@ function renderPubPages() {
   renderPubBlocks('rules');
 }
 
+let _pubActiveTab = 'member';
+
+function switchPubTab(tab) {
+  _pubActiveTab = tab;
+  document.getElementById('pubTabMember')?.classList.toggle('active', tab==='member');
+  document.getElementById('pubTabGuest')?.classList.toggle('active', tab==='guest');
+  document.getElementById('pubMemberGrid').style.display = tab==='member' ? 'grid' : 'none';
+  document.getElementById('pubGuestGrid').style.display  = tab==='guest'  ? 'grid' : 'none';
+}
+
+function filterPubMembers(q) {
+  const sq = q.toLowerCase();
+  ['pubMemberGrid','pubGuestGrid'].forEach(id => {
+    document.querySelectorAll(`#${id} [data-name]`).forEach(el => {
+      const name = (el.dataset.name||'').toLowerCase();
+      const gt   = (el.dataset.gt||'').toLowerCase();
+      el.style.display = (!sq || name.includes(sq) || gt.includes(sq)) ? '' : 'none';
+    });
+  });
+}
+
 function renderPubMembers() {
   const grid = document.getElementById('pubMemberGrid');
+  const guestGrid = document.getElementById('pubGuestGrid');
+  if (!grid) return;
+
+  // MEMBER cards (KTP style)
   const active = D.members.filter(m => m.status === 'active');
-  if (!active.length) { grid.innerHTML = '<div class="empty-state">Belum ada anggota aktif.</div>'; return; }
-  grid.innerHTML = active.map(m => {
-    const init = (m.name||'?').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
-    const hasCard = !!m.ktpPhoto;
-    return `<div class="m-card" data-name="${(m.name||'').toLowerCase()}" data-gt="${(m.gamertag||'').toLowerCase()}">
-      <div class="m-av">${m.ktpPhoto ? `<img src="${m.ktpPhoto}" style="width:100%;height:100%;object-fit:cover;border-radius:9px">` : init}</div>
-      <div class="m-info">
-        <div class="m-name">${m.name}</div>
-        <div class="m-role">Member</div>
-        ${m.gamertag ? `<div class="m-tag">${m.gamertag}</div>` : ''}
-      </div>
-      ${hasCard ? `<button class="m-card-ktp-btn" onclick="event.stopPropagation();viewMemberKtp(${JSON.stringify(m.name||'').replace(/"/g,'&quot;')})" title="Lihat Kartu ID">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="7" cy="15" r="1"/><path d="M11 15h6"/></svg>
-      </button>` : ''}
-      <div class="m-dot on"></div>
+  if (!active.length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Belum ada anggota aktif.</div>';
+  } else {
+    grid.innerHTML = active.map(m => buildMiniKtpCard(m, false)).join('');
+  }
+
+  // GUEST section
+  if (guestGrid) {
+    const guests = D.members.filter(m => m.status === 'guest' || m.role === 'guest');
+    // Also include Firebase-tracked guests if any
+    const allGuests = [...guests];
+    if (!allGuests.length) {
+      guestGrid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Belum ada tamu terdaftar.</div>';
+    } else {
+      guestGrid.innerHTML = allGuests.map(g => buildGuestMiniCard(g)).join('');
+    }
+  }
+}
+
+function buildMiniKtpCard(m, isOwner) {
+  const isMe = D.user === m.name;
+  const hasCard = !!m.ktpPhoto;
+  const codeDisplay = (isMe || D.role === 'leader' || D.role === 'admin') ? (m.code||'------') : '••••••';
+  const joinDate = m.approvedAt
+    ? new Date(m.approvedAt).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})
+    : (m.date||'—');
+  const role = m.ktpRole || 'Member';
+  const style = m.ktpStyle || 'ktp';
+  const nameKey = JSON.stringify(m.name||'').replace(/"/g,'&quot;');
+
+  if (!hasCard) {
+    return `<div class="ktp-mini ktp-mini-no-card" data-name="${(m.name||'').toLowerCase()}" data-gt="${(m.gamertag||'').toLowerCase()}" onclick="viewMemberKtp(${nameKey})">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".4"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="7" cy="15" r="1"/><path d="M11 15h6"/></svg>
+      <div style="font-weight:700;color:var(--tx);font-size:.82rem">${m.name}</div>
+      <div style="font-size:.7rem;opacity:.6">${m.gamertag?'@'+m.gamertag:''}</div>
+      <div style="font-size:.65rem;opacity:.4;margin-top:2px">Kartu belum dibuat</div>
     </div>`;
-  }).join('');
+  }
+
+  if (style === 'gaming') {
+    return `<div class="ktp-mini ktp-mini-game" data-name="${(m.name||'').toLowerCase()}" data-gt="${(m.gamertag||'').toLowerCase()}" onclick="viewMemberKtp(${nameKey})">
+      <div class="ktp-mini-header-game">
+        <span style="font-size:.52rem;font-family:'Syne',sans-serif;font-weight:800;letter-spacing:1px;color:rgba(140,100,255,.8)">🎮 CUANIE TEAM</span>
+        <span style="font-size:.5rem;color:rgba(255,255,255,.3)">ID CARD</span>
+      </div>
+      <div class="ktp-mini-body">
+        ${m.ktpPhoto ? `<img src="${m.ktpPhoto}" class="ktp-mini-photo" style="border-radius:6px;border:1px solid rgba(108,78,242,.4)">` : '<div class="ktp-mini-photo-ph-dark">👤</div>'}
+        <div class="ktp-mini-fields">
+          <div class="ktp-mini-name-game">${m.name}</div>
+          <div style="font-size:.65rem;color:rgba(30,201,154,.8);margin-bottom:4px">${m.gamertag?'@'+m.gamertag:'—'}</div>
+          <div class="ktp-mini-field">
+            <label class="dark">Kode Akses</label>
+            <div class="ktp-mini-val dark code">${codeDisplay}</div>
+          </div>
+          <div class="ktp-mini-field">
+            <label class="dark">Pekerjaan</label>
+            <div class="ktp-mini-val dark">${role}</div>
+          </div>
+          <div class="ktp-mini-field">
+            <label class="dark">Bergabung</label>
+            <div class="ktp-mini-val dark">${joinDate}</div>
+          </div>
+        </div>
+      </div>
+      <div class="ktp-mini-footer-game">
+        <span style="font-size:.5rem;font-family:'Syne',sans-serif;font-weight:800;background:linear-gradient(90deg,rgba(108,78,242,.9),rgba(140,100,255,.9));-webkit-background-clip:text;-webkit-text-fill-color:transparent">CUANIE</span>
+        <span style="font-size:.48rem;color:rgba(255,255,255,.25)">● AKTIF</span>
+      </div>
+    </div>`;
+  }
+
+  // KTP Indonesia style
+  const bars = Array.from({length:18},()=>`<span style="height:${5+Math.random()*7}px"></span>`).join('');
+  return `<div class="ktp-mini ktp-mini-ktp" data-name="${(m.name||'').toLowerCase()}" data-gt="${(m.gamertag||'').toLowerCase()}" onclick="viewMemberKtp(${nameKey})">
+    <div class="ktp-mini-header-ktp">
+      <div style="width:20px;height:20px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:.42rem;font-weight:900;color:#1a3a6e;font-family:'Syne',sans-serif;flex-shrink:0;line-height:1;text-align:center">🇮🇩<br>CQ</div>
+      <div style="flex:1">
+        <div style="font-size:.45rem;letter-spacing:1px;color:rgba(255,255,255,.75);text-transform:uppercase">Kartu Identitas Tim</div>
+        <div style="font-size:.58rem;font-weight:800;color:#fff;letter-spacing:.5px">CUANIE TEAM ID</div>
+      </div>
+      <div style="width:20px;height:14px;border-radius:2px;background:linear-gradient(135deg,#d4a843,#f5c842,#b8892a)"></div>
+    </div>
+    <div class="ktp-mini-body">
+      ${m.ktpPhoto ? `<img src="${m.ktpPhoto}" class="ktp-mini-photo">` : '<div class="ktp-mini-photo-ph">👤</div>'}
+      <div class="ktp-mini-fields">
+        <div class="ktp-mini-field">
+          <label class="light">Kode Akses</label>
+          <div class="ktp-mini-val light code" style="color:#1a3a6e;font-size:.58rem">${codeDisplay}</div>
+        </div>
+        <div class="ktp-mini-name-ktp">${m.name}</div>
+        <div class="ktp-mini-field">
+          <label class="light">Gamertag</label>
+          <div class="ktp-mini-val light">${m.gamertag||'—'}</div>
+        </div>
+        <div class="ktp-mini-field">
+          <label class="light">Pekerjaan</label>
+          <div class="ktp-mini-val light">${role}</div>
+        </div>
+        <div class="ktp-mini-field">
+          <label class="light">Bergabung</label>
+          <div class="ktp-mini-val light">${joinDate}</div>
+        </div>
+      </div>
+    </div>
+    <div class="ktp-mini-footer-ktp">
+      <span style="font-size:.46rem;color:rgba(255,255,255,.6)">CUANIE OFFICIAL</span>
+      <div class="ktp-mini-barcode">${bars}</div>
+    </div>
+  </div>`;
+}
+
+function buildGuestMiniCard(g) {
+  const nameKey = JSON.stringify(g.name||'').replace(/"/g,'&quot;');
+  return `<div class="guest-mini" data-name="${(g.name||'').toLowerCase()}" data-gt="${(g.gamertag||'').toLowerCase()}">
+    <div class="guest-mini-av">👤</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:700;font-size:.88rem;color:var(--tx)">${g.name||'Tamu'}</div>
+      ${g.gamertag ? `<div style="font-size:.72rem;color:var(--gold)">@${g.gamertag}</div>` : ''}
+      <div style="font-size:.68rem;color:var(--tx2);margin-top:2px">${g.email||''}</div>
+    </div>
+    <div style="font-size:.65rem;color:var(--gold);background:rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.2);padding:2px 8px;border-radius:10px;-webkit-user-select:none;user-select:none">Tamu</div>
+  </div>`;
 }
 
 function renderPubBlocks(type) {
@@ -3586,7 +3780,30 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
     <div class="panel">
       <div class="panel-h"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg><h3>Pertumbuhan Global</h3></div>
       <canvas id="analyticsGlobalChart" height="160" style="width:100%;display:block"></canvas>
-      <div style="font-size:.72rem;color:var(--tx2);text-align:center;margin-top:.5rem">Simulasi akumulasi dana tim 30 hari ke depan</div>
+      <div style="display:flex;gap:.5rem;justify-content:center;margin-top:.75rem">
+        <div id="growthTicker" style="font-size:.78rem;color:var(--ok);font-family:'Syne',sans-serif;font-weight:700;letter-spacing:.5px;text-align:center">Memuat data real-time...</div>
+      </div>
+      <!-- GACHA SECTION -->
+      <div style="margin-top:1rem;border-top:1px solid var(--b1);padding-top:.9rem">
+        <div style="font-size:.8rem;font-weight:700;color:var(--tx);margin-bottom:.3rem;display:flex;align-items:center;gap:6px">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Tebak Pergerakan Pasar
+        </div>
+        <p style="font-size:.72rem;color:var(--tx2);margin-bottom:.7rem;line-height:1.5">Tebak apakah grafik akan naik atau turun. Taruhan 5% dari saldo Cbank-mu. Hati-hati — pasar bisa menjebak! 🎰</p>
+        <div id="gachaSaldoInfo" style="font-size:.75rem;color:var(--tx2);margin-bottom:.6rem;text-align:center"></div>
+        <div id="gachaResult" style="display:none;text-align:center;padding:.6rem;border-radius:8px;margin-bottom:.7rem;font-size:.82rem;font-weight:700"></div>
+        <div id="gachaCooldown" style="display:none;text-align:center;font-size:.75rem;color:var(--tx2);margin-bottom:.6rem"></div>
+        <div style="display:flex;gap:.6rem">
+          <button class="gacha-btn gacha-up" id="gachaBtnUp" onclick="playGacha('up')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18,15 12,9 6,15"/></svg>
+            NAIK
+          </button>
+          <button class="gacha-btn gacha-down" id="gachaBtnDown" onclick="playGacha('down')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+            TURUN
+          </button>
+        </div>
+      </div>
     </div>
     <!-- Per-member list -->
     <div class="panel">
@@ -3637,7 +3854,7 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Ajukan Deposit
         </button>
-        <button class="btn-s" onclick="openBankWithdraw()" style="flex:1;font-size:.84rem;padding:.6rem .9rem;min-width:120px" id="guestWithdrawBtn">
+        <button class="btn-p" onclick="openBankWithdraw()" style="flex:1;font-size:.84rem;padding:.6rem .9rem;min-width:120px" id="guestWithdrawBtn">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5,12 12,5 19,12"/></svg>
           Tarik Tunai
         </button>
@@ -5417,30 +5634,30 @@ async function loadAnalytics() {
     _analyticsData = {};
   }
   renderAnalytics(_analyticsData);
+  updateGachaUI();
 }
 
 function renderAnalytics(data, filter='') {
   const members = Object.entries(data || {}).filter(([k,v]) => v && (v.balance||0) > 0);
   const fq = filter.toLowerCase();
-  const filtered = fq ? members.filter(([k,v]) => (v.memberName||k).toLowerCase().includes(fq)) : members;
+  const filtered = fq ? members.filter(([k,v]) => (v.memberName||k).toLowerCase().includes(fq) || (v.memberEmail||'').toLowerCase().includes(fq)) : members;
 
   // Global stats
   const totalFunds = members.reduce((s,[,v]) => s + (v.balance||0), 0);
   const totalPrincipal = members.reduce((s,[,v]) => s + (v.principal||0), 0);
-  const totalGrowth = totalFunds - totalPrincipal;
   const tnEl=document.getElementById('anTotalMembers'); if(tnEl) tnEl.textContent = members.length;
   const tfEl=document.getElementById('anTotalFunds'); if(tfEl) tfEl.textContent = fmtRp(totalFunds);
-  const tgEl=document.getElementById('anTotalGrowth'); if(tgEl) tgEl.textContent = '+'+fmtRp(Math.max(0,totalGrowth));
+  // Hide total bunga — acak dan privat
+  const tgEl=document.getElementById('anTotalGrowth'); if(tgEl) tgEl.textContent = '—';
 
-  // Draw global chart
+  // Draw global chart (real-time from deposit data)
   drawAnalyticsChart(members);
 
-  // Member list
+  // Member list — bunga tidak ditampilkan
   const listEl = document.getElementById('analyticsMemberList');
   if (!listEl) return;
   if (!filtered.length) { listEl.innerHTML = '<div class="bank-empty">Tidak ada data</div>'; return; }
 
-  // Sort by balance desc
   filtered.sort((a,b) => (b[1].balance||0)-(a[1].balance||0));
   const maxBal = filtered[0][1].balance || 1;
 
@@ -5449,31 +5666,152 @@ function renderAnalytics(data, filter='') {
     const init = name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
     const bal = acc.balance || 0;
     const principal = acc.principal || 0;
-    const growth = Math.max(0, bal - principal);
-    const monthlyGrowth = principal * BANK_CONFIG.INTEREST_RATE;
     const pct = Math.round((bal / maxBal) * 100);
-    const statusColor = acc.status === 'active' ? 'var(--ok)' : 'var(--tx2)';
+    const perMin = principal * BANK_CONFIG.INTEREST_RATE / (30*24*60);
     return `<div class="analytics-member-card">
       <div class="analytics-mc-top">
         <div class="analytics-mc-av">${init}</div>
         <div>
           <div class="analytics-mc-name">${name}</div>
-          <div class="analytics-mc-role">${acc.status==='active'?'Aktif':'Tidak aktif'}</div>
+          <div class="analytics-mc-role">${acc.status==='active'?'● Aktif':'○ Tidak aktif'}</div>
         </div>
         <div class="analytics-mc-bal">${fmtRp(bal)}</div>
       </div>
       <div class="analytics-mc-bar-wrap"><div class="analytics-mc-bar" style="width:${pct}%"></div></div>
       <div class="analytics-mc-growth">
         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2.5"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/></svg>
-        +${fmtRp(monthlyGrowth)}/bln · Total bunga: +${fmtRp(growth)} · Modal: ${fmtRp(principal)}
+        Modal: ${fmtRp(principal)} · +${fmtRp(perMin).replace('Rp','')}/mnt
       </div>
     </div>`;
   }).join('');
 }
 
+
 function filterAnalytics(q) {
   if (_analyticsData) renderAnalytics(_analyticsData, q);
 }
+
+// ══════════════════════════════════
+// GACHA TEBAK NAIK/TURUN
+// ══════════════════════════════════
+let _gachaCooldownTimer = null;
+const GACHA_BET_PCT = 0.05; // 5% dari saldo
+const GACHA_COOLDOWN_SEC = 30; // cooldown antar tebakan
+const GACHA_WIN_MULT = 1.8; // menang dapat 1.8x taruhan
+// Manipulasi: 40% chance menang sebenarnya (lebih susah)
+// Tapi chart selalu menunjukkan sinyal menyesatkan
+const GACHA_WIN_RATE = 0.38;
+
+function updateGachaUI() {
+  if (!D.role || !D.email) return;
+  if (!_cachedBankAcc || !_cachedBankAcc.balance) {
+    const el = document.getElementById('gachaSaldoInfo');
+    if (el) el.textContent = 'Deposit dulu ke Cbank untuk bermain.';
+    setGachaBtnsDisabled(true);
+    return;
+  }
+  const saldo = _cachedBankAcc.balance;
+  const taruhan = Math.floor(saldo * GACHA_BET_PCT);
+  const el = document.getElementById('gachaSaldoInfo');
+  if (el) el.textContent = `Saldo: ${fmtRp(saldo)} · Taruhan: ${fmtRp(taruhan)} (5%)`;
+  setGachaBtnsDisabled(false);
+}
+
+function setGachaBtnsDisabled(dis) {
+  const bu = document.getElementById('gachaBtnUp');
+  const bd = document.getElementById('gachaBtnDown');
+  if (bu) bu.disabled = dis;
+  if (bd) bd.disabled = dis;
+}
+
+async function playGacha(guess) {
+  if (!_cachedBankAcc || !_cachedBankAcc.balance) {
+    toast('Perlu saldo Cbank untuk bermain','warn'); return;
+  }
+  const saldo = _cachedBankAcc.balance;
+  const taruhan = Math.floor(saldo * GACHA_BET_PCT);
+  if (taruhan < 100) { toast('Saldo terlalu kecil','warn'); return; }
+
+  setGachaBtnsDisabled(true);
+
+  // Animasi chart yang menyesatkan — gerak dulu sebelum hasilnya keluar
+  const resultEl = document.getElementById('gachaResult');
+  if (resultEl) { resultEl.style.display='none'; }
+
+  // Chart agitasi 2 detik
+  _gachaFlipping = true;
+  setTimeout(async () => {
+    _gachaFlipping = false;
+    // Tentukan hasil — biased terhadap loss
+    // Jika user guess 'up': 38% menang. Jika guess 'down': 38% menang.
+    // Tambahan: kalau saldo besar, chance menang lebih kecil (house edge naik)
+    let winChance = GACHA_WIN_RATE;
+    if (saldo > 1000000) winChance *= 0.85; // makin kaya makin susah
+    const didWin = Math.random() < winChance;
+    const actualDir = didWin ? guess : (guess==='up'?'down':'up');
+
+    let delta = didWin ? Math.floor(taruhan*(GACHA_WIN_MULT-1)) : -taruhan;
+    const newBalance = Math.max(0, saldo + delta);
+
+    // Update Firebase
+    try {
+      const snap = await fbGet('bank');
+      const bankData = snap.val();
+      if (bankData) {
+        const key = Object.keys(bankData).find(k =>
+          bankData[k].memberEmail === D.email || bankData[k].memberName === D.user
+        );
+        if (key) {
+          const tx = {type:'gacha', amount:Math.abs(delta), method:'Tebak Pasar',
+            note: didWin ? `Menang tebak ${guess==='up'?'NAIK':'TURUN'}` : `Kalah tebak ${guess==='up'?'NAIK':'TURUN'}`,
+            ts: Date.now(), status:'approved', win: didWin};
+          const txs = bankData[key].transactions || [];
+          txs.push(tx);
+          await fbSet('bank/'+key, {...bankData[key], balance: newBalance, transactions: txs});
+          _cachedBankAcc = {..._cachedBankAcc, balance: newBalance};
+        }
+      }
+    } catch(e) { console.error('Gacha save error', e); }
+
+    // Show result
+    if (resultEl) {
+      resultEl.style.display = 'block';
+      if (didWin) {
+        resultEl.style.background = 'rgba(30,201,154,.12)';
+        resultEl.style.border = '1px solid rgba(30,201,154,.3)';
+        resultEl.style.color = 'var(--ok)';
+        resultEl.innerHTML = `🎉 MENANG! +${fmtRp(Math.abs(delta))} · Grafik memang ${guess==='up'?'NAIK ↑':'TURUN ↓'}`;
+      } else {
+        resultEl.style.background = 'rgba(232,84,106,.1)';
+        resultEl.style.border = '1px solid rgba(232,84,106,.3)';
+        resultEl.style.color = 'var(--err)';
+        resultEl.innerHTML = `💸 KALAH! -${fmtRp(taruhan)} · Grafik ternyata ${actualDir==='up'?'NAIK ↑':'TURUN ↓'}`;
+      }
+    }
+
+    updateGachaUI();
+    startGachaCooldown();
+  }, 2200);
+}
+
+function startGachaCooldown() {
+  let sec = GACHA_COOLDOWN_SEC;
+  const el = document.getElementById('gachaCooldown');
+  if (el) el.style.display = 'block';
+  if (_gachaCooldownTimer) clearInterval(_gachaCooldownTimer);
+  _gachaCooldownTimer = setInterval(() => {
+    sec--;
+    if (el) el.textContent = `Cooldown: ${sec}s sebelum bisa tebak lagi`;
+    if (sec <= 0) {
+      clearInterval(_gachaCooldownTimer);
+      if (el) el.style.display = 'none';
+      setGachaBtnsDisabled(false);
+      updateGachaUI();
+    }
+  }, 1000);
+}
+
+let _gachaFlipping = false;
 
 let _chartAnimFrame = null;
 let _chartBasePoints = [];
@@ -5482,39 +5820,61 @@ let _chartNoiseOffsets = [];
 function drawAnalyticsChart(members) {
   const canvas = document.getElementById('analyticsGlobalChart');
   if (!canvas) return;
-
-  // Cancel previous animation
   if (_chartAnimFrame) cancelAnimationFrame(_chartAnimFrame);
 
   const totalPrincipal = members.reduce((s,[,v]) => s+(v.principal||0), 0);
   const base = members.reduce((s,[,v]) => s+(v.balance||0), 0);
-  const rate = BANK_CONFIG.INTEREST_RATE;
-  const days = 30;
+  const secPerMonth = 30*24*60*60;
+  const pts = 60; // 60 points = last 60 seconds of real-time
 
-  // Build base trajectory (growth curve)
-  _chartBasePoints = [];
-  for (let d = 0; d <= days; d++) {
-    _chartBasePoints.push(base + totalPrincipal * rate * (d/30));
-  }
-
-  // Random noise seeds per point (animate these with sin waves)
-  _chartNoiseOffsets = _chartBasePoints.map(() => ({
-    amp: totalPrincipal * (0.003 + Math.random() * 0.007),
-    freq: 0.4 + Math.random() * 1.2,
-    phase: Math.random() * Math.PI * 2
+  // Noise seeds
+  _chartNoiseOffsets = Array.from({length:pts+1}, () => ({
+    amp: totalPrincipal * (0.004 + Math.random()*0.009),
+    freq: 0.3 + Math.random()*1.5,
+    phase: Math.random()*Math.PI*2
   }));
 
   let t = 0;
-  function frame() {
-    t += 0.018;
-    const points = _chartBasePoints.map((v, i) => {
+  let lastTickerUpdate = 0;
+
+  function frame(ts) {
+    t += _gachaFlipping ? 0.12 : 0.022; // shake harder during gacha
+
+    // Real-time growth: actual balance + interest accrued per second
+    const now = Date.now();
+    const liveBase = members.reduce((s,[,v]) => {
+      const elapsed = (now - (v.lastTick||now)) / 1000;
+      return s + (v.balance||0) + (v.principal||0)*BANK_CONFIG.INTEREST_RATE*(elapsed/secPerMonth);
+    }, 0);
+
+    // Build points array (rolling 60-second window, growing from left)
+    const points = Array.from({length:pts+1}, (_, i) => {
+      const frac = i/pts;
+      const growth = totalPrincipal * BANK_CONFIG.INTEREST_RATE * (frac/30/24/60);
       const n = _chartNoiseOffsets[i];
-      return v + n.amp * Math.sin(t * n.freq + n.phase);
+      const noiseAmp = _gachaFlipping ? n.amp*5 : n.amp;
+      return liveBase + growth + noiseAmp * Math.sin(t*n.freq + n.phase);
     });
+
     _renderChart(canvas, points);
+
+    // Growth ticker
+    if (ts - lastTickerUpdate > 1000) {
+      lastTickerUpdate = ts;
+      const tickerEl = document.getElementById('growthTicker');
+      if (tickerEl && totalPrincipal > 0) {
+        const perMin = totalPrincipal * BANK_CONFIG.INTEREST_RATE / (30*24*60);
+        const dir = points[pts] > points[pts-3] ? '▲' : '▼';
+        const col = points[pts] > points[pts-3] ? '#1ec99a' : '#e8546a';
+        tickerEl.innerHTML = `<span style="color:${col}">${dir} Dana aktif tumbuh +${fmtRp(perMin)}/mnt dari ${fmtRp(totalPrincipal)} modal</span>`;
+      } else if (tickerEl) {
+        tickerEl.textContent = 'Belum ada deposit aktif';
+      }
+    }
+
     _chartAnimFrame = requestAnimationFrame(frame);
   }
-  frame();
+  requestAnimationFrame(frame);
 }
 
 function _renderChart(canvas, points) {
@@ -5733,8 +6093,58 @@ function buildKtpHtml(mem, photoB64, isOwner, isLeader) {
   return buildKtpGaming(mem, photoHtml, codeDisplay, joinDate, isLeader);
 }
 
+// Generate simple QR-like pattern from string
+function genQRPattern(str) {
+  let hash = 0;
+  for (let i=0;i<str.length;i++) hash = ((hash<<5)-hash)+str.charCodeAt(i);
+  const rng = (n) => { hash = ((hash*1664525)+1013904223)&0xffffffff; return Math.abs(hash)%n; };
+  const size = 9;
+  const cells = [];
+  for (let r=0;r<size;r++) for (let c=0;c<size;c++) {
+    const isCorner = (r<3&&c<3)||(r<3&&c>=6)||(r>=6&&c<3);
+    cells.push(isCorner ? 1 : rng(2));
+  }
+  return cells;
+}
+
+function buildQRSvg(str, sz=54, dark='#111', light='transparent') {
+  const cells = genQRPattern(str);
+  const n = 9; const cs = sz/n;
+  let rects = '';
+  // Corner finder squares
+  [[0,0],[0,6],[6,0]].forEach(([r,c]) => {
+    rects += `<rect x="${c*cs}" y="${r*cs}" width="${3*cs}" height="${3*cs}" fill="${dark}" rx="1"/>`;
+    rects += `<rect x="${c*cs+cs*.3}" y="${r*cs+cs*.3}" width="${2.4*cs}" height="${2.4*cs}" fill="${light==='transparent'?'rgba(255,255,255,.8)':light}" rx=".5"/>`;
+    rects += `<rect x="${c*cs+cs*.7}" y="${r*cs+cs*.7}" width="${1.6*cs}" height="${1.6*cs}" fill="${dark}" rx=".3"/>`;
+  });
+  cells.forEach((v,i) => {
+    const r=Math.floor(i/n), cc=i%n;
+    const isCornerArea = (r<3&&cc<3)||(r<3&&cc>=6)||(r>=6&&cc<3);
+    if (!isCornerArea && v) rects += `<rect x="${cc*cs+1}" y="${r*cs+1}" width="${cs-2}" height="${cs-2}" fill="${dark}" rx="1"/>`;
+  });
+  return `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="display:block">${rects}</svg>`;
+}
+
+function buildFingerprintSvg(dark='rgba(0,0,60,.25)', w=50, h=50) {
+  const lines = [];
+  const cx=w/2, cy=h/2;
+  for (let i=0;i<9;i++) {
+    const rx = 3+i*2.8, ry = 2.5+i*2.2;
+    const gap = i%3===0 ? `stroke-dasharray="${0.5+i*.3} ${0.8+i*.2}"` : '';
+    lines.push(`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="none" stroke="${dark}" stroke-width=".7" ${gap}/>`);
+  }
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="display:block;opacity:.7">${lines.join('')}</svg>`;
+}
+
 function buildKtpIndonesia(mem, photoHtml, codeDisplay, joinDate, expiry, isLeader) {
-  const barcodeLines = Array.from({length:22},(_,i)=>`<span style="height:${8+Math.random()*8}px"></span>`).join('');
+  const barcodeLines = Array.from({length:28},()=>`<span style="height:${5+Math.random()*10}px"></span>`).join('');
+  const qrSvg = buildQRSvg((mem.code||'XX')+mem.name, 52, '#1a3a6e', '#f5f0e8');
+  const fpSvg = buildFingerprintSvg('rgba(0,0,80,.2)', 44, 44);
+  const role = mem.ktpRole || 'Member';
+  const roleInput = isLeader
+    ? `<input value="${mem.ktpRole||''}" placeholder="Misal: Sniper, IGL..." oninput="_ktpCurrentMember.ktpRole=this.value" style="font-size:.6rem;border:1px solid #bbb;border-radius:3px;padding:1px 4px;width:100%;font-family:'DM Sans',sans-serif;background:#fff;color:#111"/>`
+    : `<div class="ktp-val">${role}</div>`;
+
   return `<div class="ktp-card" id="ktpExportEl">
     <div class="ktp-header">
       <div class="ktp-header-logo">🇮🇩<br>CQ</div>
@@ -5747,12 +6157,16 @@ function buildKtpIndonesia(mem, photoHtml, codeDisplay, joinDate, expiry, isLead
     <div class="ktp-body">
       <div class="ktp-photo-col">
         ${photoHtml}
-        ${isLeader ? `<button onclick="ktpTriggerPhotoUpload()" style="margin-top:4px;width:72px;font-size:.52rem;background:var(--ac);border:none;color:#fff;border-radius:3px;padding:2px 0;cursor:pointer;font-family:'DM Sans',sans-serif">Ganti Foto</button>` : ''}
+        <div style="margin-top:5px;display:flex;flex-direction:column;align-items:center;gap:3px">
+          ${fpSvg}
+          <div style="font-size:.44rem;color:#888;text-transform:uppercase;letter-spacing:.5px">Sidik Jari</div>
+        </div>
+        ${isLeader ? `<button onclick="ktpTriggerPhotoUpload()" style="margin-top:4px;width:72px;font-size:.5rem;background:var(--ac);border:none;color:#fff;border-radius:3px;padding:2px 0;cursor:pointer;font-family:'DM Sans',sans-serif">📷 Foto</button>` : ''}
       </div>
       <div class="ktp-fields">
         <div class="ktp-field">
           <label>Kode Akses (NIK)</label>
-          <div class="ktp-val" style="letter-spacing:2px;font-family:'Syne',sans-serif;color:#1a3a6e;font-size:.7rem">${codeDisplay}</div>
+          <div class="ktp-val" style="letter-spacing:2px;font-family:'Syne',sans-serif;color:#1a3a6e;font-size:.68rem">${codeDisplay}</div>
         </div>
         <div class="ktp-field">
           <label>Nama</label>
@@ -5764,37 +6178,64 @@ function buildKtpIndonesia(mem, photoHtml, codeDisplay, joinDate, expiry, isLead
         </div>
         <div class="ktp-field-row">
           <div class="ktp-field">
-            <label>Role</label>
-            <div class="ktp-val">Member</div>
+            <label>Pekerjaan / Role</label>
+            ${roleInput}
           </div>
           <div class="ktp-field">
             <label>Status</label>
-            <div class="ktp-val" style="color:green">Aktif</div>
+            <div class="ktp-val" style="color:green;font-weight:800">AKTIF</div>
+          </div>
+        </div>
+        <div class="ktp-field-row">
+          <div class="ktp-field">
+            <label>Bergabung</label>
+            <div class="ktp-val">${joinDate}</div>
+          </div>
+          <div class="ktp-field">
+            <label>Berlaku Hingga</label>
+            <div class="ktp-val">${expiry}</div>
           </div>
         </div>
         <div class="ktp-field">
-          <label>Bergabung</label>
-          <div class="ktp-val">${joinDate}</div>
-        </div>
-        <div class="ktp-field">
           <label>Email</label>
-          <div class="ktp-val" style="font-size:.56rem">${mem.email || '—'}</div>
+          <div class="ktp-val" style="font-size:.54rem;color:#555">${mem.email || '—'}</div>
         </div>
         <div class="ktp-field">
-          <label>Berlaku Hingga</label>
-          <div class="ktp-val">${expiry}</div>
+          <label>Kewarganegaraan</label>
+          <div class="ktp-val">WNI · Team Cuanie</div>
         </div>
+      </div>
+    </div>
+    <!-- Bottom section: QR + barcode -->
+    <div style="background:#ede8dc;border-top:1px solid #ccc;padding:6px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+        ${qrSvg}
+        <div style="font-size:.42rem;color:#888;letter-spacing:.3px">Scan untuk verifikasi</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+        <div style="font-size:.5rem;color:#666;letter-spacing:.5px">TANDA TANGAN DIGITAL</div>
+        <div style="font-size:.9rem;font-family:'Syne',sans-serif;font-weight:800;color:#1a3a6e;letter-spacing:1px;border-bottom:1px solid #999;padding-bottom:2px;min-width:100px;text-align:center">${(mem.name||'').split(' ')[0]}</div>
+        <div class="ktp-barcode" style="height:20px">${barcodeLines}</div>
       </div>
     </div>
     <div class="ktp-footer">
       <span class="ktp-footer-txt">CUANIE OFFICIAL · ${new Date().getFullYear()}</span>
-      <div class="ktp-barcode">${barcodeLines}</div>
+      <span class="ktp-footer-txt">${(mem.code||'').toUpperCase()}</span>
     </div>
-    ${isLeader ? `<div style="text-align:center;background:#f0f0f0;padding:5px"><button onclick="saveKtpToMember()" style="font-size:.65rem;background:#1a3a6e;color:#fff;border:none;border-radius:4px;padding:3px 10px;cursor:pointer;font-family:'DM Sans',sans-serif">💾 Simpan ke Profil Member</button></div>` : ''}
+    ${isLeader ? `<div style="text-align:center;background:#f0f0f0;padding:6px;display:flex;gap:6px;justify-content:center">
+      <button onclick="saveKtpToMember()" style="font-size:.65rem;background:#1a3a6e;color:#fff;border:none;border-radius:4px;padding:4px 12px;cursor:pointer;font-family:'DM Sans',sans-serif">💾 Simpan Kartu</button>
+    </div>` : ''}
   </div>`;
 }
 
 function buildKtpGaming(mem, photoHtml, codeDisplay, joinDate, isLeader) {
+  const qrSvg = buildQRSvg((mem.code||'XX')+mem.name, 50, 'rgba(140,100,255,.9)', 'transparent');
+  const fpSvg = buildFingerprintSvg('rgba(140,100,255,.35)', 42, 42);
+  const role = mem.ktpRole || 'Member';
+  const roleInput = isLeader
+    ? `<input value="${mem.ktpRole||''}" placeholder="Sniper, IGL..." oninput="_ktpCurrentMember.ktpRole=this.value" style="font-size:.6rem;border:1px solid rgba(108,78,242,.4);border-radius:3px;padding:1px 4px;width:100%;font-family:'DM Sans',sans-serif;background:rgba(108,78,242,.1);color:#fff"/>`
+    : `<div class="gcard-val">${role}</div>`;
+
   return `<div class="gcard" id="ktpExportEl">
     <div class="gcard-top">
       ${photoHtml}
@@ -5804,7 +6245,7 @@ function buildKtpGaming(mem, photoHtml, codeDisplay, joinDate, isLeader) {
         <div class="gcard-gt">${mem.gamertag ? '@'+mem.gamertag : '—'}</div>
         <div class="gcard-role-chip">
           <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          Member Aktif
+          ${role}
         </div>
       </div>
       ${isLeader ? `<button onclick="ktpTriggerPhotoUpload()" style="position:absolute;top:10px;right:10px;background:rgba(108,78,242,.3);border:1px solid rgba(108,78,242,.4);color:var(--ac2);border-radius:5px;padding:3px 7px;font-size:.58rem;cursor:pointer;font-family:'DM Sans',sans-serif">📷</button>` : ''}
@@ -5820,40 +6261,46 @@ function buildKtpGaming(mem, photoHtml, codeDisplay, joinDate, isLeader) {
         <div class="gcard-val" style="color:var(--ok)">● Aktif</div>
       </div>
       <div class="gcard-field">
+        <label>Pekerjaan / Role</label>
+        ${roleInput}
+      </div>
+      <div class="gcard-field">
         <label>Bergabung</label>
         <div class="gcard-val">${joinDate}</div>
       </div>
-      <div class="gcard-field">
-        <label>Email</label>
-        <div class="gcard-val" style="font-size:.55rem;opacity:.7">${(mem.email||'').split('@')[0]}@…</div>
+    </div>
+    <!-- QR + fingerprint row -->
+    <div style="padding:8px 14px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(108,78,242,.12)">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+        ${qrSvg}
+        <div style="font-size:.42rem;color:rgba(255,255,255,.3);letter-spacing:.3px">Scan verifikasi</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+        ${fpSvg}
+        <div style="font-size:.42rem;color:rgba(255,255,255,.3);letter-spacing:.3px">Sidik Jari</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+        <div style="font-size:.48rem;color:rgba(255,255,255,.3)">TTD DIGITAL</div>
+        <div style="font-size:.85rem;font-family:'Syne',sans-serif;font-weight:800;color:rgba(140,100,255,.8);letter-spacing:1px;border-bottom:1px solid rgba(108,78,242,.3);padding-bottom:2px;min-width:80px;text-align:center">${(mem.name||'').split(' ')[0]}</div>
       </div>
     </div>
     <div class="gcard-footer">
       <div class="gcard-footer-brand">CUANIE</div>
-      <div class="gcard-footer-id">ID · ${(mem.code||'').substring(0,3)}···</div>
+      <div class="gcard-footer-id">${(mem.code||'').substring(0,3)}···</div>
     </div>
-    ${isLeader ? `<div style="text-align:center;padding:6px;border-top:1px solid rgba(108,78,242,.15)"><button onclick="saveKtpToMember()" style="font-size:.65rem;background:var(--ac);color:#fff;border:none;border-radius:5px;padding:3px 10px;cursor:pointer;font-family:'DM Sans',sans-serif">💾 Simpan ke Profil Member</button></div>` : ''}
+    ${isLeader ? `<div style="text-align:center;padding:6px;border-top:1px solid rgba(108,78,242,.15);display:flex;gap:6px;justify-content:center">
+      <button onclick="saveKtpToMember()" style="font-size:.65rem;background:var(--ac);color:#fff;border:none;border-radius:5px;padding:4px 12px;cursor:pointer;font-family:'DM Sans',sans-serif">💾 Simpan Kartu</button>
+    </div>` : ''}
   </div>`;
 }
 
 // Download as image using canvas
 async function downloadKtpCard() {
-  const el = document.getElementById('ktpExportEl');
-  if (!el) return;
+  const mem = _ktpCurrentMember;
+  if (!mem) return;
   toast('Menyiapkan gambar...','success');
-  try {
-    // Use html2canvas if available, else fallback SVG method
-    if (window.html2canvas) {
-      const canvas = await html2canvas(el, {backgroundColor:null, scale:2, useCORS:true, logging:false});
-      const a = document.createElement('a');
-      a.download = `KartuID_${_ktpCurrentMember?.name||'member'}.png`;
-      a.href = canvas.toDataURL('image/png');
-      a.click();
-    } else {
-      // Inline CSS clone → canvas fallback
-      drawKtpCanvas();
-    }
-  } catch(e) { drawKtpCanvas(); }
+  // Always use canvas render (consistent, no double download)
+  setTimeout(() => drawKtpCanvas(), 100);
 }
 
 function drawKtpCanvas() {
