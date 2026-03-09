@@ -1112,7 +1112,7 @@ function bootApp() {
     fbGet('events'),
     fbGet('rules'),
     fbGet('settings/pixabayKey'),
-  ]).then(([regSnap, qSnap, memSnap, evSnap, ruSnap, pkSnap]) => {
+  ]).then(async ([regSnap, qSnap, memSnap, evSnap, ruSnap, pkSnap]) => {
     D.regOpen   = regSnap.val() !== null ? regSnap.val() : true;
     D.questions = qSnap.val()   || DEFAULT_QUESTIONS;
     D.members   = memSnap.val() ? Object.values(memSnap.val()) : [];
@@ -1792,7 +1792,7 @@ function buildMsgHTML(m, idx, isMentionMe) {
   const avHTML = (prof && prof.avatar) ? '<img src="'+prof.avatar+'" style="width:32px;height:32px;border-radius:7px;object-fit:cover;flex-shrink:0;margin-top:2px"/>' : '<div class="msg-av '+(m.bot?'bot':roleClass)+'">'+(m.bot?'🤖':initials)+'</div>';
   return '<div class="chat-msg'+(isMentionMe?' mention-me':'')+'" id="msg-'+idx+'" data-idx="'+idx+'">' +
     avHTML +
-    <div class="msg-right">
+    `<div class="msg-right">
       <div class="msg-meta">
         <span class="msg-name ${m.bot?'bot':roleClass}" onclick="mentionUser('${m.name}')">${m.name}</span>
         ${badge}${botBadge}
