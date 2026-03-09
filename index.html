@@ -47,6 +47,16 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 1.2rem 0 2.5rem;height:60px;--nav-h:60px;background:rgba(8,8,13,.93);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1)}
+/* ══ NAV ONLINE/REFRESH BUTTON ══ */
+.nav-left{display:flex;align-items:center;gap:8px}
+.nav-online-btn{display:flex;align-items:center;gap:5px;background:rgba(30,201,154,.08);border:1px solid rgba(30,201,154,.2);color:var(--ok);padding:4px 10px 4px 8px;border-radius:20px;font-size:.72rem;font-family:'Syne',sans-serif;font-weight:600;cursor:pointer;transition:all .25s;-webkit-user-select:none;user-select:none;letter-spacing:.3px}
+.nav-online-btn:hover{background:rgba(30,201,154,.15);transform:translateY(-1px);box-shadow:0 2px 8px rgba(30,201,154,.2)}
+.nav-online-btn:active{transform:scale(.96)}
+.nav-online-btn.offline{background:rgba(232,84,106,.08);border-color:rgba(232,84,106,.2);color:var(--err)}
+.nav-online-btn.offline:hover{background:rgba(232,84,106,.15)}
+.nav-online-btn.spinning .nav-online-dot{animation:online-spin .5s linear infinite}
+.nav-online-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;transition:background .3s}
+@keyframes online-spin{0%{transform:scale(1);opacity:1}50%{transform:scale(1.8);opacity:.4}100%{transform:scale(1);opacity:1}}
 .nav-logo{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:-.5px;color:#fff;display:flex;align-items:center;gap:8px;cursor:pointer}
 .logo-dot{width:7px;height:7px;border-radius:50%;background:var(--ac);margin-bottom:1px;transition:background .3s}
 .logo-dot.off{background:var(--err)}
@@ -534,6 +544,183 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 .returning-role-tag{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;color:var(--tx2);background:var(--s3);border:1px solid var(--b2);padding:2px 8px;border-radius:4px;margin-top:3px;-webkit-user-select:none;user-select:none}
 
 
+
+/* ══ KARTU ID MEMBER ══ */
+.ktp-wrap{perspective:1200px;cursor:pointer;-webkit-user-select:none;user-select:none}
+.ktp-wrap:hover .ktp-inner{transform:rotateY(4deg) scale(1.01)}
+.ktp-inner{transition:transform .3s ease;transform-style:preserve-3d}
+
+/* KTP INDONESIA STYLE */
+.ktp-card{
+  width:100%;max-width:340px;
+  border-radius:10px;overflow:hidden;
+  font-family:'DM Sans',sans-serif;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  position:relative;
+}
+.ktp-header{
+  background:linear-gradient(135deg,#1a3a6e 0%,#0d2144 100%);
+  padding:7px 12px;
+  display:flex;align-items:center;gap:8px;
+}
+.ktp-header-logo{
+  width:30px;height:30px;
+  border-radius:50%;
+  background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.55rem;font-weight:900;color:#1a3a6e;
+  font-family:'Syne',sans-serif;flex-shrink:0;line-height:1.1;text-align:center
+}
+.ktp-header-txt{color:#fff;flex:1}
+.ktp-header-txt .ktp-negara{font-size:.62rem;letter-spacing:1.5px;font-weight:600;opacity:.85;text-transform:uppercase}
+.ktp-header-txt .ktp-title{font-size:.72rem;font-weight:800;letter-spacing:.8px;text-transform:uppercase}
+.ktp-header-chip{
+  width:28px;height:20px;border-radius:3px;
+  background:linear-gradient(135deg,#d4a843,#f5c842,#b8892a);
+  opacity:.9;
+}
+.ktp-body{
+  background:linear-gradient(180deg,#f5f0e8 0%,#ede8dc 100%);
+  padding:10px 12px;
+  display:flex;gap:10px;
+}
+.ktp-photo-col{flex-shrink:0}
+.ktp-photo{
+  width:72px;height:90px;
+  border:2px solid #aaa;
+  border-radius:3px;
+  background:#ddd;
+  object-fit:cover;
+  display:block;
+}
+.ktp-photo-placeholder{
+  width:72px;height:90px;
+  border:2px solid #aaa;border-radius:3px;
+  background:linear-gradient(135deg,#c8d4e8,#a8b8d0);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;color:#fff;
+}
+.ktp-fields{flex:1;min-width:0}
+.ktp-field{margin-bottom:4px}
+.ktp-field label{font-size:.5rem;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.5px;display:block;line-height:1}
+.ktp-field .ktp-val{font-size:.68rem;font-weight:600;color:#111;line-height:1.3;word-break:break-word}
+.ktp-field .ktp-val.big{font-size:.78rem;font-weight:800}
+.ktp-field-row{display:flex;gap:8px}
+.ktp-field-row .ktp-field{flex:1}
+.ktp-footer{
+  background:linear-gradient(135deg,#1a3a6e,#0d2144);
+  padding:5px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.ktp-footer-txt{color:rgba(255,255,255,.7);font-size:.5rem;letter-spacing:.5px}
+.ktp-barcode{display:flex;gap:1px;align-items:flex-end;height:16px}
+.ktp-barcode span{background:rgba(255,255,255,.7);width:2px;border-radius:1px}
+.ktp-nik-hidden{letter-spacing:3px;color:#777;font-size:.65rem}
+
+/* KARTU GAMING (Cuanie ID) */
+.gcard{
+  width:100%;max-width:340px;
+  border-radius:14px;overflow:hidden;
+  background:linear-gradient(135deg,#0d0d1a 0%,#131330 50%,#0d0d1a 100%);
+  border:1px solid rgba(108,78,242,.35);
+  box-shadow:0 0 30px rgba(108,78,242,.18),0 8px 32px rgba(0,0,0,.7);
+  position:relative;font-family:'DM Sans',sans-serif;
+}
+.gcard::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 20% 20%,rgba(108,78,242,.12) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 80%,rgba(30,201,154,.06) 0%,transparent 60%);
+  pointer-events:none;
+}
+.gcard-top{
+  padding:14px 14px 0;
+  display:flex;align-items:flex-start;gap:12px;
+  position:relative;
+}
+.gcard-photo{
+  width:64px;height:80px;
+  border-radius:9px;
+  border:2px solid rgba(108,78,242,.5);
+  object-fit:cover;flex-shrink:0;
+  box-shadow:0 0 12px rgba(108,78,242,.3);
+}
+.gcard-photo-placeholder{
+  width:64px;height:80px;
+  border-radius:9px;border:2px solid rgba(108,78,242,.5);
+  background:linear-gradient(135deg,rgba(108,78,242,.25),rgba(30,201,154,.1));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;
+}
+.gcard-info{flex:1;min-width:0;padding-top:2px}
+.gcard-badge{
+  font-size:.55rem;font-weight:800;
+  font-family:'Syne',sans-serif;letter-spacing:2px;
+  text-transform:uppercase;color:var(--ac2);
+  margin-bottom:3px;opacity:.8;
+}
+.gcard-name{
+  font-size:.92rem;font-weight:800;color:#fff;
+  font-family:'Syne',sans-serif;line-height:1.2;margin-bottom:2px;
+}
+.gcard-gt{
+  font-size:.72rem;color:var(--ok);font-weight:600;margin-bottom:5px;
+}
+.gcard-role-chip{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(108,78,242,.18);border:1px solid rgba(108,78,242,.35);
+  color:var(--ac2);padding:2px 8px;border-radius:12px;
+  font-size:.6rem;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:.5px;
+}
+.gcard-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(108,78,242,.4),transparent);margin:10px 14px}
+.gcard-fields{padding:0 14px 12px;display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.gcard-field label{font-size:.5rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:1px}
+.gcard-field .gcard-val{font-size:.68rem;color:rgba(255,255,255,.85);font-weight:600}
+.gcard-field .gcard-val.code{letter-spacing:3px;color:var(--ac2);font-family:'Syne',sans-serif;font-size:.65rem}
+.gcard-footer{
+  background:rgba(108,78,242,.08);
+  border-top:1px solid rgba(108,78,242,.15);
+  padding:6px 14px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.gcard-footer-brand{
+  font-family:'Syne',sans-serif;font-size:.62rem;
+  font-weight:800;letter-spacing:1.5px;
+  background:linear-gradient(90deg,var(--ac),var(--ac2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.gcard-footer-id{font-size:.5rem;color:rgba(255,255,255,.3);letter-spacing:.5px}
+
+/* KTP modal / viewer */
+.ktp-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:800;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(8px)}
+.ktp-modal-bg.show{opacity:1;pointer-events:all}
+.ktp-modal-inner{display:flex;flex-direction:column;align-items:center;gap:1rem;max-width:380px;width:100%}
+.ktp-modal-actions{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
+.ktp-modal-actions button{padding:.55rem 1.1rem;border-radius:8px;border:none;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.ktp-dl-btn{background:var(--ac);color:#fff}
+.ktp-dl-btn:hover{background:var(--ac2)}
+.ktp-close-btn{background:var(--s2);color:var(--tx);border:1px solid var(--b2)!important}
+.ktp-switch-btn{background:var(--s2);color:var(--ac2);border:1px solid rgba(108,78,242,.3)!important}
+.ktp-close-btn:hover,.ktp-switch-btn:hover{background:var(--s3)}
+
+/* In anggota aktif grid */
+.m-card-ktp-btn{
+  background:none;border:none;cursor:pointer;
+  margin-left:auto;color:var(--ac2);opacity:.7;
+  transition:opacity .2s;padding:4px;border-radius:5px;
+}
+.m-card-ktp-btn:hover{opacity:1;background:rgba(108,78,242,.1)}
+
+/* Leader KTP generate panel */
+.ktp-gen-form{display:flex;flex-direction:column;gap:.75rem}
+.ktp-gen-photo-upload{
+  border:2px dashed var(--b2);border-radius:10px;
+  padding:1.5rem;text-align:center;cursor:pointer;
+  transition:border-color .2s;position:relative;
+}
+.ktp-gen-photo-upload:hover{border-color:var(--ac2)}
+.ktp-gen-photo-preview{width:80px;height:100px;object-fit:cover;border-radius:6px;border:2px solid var(--b2);margin:0 auto .5rem;display:block}
+
 /* ══ ANALYTICS ══ */
 .analytics-member-card{background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem 1rem;margin-bottom:.6rem;transition:border-color .2s}
 .analytics-member-card:hover{border-color:var(--b2)}
@@ -575,8 +762,7 @@ canvas{-webkit-user-select:none;user-select:none}
 .loading-overlay.hidden{opacity:0;pointer-events:none}
 .loading-spinner{width:40px;height:40px;border:3px solid var(--b2);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}
 .loading-text{font-family:'Syne',sans-serif;font-size:.85rem;color:var(--tx2);letter-spacing:1px}
-.online-indicator{position:fixed;bottom:1rem;left:1rem;display:flex;align-items:center;gap:6px;background:rgba(30,201,154,.08);border:1px solid rgba(30,201,154,.2);color:var(--ok);padding:4px 10px;border-radius:5px;font-size:.72rem;z-index:50;font-family:'Syne',sans-serif;user-select:none;pointer-events:none}
-.online-indicator.offline{background:rgba(232,84,106,.08);border-color:rgba(232,84,106,.2);color:var(--err)}
+.online-indicator-legacy{display:none}/* removed — moved to nav */
 @keyframes spin{to{transform:rotate(360deg)}}
 
 
@@ -884,14 +1070,16 @@ canvas{-webkit-user-select:none;user-select:none}
   <div class="loading-spinner"></div>
   <div class="loading-text" id="loadingText">Menghubungkan ke server...</div>
 </div>
-<div class="online-indicator" id="onlineIndicator">
-  <div style="width:6px;height:6px;border-radius:50%;background:currentColor"></div>
-  <span id="onlineLabel">Online</span>
-</div>
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo" onclick="showPg('home')"><div class="logo-dot" id="logoDot"></div>Cuanie</div>
+  <div class="nav-left">
+    <div class="nav-logo" onclick="showPg(getDashPage())"><div class="logo-dot" id="logoDot"></div>Cuanie</div>
+    <button class="nav-online-btn" id="onlineIndicator" onclick="refreshApp()" title="Klik untuk refresh">
+      <div class="nav-online-dot" id="onlineDot"></div>
+      <span id="onlineLabel">Online</span>
+    </button>
+  </div>
   <div class="nav-right">
     <div class="nav-chip" id="navChip">
       <div class="av"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
@@ -912,7 +1100,7 @@ canvas{-webkit-user-select:none;user-select:none}
   </div>
   <div class="sb-body">
     <div class="sb-sec">Navigasi</div>
-    <a class="sb-lnk" href="#" onclick="showPg('home');toggleSB()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>Beranda</a>
+    <a class="sb-lnk" href="#" onclick="showPg(getDashPage());toggleSB()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>Beranda</a>
     <button class="sb-lnk" onclick="showPg('auth');toggleSB()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>Daftar / Masuk</button>
     <div class="sb-div"></div>
     <div class="sb-sec">Info Tim</div>
@@ -1035,7 +1223,7 @@ canvas{-webkit-user-select:none;user-select:none}
       <input type="text" id="pubMemberSearch" placeholder="Cari nama atau gamertag..." oninput="filterPubMembers(this.value)" style="-webkit-user-select:text;user-select:text"/>
     </div>
     <div class="member-grid" id="pubMemberGrid"><div class="empty-state">Belum ada data anggota.</div></div>
-    <a href="#" class="back-link" onclick="showPg('home')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>Kembali ke Beranda</a>
+    <a href="#" class="back-link" onclick="showPg(getDashPage())"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>Kembali</a>
   </div>
 </div>
 
@@ -1046,7 +1234,7 @@ canvas{-webkit-user-select:none;user-select:none}
     <h2>Event &amp; Jadwal</h2>
     <p class="sub">Jadwal latihan, event internal, dan turnamen Team Cuanie</p>
     <div id="pubEvents"><div class="empty-state">Belum ada event yang ditambahkan.</div></div>
-    <a href="#" class="back-link" onclick="showPg('home')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>Kembali ke Beranda</a>
+    <a href="#" class="back-link" onclick="showPg(getDashPage())"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>Kembali</a>
   </div>
 </div>
 
@@ -1057,7 +1245,7 @@ canvas{-webkit-user-select:none;user-select:none}
     <h2>Peraturan Tim</h2>
     <p class="sub">Peraturan dan kewajiban resmi yang berlaku di Team Cuanie</p>
     <div id="pubRules"><div class="empty-state">Belum ada peraturan yang ditambahkan.</div></div>
-    <a href="#" class="back-link" onclick="showPg('home')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>Kembali ke Beranda</a>
+    <a href="#" class="back-link" onclick="showPg(getDashPage())"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>Kembali</a>
   </div>
 </div>
 
@@ -1229,7 +1417,7 @@ canvas{-webkit-user-select:none;user-select:none}
 
       </div><!-- /authMemberSection -->
 
-      <p class="sub-note"><a href="#" onclick="showPg('home')">← Kembali ke Beranda</a></p>
+      <p class="sub-note"><a href="#" onclick="showPg(getDashPage())">← Kembali</a></p>
     </div>
   </div>
 </div>
@@ -1517,6 +1705,25 @@ canvas{-webkit-user-select:none;user-select:none}
       </button>
     </div>
 
+    <!-- KTP GENERATOR PANEL -->
+    <div class="panel" id="leaderKtpPanel">
+      <div class="panel-h">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="7" cy="15" r="1"/><path d="M11 15h6"/></svg>
+        <h3>Generate Kartu ID Member</h3>
+      </div>
+      <p style="color:var(--tx2);font-size:.82rem;margin-bottom:1rem">Pilih member untuk di-generate kartu identitasnya. Kartu otomatis dibuat saat member disetujui.</p>
+      <div style="display:flex;gap:.6rem;margin-bottom:.75rem;flex-wrap:wrap">
+        <select id="ktpMemberSelect" style="flex:1;min-width:140px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:.6rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none">
+          <option value="">— Pilih member —</option>
+        </select>
+        <button class="btn-p" onclick="openKtpGenerator()" style="font-size:.82rem;padding:.6rem 1rem">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+          Buat Kartu
+        </button>
+      </div>
+      <div id="ktpGenStatus" style="font-size:.78rem;color:var(--tx2)"></div>
+    </div>
+
     <!-- QUESTIONS -->
     <div class="panel">
       <div class="panel-h"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><h3>Kelola Pertanyaan Formulir</h3></div>
@@ -1777,6 +1984,8 @@ function bootApp() {
     showLoadingOverlay(false);
     if (typeof google !== 'undefined' && google.accounts)
       google.accounts.id.initialize({client_id:G_ID, callback:onGoogleResp});
+    // Restore session after refresh
+    await restoreSession();
   }).catch(err => {
     console.error('Firebase load error:', err);
     // Fallback to localStorage
@@ -1909,13 +2118,17 @@ function renderPubMembers() {
   if (!active.length) { grid.innerHTML = '<div class="empty-state">Belum ada anggota aktif.</div>'; return; }
   grid.innerHTML = active.map(m => {
     const init = (m.name||'?').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+    const hasCard = !!m.ktpPhoto;
     return `<div class="m-card" data-name="${(m.name||'').toLowerCase()}" data-gt="${(m.gamertag||'').toLowerCase()}">
-      <div class="m-av">${init}</div>
+      <div class="m-av">${m.ktpPhoto ? `<img src="${m.ktpPhoto}" style="width:100%;height:100%;object-fit:cover;border-radius:9px">` : init}</div>
       <div class="m-info">
         <div class="m-name">${m.name}</div>
         <div class="m-role">Member</div>
         ${m.gamertag ? `<div class="m-tag">${m.gamertag}</div>` : ''}
       </div>
+      ${hasCard ? `<button class="m-card-ktp-btn" onclick="event.stopPropagation();viewMemberKtp(${JSON.stringify(m.name||'').replace(/"/g,'&quot;')})" title="Lihat Kartu ID">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="7" cy="15" r="1"/><path d="M11 15h6"/></svg>
+      </button>` : ''}
       <div class="m-dot on"></div>
     </div>`;
   }).join('');
@@ -1936,9 +2149,19 @@ function toggleSB() {
 }
 
 /* ══ PAGES ══ */
+function getDashPage() {
+  if (!D.role) return 'home';
+  if (D.role === 'member') return 'member';
+  if (D.role === 'admin')  return 'admin';
+  if (D.role === 'leader') return 'leader';
+  if (D.role === 'guest')  return 'guest';
+  return 'home';
+}
+
 function showPg(id) {
   if (id === 'auth') { setTimeout(checkReturningUser, 50); }
   if (id === 'analytics') { setTimeout(loadAnalytics, 100); }
+  if (id !== 'analytics') stopChartAnimation();
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const pg = document.getElementById('page-' + id);
   if (pg) pg.classList.add('active');
@@ -2184,6 +2407,62 @@ async function logoutPermanent() {
   toast('Akun dinonaktifkan permanen. Kode tidak bisa digunakan lagi.','warn');
 }
 
+function refreshApp() {
+  if (D.user && D.role) {
+    const session = { user: D.user, role: D.role, email: D.email, guestJoinDate: D.guestJoinDate };
+    localStorage.setItem('c_session_restore', JSON.stringify(session));
+  }
+  const btn = document.getElementById('onlineIndicator');
+  if (btn) btn.classList.add('spinning');
+  setTimeout(() => location.reload(), 350);
+}
+
+// Restore sesi setelah reload (dipanggil di bootApp)
+async function restoreSession() {
+  const raw = localStorage.getItem('c_session_restore');
+  if (!raw) return false;
+  localStorage.removeItem('c_session_restore');
+  try {
+    const s = JSON.parse(raw);
+    if (!s.user || !s.role) return false;
+    if (s.role === 'guest') {
+      D.user = s.user; D.email = s.email; D.role = 'guest';
+      D.guestJoinDate = s.guestJoinDate;
+      updateNav(); showProfileBtn(); showChatSidebarLink();
+      loadGuestBank(); startBankTicker();
+      renderGuestDash(); showPg('guest');
+      toast('Sesi dipulihkan ✓', 'success');
+      return true;
+    } else if (s.role === 'member') {
+      // Re-verify dari Firebase
+      await loadData();
+      const mem = D.members.find(m => m.email === s.email && m.status === 'active');
+      if (!mem) return false;
+      D.user = mem.name; D.email = mem.email; D.role = 'member';
+      updateNav(); showPg('member'); showChatSidebarLink(); showProfileBtn();
+      checkChatNotifs(); loadMemberBank(); startBankTicker();
+      toast('Sesi dipulihkan ✓', 'success');
+      return true;
+    } else if (s.role === 'admin') {
+      await loadData();
+      D.user = 'Admin'; D.role = 'admin';
+      renderAdminPanel(); updateNav(); showPg('admin');
+      showChatSidebarLink(); showProfileBtn(); checkChatNotifs();
+      toast('Sesi dipulihkan ✓', 'success');
+      return true;
+    } else if (s.role === 'leader') {
+      await loadData();
+      D.user = 'Leader'; D.role = 'leader';
+      renderLeaderPanel(); updateNav(); showPg('leader');
+      showChatSidebarLink(); showProfileBtn(); checkChatNotifs();
+      setTimeout(loadLeaderBank, 500);
+      toast('Sesi dipulihkan ✓', 'success');
+      return true;
+    }
+  } catch(e) { console.error('restoreSession:', e); }
+  return false;
+}
+
 function doLogout() {
   D.user=null; D.role=null; D.email=null; D.guestJoinDate=null; _selectedRole=null;
   updateNav();
@@ -2327,8 +2606,11 @@ function copyCode(code) {
 
 function approveMember(i) {
   D.members[i].status = 'active';
+  D.members[i].approvedAt = Date.now();
   saveMembers(); refreshDash(); renderPubMembers();
-  toast(D.members[i].name + ' disetujui','success');
+  toast(D.members[i].name + ' disetujui — generate kartu ID di panel Kartu ID','success');
+  // Refresh KTP member select
+  populateKtpMemberSelect();
 }
 
 function kickMember(i) {
@@ -2391,6 +2673,7 @@ function renderAdminPanel() {
 
 /* ══ LEADER PANEL ══ */
 function renderLeaderPanel() {
+  setTimeout(populateKtpMemberSelect, 300);
   // Load guest form toggle state
   const gfTgl = document.getElementById('leaderGuestFormTgl');
   if (gfTgl) gfTgl.checked = !!D.guestFormEnabled;
@@ -2993,7 +3276,7 @@ function updateOnlineStatus(online) {
   const el = document.getElementById('onlineIndicator');
   const lbl = document.getElementById('onlineLabel');
   if (!el || !lbl) return;
-  el.className = 'online-indicator' + (online ? '' : ' offline');
+  el.className = 'nav-online-btn' + (online ? '' : ' offline');
   lbl.textContent = online ? 'Online' : 'Offline';
 }
 
@@ -3262,12 +3545,31 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
   </div>
 </div>
 
+
+<!-- KTP VIEWER MODAL -->
+<div class="ktp-modal-bg" id="ktpModalBg" onclick="ktpModalClickOut(event)">
+  <div class="ktp-modal-inner">
+    <div id="ktpCardRender"></div>
+    <div class="ktp-modal-actions">
+      <button class="ktp-dl-btn" onclick="downloadKtpCard()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" style="vertical-align:middle;margin-right:5px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Simpan Gambar
+      </button>
+      <button class="ktp-switch-btn" onclick="toggleKtpStyle()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="vertical-align:middle;margin-right:5px"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+        Ganti Tampilan
+      </button>
+      <button class="ktp-close-btn" onclick="closeKtpModal()">Tutup</button>
+    </div>
+  </div>
+</div>
+
 <!-- CBANK ANALYTICS PAGE -->
 <div class="page" id="page-analytics">
   <div class="dash">
     <div class="dash-top">
       <div><div class="sec-tag">// Analisis</div><h2>Cbank <span class="r-tag leader">Analitik</span></h2></div>
-      <button onclick="history.back()||showPg('home')" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+      <button onclick="stopChartAnimation();showPg(getDashPage())" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
     </div>
     <!-- Search -->
     <div class="member-search-wrap" style="margin-bottom:1rem">
@@ -4414,16 +4716,49 @@ function renderMemberBank(acc) {
 
 // Live balance ticker — updates every minute
 let _bankTicker = null;
+let _bankSyncTimer = null;
+let _cachedBankAcc = null;
 function startBankTicker() {
   if (_bankTicker) clearInterval(_bankTicker);
   if (!D.role) return;
+  // Update UI setiap 1 detik (hanya hitung ulang bunga, tanpa hit Firebase)
   _bankTicker = setInterval(() => {
-    if (document.getElementById('page-member')?.classList.contains('active')) {
-      loadMemberBank();
-    } else if (document.getElementById('page-guest')?.classList.contains('active')) {
-      loadGuestBank();
-    }
-  }, BANK_CONFIG.GROWTH_INTERVAL_MS);
+    const onMember = document.getElementById('page-member')?.classList.contains('active');
+    const onGuest  = document.getElementById('page-guest')?.classList.contains('active');
+    if (onMember || onGuest) tickBankDisplay();
+  }, 1000);
+  // Sync ke Firebase setiap 5 menit
+  if (_bankSyncTimer) clearInterval(_bankSyncTimer);
+  _bankSyncTimer = setInterval(() => {
+    if (D.role === 'guest') loadGuestBank();
+    else if (D.role === 'member') loadMemberBank();
+  }, 5 * 60 * 1000);
+}
+
+// Hitung & tampilkan live balance dari data cache (tanpa Firebase)
+function tickBankDisplay() {
+  if (!_cachedBankAcc) return;
+  const acc = _cachedBankAcc;
+  const now = Date.now();
+  const principal = acc.principal || 0;
+  const lastTick = acc.lastTick || acc.depositedAt || now;
+  const secElapsed = (now - lastTick) / 1000;
+  const secPerMonth = 30 * 24 * 60 * 60;
+  const liveBalance = (acc.balance || 0) + principal * BANK_CONFIG.INTEREST_RATE * (secElapsed / secPerMonth);
+
+  // Member page
+  const mBal = document.getElementById('memberBankBalance');
+  if (mBal) mBal.textContent = fmtRp(liveBalance);
+  const mGrowTxt = document.getElementById('memberBankGrowthTxt');
+  if (mGrowTxt && acc.status === 'active') {
+    const perSec = principal * BANK_CONFIG.INTEREST_RATE / secPerMonth;
+    mGrowTxt.textContent = '+' + fmtRp(principal * BANK_CONFIG.INTEREST_RATE) + '/bln · +' + fmtRp(perSec).replace('Rp ','Rp ') + '/dtk';
+  }
+  // Guest page
+  const gBal = document.getElementById('guestBankBalance');
+  if (gBal) gBal.textContent = fmtRp(liveBalance);
+  const gStat = document.getElementById('guestBankBalStat');
+  if (gStat) gStat.textContent = fmtRp(liveBalance);
 }
 
 function openBankDeposit() {
@@ -4702,8 +5037,8 @@ async function loadGuestBank() {
   let acc = null;
   try { const snap = await fbGet('bank/'+key); acc = snap.val(); }
   catch(e) { acc = JSON.parse(localStorage.getItem('c_bank_'+key)||'null'); }
+  _cachedBankAcc = acc;
   renderGuestBankUI(acc);
-  // Also update stat
   const statEl = document.getElementById('guestBankBalStat');
   if (statEl && acc) statEl.textContent = fmtRp(acc.balance||0);
 }
@@ -4869,7 +5204,8 @@ async function loadLeaderBank() {
       const typeLabel = tx.type === 'deposit' ? '💰 Deposit' : '💸 Tarik Tunai';
       const typeBadgeCls = tx.type === 'deposit' ? 'bank-tx-status active' : 'bank-tx-status pending';
       const netAmt = tx.type === 'deposit' ? tx.amount - BANK_CONFIG.DEPOSIT_ADMIN_FEE : tx.amount - BANK_CONFIG.WITHDRAW_ADMIN_FEE;
-      return `<div class="bank-approval-item">
+      const memberGt = D.members.find(m=>m.email===acc.memberEmail)?.gamertag||'';
+      return `<div class="bank-approval-item" data-name="${(acc.memberName||key).toLowerCase()}" data-email="${(acc.memberEmail||'').toLowerCase()}" data-gt="${memberGt.toLowerCase()}">
         <div class="ba-top">
           <div class="ba-name">${acc.memberName || memberKey}</div>
           <span class="${typeBadgeCls}" style="font-size:.65rem">${typeLabel}</span>
@@ -5139,81 +5475,124 @@ function filterAnalytics(q) {
   if (_analyticsData) renderAnalytics(_analyticsData, q);
 }
 
+let _chartAnimFrame = null;
+let _chartBasePoints = [];
+let _chartNoiseOffsets = [];
+
 function drawAnalyticsChart(members) {
   const canvas = document.getElementById('analyticsGlobalChart');
   if (!canvas) return;
+
+  // Cancel previous animation
+  if (_chartAnimFrame) cancelAnimationFrame(_chartAnimFrame);
+
+  const totalPrincipal = members.reduce((s,[,v]) => s+(v.principal||0), 0);
+  const base = members.reduce((s,[,v]) => s+(v.balance||0), 0);
+  const rate = BANK_CONFIG.INTEREST_RATE;
+  const days = 30;
+
+  // Build base trajectory (growth curve)
+  _chartBasePoints = [];
+  for (let d = 0; d <= days; d++) {
+    _chartBasePoints.push(base + totalPrincipal * rate * (d/30));
+  }
+
+  // Random noise seeds per point (animate these with sin waves)
+  _chartNoiseOffsets = _chartBasePoints.map(() => ({
+    amp: totalPrincipal * (0.003 + Math.random() * 0.007),
+    freq: 0.4 + Math.random() * 1.2,
+    phase: Math.random() * Math.PI * 2
+  }));
+
+  let t = 0;
+  function frame() {
+    t += 0.018;
+    const points = _chartBasePoints.map((v, i) => {
+      const n = _chartNoiseOffsets[i];
+      return v + n.amp * Math.sin(t * n.freq + n.phase);
+    });
+    _renderChart(canvas, points);
+    _chartAnimFrame = requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+function _renderChart(canvas, points) {
   const ctx = canvas.getContext('2d');
   const W = canvas.offsetWidth || 320;
   const H = 160;
-  canvas.width = W;
+  if (canvas.width !== W) canvas.width = W;
   canvas.height = H;
 
-  const days = 30;
-  const totalPrincipal = members.reduce((s,[,v]) => s+(v.principal||0), 0);
-  const rate = BANK_CONFIG.INTEREST_RATE;
-
-  // Generate data points with slight random noise for realism
-  const points = [];
-  let base = members.reduce((s,[,v]) => s+(v.balance||0), 0);
-  for (let d = 0; d <= days; d++) {
-    const growth = totalPrincipal * rate * (d/30);
-    const noise = (Math.random()-0.5) * totalPrincipal * 0.002; // ±0.2% noise
-    points.push(base + growth + noise);
-  }
-  const minV = Math.min(...points) * 0.995;
-  const maxV = Math.max(...points) * 1.005;
+  const minV = Math.min(...points) * 0.993;
+  const maxV = Math.max(...points) * 1.007;
   const range = maxV - minV || 1;
-
-  const pad = {t:16,r:12,b:28,l:72};
+  const days = points.length - 1;
+  const pad = {t:16,r:12,b:28,l:70};
   const cW = W - pad.l - pad.r;
   const cH = H - pad.t - pad.b;
 
   ctx.clearRect(0,0,W,H);
 
-  // Grid lines
-  ctx.strokeStyle = 'rgba(46,46,66,.6)';
+  // Grid
+  ctx.strokeStyle = 'rgba(46,46,66,.5)';
   ctx.lineWidth = 1;
   for (let i=0;i<=4;i++) {
     const y = pad.t + cH*(1-i/4);
     ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(W-pad.r,y); ctx.stroke();
-    // Y label
-    ctx.fillStyle='rgba(148,148,170,.7)';
+    ctx.fillStyle='rgba(148,148,170,.65)';
     ctx.font='9px DM Sans,sans-serif';
     ctx.textAlign='right';
     const val = minV + range*(i/4);
     ctx.fillText(fmtRp(val).replace('Rp ',''), pad.l-4, y+3);
   }
 
-  // Gradient fill
+  // Area gradient
   const grad = ctx.createLinearGradient(0,pad.t,0,pad.t+cH);
-  grad.addColorStop(0,'rgba(108,78,242,.35)');
+  grad.addColorStop(0,'rgba(108,78,242,.3)');
   grad.addColorStop(1,'rgba(108,78,242,.01)');
-
-  // Draw area
   ctx.beginPath();
   points.forEach((v,i) => {
     const x = pad.l + (i/days)*cW;
     const y = pad.t + cH*(1-(v-minV)/range);
-    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
   });
-  const lastX = pad.l+cW, lastY = pad.t+cH;
-  ctx.lineTo(lastX,lastY); ctx.lineTo(pad.l,lastY); ctx.closePath();
-  ctx.fillStyle = grad; ctx.fill();
+  ctx.lineTo(pad.l+cW,pad.t+cH); ctx.lineTo(pad.l,pad.t+cH); ctx.closePath();
+  ctx.fillStyle=grad; ctx.fill();
 
-  // Draw line
+  // Line with glow
+  ctx.save();
+  ctx.shadowColor='rgba(108,78,242,.5)';
+  ctx.shadowBlur=6;
   ctx.beginPath();
   points.forEach((v,i) => {
     const x = pad.l+(i/days)*cW;
     const y = pad.t+cH*(1-(v-minV)/range);
-    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
   });
-  ctx.strokeStyle='rgba(108,78,242,.9)'; ctx.lineWidth=2; ctx.lineJoin='round'; ctx.stroke();
+  ctx.strokeStyle='rgba(140,100,255,.95)'; ctx.lineWidth=2; ctx.lineJoin='round'; ctx.stroke();
+  ctx.restore();
+
+  // Animated dot at right end
+  const lastX = pad.l+cW;
+  const lastY = pad.t+cH*(1-(points[days]-minV)/range);
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, 4, 0, Math.PI*2);
+  ctx.fillStyle='rgba(140,100,255,1)'; ctx.fill();
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, 7, 0, Math.PI*2);
+  ctx.strokeStyle='rgba(140,100,255,.3)'; ctx.lineWidth=2; ctx.stroke();
 
   // X labels
-  ctx.fillStyle='rgba(148,148,170,.7)'; ctx.font='9px DM Sans,sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle='rgba(148,148,170,.65)'; ctx.font='9px DM Sans,sans-serif'; ctx.textAlign='center';
   [0,7,14,21,30].forEach(d => {
     ctx.fillText('H+'+d, pad.l+(d/days)*cW, H-6);
   });
+}
+
+// Stop chart animation when leaving analytics page
+function stopChartAnimation() {
+  if (_chartAnimFrame) { cancelAnimationFrame(_chartAnimFrame); _chartAnimFrame = null; }
 }
 
 // Leader: send transaction history to WA
@@ -5275,6 +5654,430 @@ async function leaderDeleteAllTx(memberKey) {
     loadLeaderBank();
     if (document.getElementById('page-analytics')?.classList.contains('active')) loadAnalytics();
   } catch(e) { toast('Gagal','error'); }
+}
+
+
+// ══════════════════════════════════════
+// KARTU ID MEMBER (KTP SYSTEM)
+// ══════════════════════════════════════
+
+let _ktpCurrentMember = null;
+let _ktpStyle = 'ktp'; // 'ktp' | 'gaming'
+let _ktpGenPhotoB64 = null;
+
+// Populate leader select
+function populateKtpMemberSelect() {
+  const sel = document.getElementById('ktpMemberSelect');
+  if (!sel) return;
+  const active = D.members.filter(m => m.status === 'active');
+  sel.innerHTML = '<option value="">— Pilih member —</option>' +
+    active.map((m,i) => `<option value="${m.code||i}">${m.name}${m.gamertag?' (@'+m.gamertag+')':''}</option>`).join('');
+}
+
+// Open KTP generator flow
+function openKtpGenerator() {
+  const sel = document.getElementById('ktpMemberSelect');
+  const code = sel?.value;
+  if (!code) { toast('Pilih member dulu','warn'); return; }
+  const mem = D.members.find(m => (m.code === code || m.status === 'active') && (m.code === code));
+  if (!mem) { toast('Member tidak ditemukan','error'); return; }
+  _ktpCurrentMember = mem;
+  _ktpGenPhotoB64 = mem.ktpPhoto || null;
+  showKtpModal(mem, _ktpGenPhotoB64, true);
+}
+
+// View member KTP (public) — hides code if not owner
+function viewMemberKtp(name) {
+  const mem = D.members.find(m => m.name === name && m.status === 'active');
+  if (!mem) { toast('Kartu tidak ditemukan','error'); return; }
+  _ktpCurrentMember = mem;
+  showKtpModal(mem, mem.ktpPhoto || null, false);
+}
+
+function showKtpModal(mem, photoB64, isLeader) {
+  const bg = document.getElementById('ktpModalBg');
+  const render = document.getElementById('ktpCardRender');
+  if (!bg || !render) return;
+  const isOwner = D.user === mem.name || D.role === 'leader' || D.role === 'admin';
+  render.innerHTML = buildKtpHtml(mem, photoB64, isOwner, isLeader);
+  bg.classList.add('show');
+}
+
+function closeKtpModal() {
+  document.getElementById('ktpModalBg')?.classList.remove('show');
+}
+
+function ktpModalClickOut(e) {
+  if (e.target === document.getElementById('ktpModalBg')) closeKtpModal();
+}
+
+function toggleKtpStyle() {
+  _ktpStyle = _ktpStyle === 'ktp' ? 'gaming' : 'ktp';
+  if (_ktpCurrentMember) showKtpModal(_ktpCurrentMember, _ktpCurrentMember.ktpPhoto || _ktpGenPhotoB64, D.role === 'leader' || D.role === 'admin');
+}
+
+// Build KTP HTML
+function buildKtpHtml(mem, photoB64, isOwner, isLeader) {
+  const codeDisplay = isOwner ? (mem.code || '------') : '••••••';
+  const joinDate = mem.approvedAt
+    ? new Date(mem.approvedAt).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})
+    : (mem.date || '—');
+  const expiry = mem.approvedAt
+    ? new Date(mem.approvedAt + 365*24*60*60*1000*3).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})
+    : 'Seumur Hidup';
+  const photoHtml = photoB64
+    ? `<img src="${photoB64}" class="${_ktpStyle==='ktp'?'ktp-photo':'gcard-photo'}" alt="foto"/>`
+    : `<div class="${_ktpStyle==='ktp'?'ktp-photo-placeholder':'gcard-photo-placeholder'}">👤</div>`;
+
+  if (_ktpStyle === 'ktp') return buildKtpIndonesia(mem, photoHtml, codeDisplay, joinDate, expiry, isLeader);
+  return buildKtpGaming(mem, photoHtml, codeDisplay, joinDate, isLeader);
+}
+
+function buildKtpIndonesia(mem, photoHtml, codeDisplay, joinDate, expiry, isLeader) {
+  const barcodeLines = Array.from({length:22},(_,i)=>`<span style="height:${8+Math.random()*8}px"></span>`).join('');
+  return `<div class="ktp-card" id="ktpExportEl">
+    <div class="ktp-header">
+      <div class="ktp-header-logo">🇮🇩<br>CQ</div>
+      <div class="ktp-header-txt">
+        <div class="ktp-negara">Kartu Identitas Tim</div>
+        <div class="ktp-title">Cuanie Team ID Card</div>
+      </div>
+      <div class="ktp-header-chip"></div>
+    </div>
+    <div class="ktp-body">
+      <div class="ktp-photo-col">
+        ${photoHtml}
+        ${isLeader ? `<button onclick="ktpTriggerPhotoUpload()" style="margin-top:4px;width:72px;font-size:.52rem;background:var(--ac);border:none;color:#fff;border-radius:3px;padding:2px 0;cursor:pointer;font-family:'DM Sans',sans-serif">Ganti Foto</button>` : ''}
+      </div>
+      <div class="ktp-fields">
+        <div class="ktp-field">
+          <label>Kode Akses (NIK)</label>
+          <div class="ktp-val" style="letter-spacing:2px;font-family:'Syne',sans-serif;color:#1a3a6e;font-size:.7rem">${codeDisplay}</div>
+        </div>
+        <div class="ktp-field">
+          <label>Nama</label>
+          <div class="ktp-val big">${mem.name || '—'}</div>
+        </div>
+        <div class="ktp-field">
+          <label>Gamertag</label>
+          <div class="ktp-val">${mem.gamertag || '—'}</div>
+        </div>
+        <div class="ktp-field-row">
+          <div class="ktp-field">
+            <label>Role</label>
+            <div class="ktp-val">Member</div>
+          </div>
+          <div class="ktp-field">
+            <label>Status</label>
+            <div class="ktp-val" style="color:green">Aktif</div>
+          </div>
+        </div>
+        <div class="ktp-field">
+          <label>Bergabung</label>
+          <div class="ktp-val">${joinDate}</div>
+        </div>
+        <div class="ktp-field">
+          <label>Email</label>
+          <div class="ktp-val" style="font-size:.56rem">${mem.email || '—'}</div>
+        </div>
+        <div class="ktp-field">
+          <label>Berlaku Hingga</label>
+          <div class="ktp-val">${expiry}</div>
+        </div>
+      </div>
+    </div>
+    <div class="ktp-footer">
+      <span class="ktp-footer-txt">CUANIE OFFICIAL · ${new Date().getFullYear()}</span>
+      <div class="ktp-barcode">${barcodeLines}</div>
+    </div>
+    ${isLeader ? `<div style="text-align:center;background:#f0f0f0;padding:5px"><button onclick="saveKtpToMember()" style="font-size:.65rem;background:#1a3a6e;color:#fff;border:none;border-radius:4px;padding:3px 10px;cursor:pointer;font-family:'DM Sans',sans-serif">💾 Simpan ke Profil Member</button></div>` : ''}
+  </div>`;
+}
+
+function buildKtpGaming(mem, photoHtml, codeDisplay, joinDate, isLeader) {
+  return `<div class="gcard" id="ktpExportEl">
+    <div class="gcard-top">
+      ${photoHtml}
+      <div class="gcard-info">
+        <div class="gcard-badge">🎮 Cuanie Team</div>
+        <div class="gcard-name">${mem.name || '—'}</div>
+        <div class="gcard-gt">${mem.gamertag ? '@'+mem.gamertag : '—'}</div>
+        <div class="gcard-role-chip">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Member Aktif
+        </div>
+      </div>
+      ${isLeader ? `<button onclick="ktpTriggerPhotoUpload()" style="position:absolute;top:10px;right:10px;background:rgba(108,78,242,.3);border:1px solid rgba(108,78,242,.4);color:var(--ac2);border-radius:5px;padding:3px 7px;font-size:.58rem;cursor:pointer;font-family:'DM Sans',sans-serif">📷</button>` : ''}
+    </div>
+    <div class="gcard-divider"></div>
+    <div class="gcard-fields">
+      <div class="gcard-field">
+        <label>Kode Akses</label>
+        <div class="gcard-val code">${codeDisplay}</div>
+      </div>
+      <div class="gcard-field">
+        <label>Status</label>
+        <div class="gcard-val" style="color:var(--ok)">● Aktif</div>
+      </div>
+      <div class="gcard-field">
+        <label>Bergabung</label>
+        <div class="gcard-val">${joinDate}</div>
+      </div>
+      <div class="gcard-field">
+        <label>Email</label>
+        <div class="gcard-val" style="font-size:.55rem;opacity:.7">${(mem.email||'').split('@')[0]}@…</div>
+      </div>
+    </div>
+    <div class="gcard-footer">
+      <div class="gcard-footer-brand">CUANIE</div>
+      <div class="gcard-footer-id">ID · ${(mem.code||'').substring(0,3)}···</div>
+    </div>
+    ${isLeader ? `<div style="text-align:center;padding:6px;border-top:1px solid rgba(108,78,242,.15)"><button onclick="saveKtpToMember()" style="font-size:.65rem;background:var(--ac);color:#fff;border:none;border-radius:5px;padding:3px 10px;cursor:pointer;font-family:'DM Sans',sans-serif">💾 Simpan ke Profil Member</button></div>` : ''}
+  </div>`;
+}
+
+// Download as image using canvas
+async function downloadKtpCard() {
+  const el = document.getElementById('ktpExportEl');
+  if (!el) return;
+  toast('Menyiapkan gambar...','success');
+  try {
+    // Use html2canvas if available, else fallback SVG method
+    if (window.html2canvas) {
+      const canvas = await html2canvas(el, {backgroundColor:null, scale:2, useCORS:true, logging:false});
+      const a = document.createElement('a');
+      a.download = `KartuID_${_ktpCurrentMember?.name||'member'}.png`;
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    } else {
+      // Inline CSS clone → canvas fallback
+      drawKtpCanvas();
+    }
+  } catch(e) { drawKtpCanvas(); }
+}
+
+function drawKtpCanvas() {
+  // Simple canvas fallback render
+  const mem = _ktpCurrentMember;
+  if (!mem) return;
+  const W = 680, H = 430;
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d');
+  const isOwner = D.user === mem.name || D.role === 'leader' || D.role === 'admin';
+
+  if (_ktpStyle === 'gaming') {
+    drawGameCardCanvas(ctx, mem, W, H, isOwner);
+  } else {
+    drawKtpIdCanvas(ctx, mem, W, H, isOwner);
+  }
+
+  const a = document.createElement('a');
+  a.download = `KartuID_${mem.name||'member'}.png`;
+  a.href = cv.toDataURL('image/png');
+  a.click();
+  toast('Berhasil disimpan!','success');
+}
+
+function drawKtpIdCanvas(ctx, mem, W, H, isOwner) {
+  // Header
+  const hg = ctx.createLinearGradient(0,0,W,60);
+  hg.addColorStop(0,'#1a3a6e'); hg.addColorStop(1,'#0d2144');
+  ctx.fillStyle = hg; ctx.beginPath();
+  ctx.roundRect(0,0,W,H,12); ctx.fill();
+
+  // Body background
+  const bg = ctx.createLinearGradient(0,60,0,H-40);
+  bg.addColorStop(0,'#f5f0e8'); bg.addColorStop(1,'#ede8dc');
+  ctx.fillStyle = bg; ctx.fillRect(0,60,W,H-100);
+
+  // Footer
+  const fg = ctx.createLinearGradient(0,H-40,W,H);
+  fg.addColorStop(0,'#1a3a6e'); fg.addColorStop(1,'#0d2144');
+  ctx.fillStyle = fg; ctx.fillRect(0,H-40,W,40);
+
+  // Header text
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 11px Syne,sans-serif';
+  ctx.fillText('KARTU IDENTITAS TIM', 50, 30);
+  ctx.font = 'bold 16px Syne,sans-serif';
+  ctx.fillText('CUANIE TEAM ID CARD', 50, 50);
+
+  // Gold chip
+  const cg = ctx.createLinearGradient(W-70,15,W-10,45);
+  cg.addColorStop(0,'#d4a843'); cg.addColorStop(0.5,'#f5c842'); cg.addColorStop(1,'#b8892a');
+  ctx.fillStyle = cg; ctx.beginPath();
+  ctx.roundRect(W-65,20,50,30,4); ctx.fill();
+
+  // Photo area
+  if (mem.ktpPhoto) {
+    const img = new Image();
+    img.onload = () => {
+      ctx.save();
+      ctx.beginPath(); ctx.roundRect(20,75,100,130,3); ctx.clip();
+      ctx.drawImage(img,20,75,100,130);
+      ctx.restore();
+      _finalizeKtpCanvas(ctx, mem, W, H, isOwner);
+      const a = document.createElement('a');
+      a.download = `KartuID_${mem.name}.png`;
+      a.href = ctx.canvas.toDataURL('image/png');
+      a.click();
+    };
+    img.src = mem.ktpPhoto;
+  } else {
+    ctx.fillStyle = '#c8d4e8';
+    ctx.beginPath(); ctx.roundRect(20,75,100,130,3); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.font = '40px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('👤', 70, 148); ctx.textAlign = 'left';
+    _finalizeKtpCanvas(ctx, mem, W, H, isOwner);
+  }
+}
+
+function _finalizeKtpCanvas(ctx, mem, W, H, isOwner) {
+  const codeDisplay = isOwner ? (mem.code||'------') : '••••••';
+  const joinDate = mem.approvedAt
+    ? new Date(mem.approvedAt).toLocaleDateString('id-ID',{month:'long',year:'numeric'})
+    : (mem.date||'—');
+  const fields = [
+    ['KODE AKSES (NIK)', codeDisplay, true],
+    ['NAMA', mem.name||'—', false],
+    ['GAMERTAG', mem.gamertag||'—', false],
+    ['ROLE', 'Member', false],
+    ['BERGABUNG', joinDate, false],
+    ['STATUS', 'AKTIF', false],
+  ];
+  let y = 90;
+  fields.forEach(([lbl,val,bold]) => {
+    ctx.fillStyle = '#777'; ctx.font = '9px DM Sans,sans-serif';
+    ctx.fillText(lbl, 135, y);
+    ctx.fillStyle = bold ? '#1a3a6e' : '#111';
+    ctx.font = (bold ? 'bold ' : '') + '13px DM Sans,sans-serif';
+    ctx.fillText(val, 135, y+14);
+    y += 32;
+  });
+  // Footer
+  ctx.fillStyle = 'rgba(255,255,255,.6)'; ctx.font = '10px Syne,sans-serif';
+  ctx.fillText('CUANIE OFFICIAL · ' + new Date().getFullYear(), 20, H-15);
+}
+
+function drawGameCardCanvas(ctx, mem, W, H, isOwner) {
+  // Dark gradient bg
+  const bg = ctx.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#0d0d1a'); bg.addColorStop(0.5,'#131330'); bg.addColorStop(1,'#0d0d1a');
+  ctx.fillStyle = bg; ctx.beginPath(); ctx.roundRect(0,0,W,H,14); ctx.fill();
+
+  // Glow orbs
+  const r1 = ctx.createRadialGradient(W*.2,H*.2,0,W*.2,H*.2,W*.4);
+  r1.addColorStop(0,'rgba(108,78,242,.15)'); r1.addColorStop(1,'transparent');
+  ctx.fillStyle = r1; ctx.fillRect(0,0,W,H);
+
+  // Border
+  ctx.strokeStyle = 'rgba(108,78,242,.45)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.roundRect(0,0,W,H,14); ctx.stroke();
+
+  const codeDisplay = isOwner ? (mem.code||'------') : '••••••';
+  const joinDate = mem.approvedAt
+    ? new Date(mem.approvedAt).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})
+    : (mem.date||'—');
+
+  // Photo
+  if (mem.ktpPhoto) {
+    const img = new Image();
+    img.onload = () => {
+      ctx.save(); ctx.beginPath(); ctx.roundRect(20,20,90,115,8); ctx.clip();
+      ctx.drawImage(img,20,20,90,115); ctx.restore();
+      _finalizeGameCard(ctx,mem,W,H,codeDisplay,joinDate,isOwner);
+      const a=document.createElement('a');
+      a.download=`CuanieID_${mem.name}.png`; a.href=ctx.canvas.toDataURL('image/png'); a.click();
+    };
+    img.src = mem.ktpPhoto;
+  } else {
+    ctx.fillStyle='rgba(108,78,242,.2)'; ctx.beginPath(); ctx.roundRect(20,20,90,115,8); ctx.fill();
+    ctx.strokeStyle='rgba(108,78,242,.5)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.roundRect(20,20,90,115,8); ctx.stroke();
+    ctx.font='36px sans-serif'; ctx.textAlign='center'; ctx.fillStyle='rgba(255,255,255,.6)';
+    ctx.fillText('👤',65,90); ctx.textAlign='left';
+    _finalizeGameCard(ctx,mem,W,H,codeDisplay,joinDate,isOwner);
+  }
+}
+
+function _finalizeGameCard(ctx,mem,W,H,codeDisplay,joinDate,isOwner) {
+  // Badge
+  ctx.fillStyle='rgba(108,78,242,.6)'; ctx.font='bold 10px Syne,sans-serif';
+  ctx.fillText('🎮 CUANIE TEAM',125,35);
+  // Name
+  ctx.fillStyle='#fff'; ctx.font='bold 22px Syne,sans-serif';
+  ctx.fillText(mem.name||'—',125,65);
+  // Gamertag
+  ctx.fillStyle='rgba(30,201,154,.9)'; ctx.font='bold 13px DM Sans,sans-serif';
+  ctx.fillText(mem.gamertag?'@'+mem.gamertag:'—',125,85);
+  // Role chip bg
+  ctx.fillStyle='rgba(108,78,242,.25)'; ctx.beginPath(); ctx.roundRect(125,93,90,20,10); ctx.fill();
+  ctx.fillStyle='rgba(140,100,255,.9)'; ctx.font='bold 10px Syne,sans-serif';
+  ctx.fillText('★ Member Aktif',133,107);
+  // Divider
+  ctx.strokeStyle='rgba(108,78,242,.3)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(20,148); ctx.lineTo(W-20,148); ctx.stroke();
+  // Fields
+  const cols = [
+    [['KODE AKSES',codeDisplay,true],['STATUS','● Aktif',false]],
+    [['BERGABUNG',joinDate,false],['EMAIL',(mem.email||'').split('@')[0]+'@…',false]]
+  ];
+  cols.forEach((col,ci) => {
+    col.forEach((f,fi) => {
+      const x = 20 + ci*(W/2-20);
+      const y = 170 + fi*50;
+      ctx.fillStyle='rgba(255,255,255,.35)'; ctx.font='9px DM Sans,sans-serif';
+      ctx.fillText(f[0],x,y);
+      ctx.fillStyle = f[2] ? 'rgba(140,100,255,.9)' : 'rgba(255,255,255,.85)';
+      ctx.font=(f[2]?'bold ':'')+' 13px DM Sans,sans-serif';
+      ctx.fillText(f[1],x,y+16);
+    });
+  });
+  // Footer brand
+  const grd = ctx.createLinearGradient(W-100,H-30,W-20,H-10);
+  grd.addColorStop(0,'rgba(108,78,242,.9)'); grd.addColorStop(1,'rgba(30,201,154,.9)');
+  ctx.fillStyle=grd; ctx.font='bold 16px Syne,sans-serif';
+  ctx.textAlign='right'; ctx.fillText('CUANIE',W-20,H-16); ctx.textAlign='left';
+}
+
+// Save photo to member Firebase record
+async function saveKtpToMember() {
+  if (!_ktpCurrentMember || !_ktpGenPhotoB64) {
+    toast('Upload foto dulu sebelum simpan','warn'); return;
+  }
+  const idx = D.members.findIndex(m => m.code === _ktpCurrentMember.code);
+  if (idx === -1) { toast('Member tidak ditemukan','error'); return; }
+  D.members[idx].ktpPhoto = _ktpGenPhotoB64;
+  D.members[idx].ktpStyle = _ktpStyle;
+  try {
+    await saveMembers();
+    _ktpCurrentMember = D.members[idx];
+    toast('Kartu ID disimpan ke profil member!','success');
+    renderPubMembers();
+    document.getElementById('ktpGenStatus').textContent = '✓ Kartu sudah tersimpan di profil member.';
+    document.getElementById('ktpGenStatus').style.color = 'var(--ok)';
+  } catch(e) { toast('Gagal simpan','error'); }
+}
+
+// Trigger photo upload inside modal
+function ktpTriggerPhotoUpload() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = e => {
+    const file = e.target.files[0]; if (!file) return;
+    if (file.size > 2*1024*1024) { toast('Foto maks 2MB','warn'); return; }
+    const reader = new FileReader();
+    reader.onload = ev => {
+      _ktpGenPhotoB64 = ev.target.result;
+      if (_ktpCurrentMember) {
+        _ktpCurrentMember = {..._ktpCurrentMember, ktpPhoto: _ktpGenPhotoB64};
+        showKtpModal(_ktpCurrentMember, _ktpGenPhotoB64, true);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+  inp.click();
 }
 
 // Hook into bootApp to also load CiunTik and set up listener
