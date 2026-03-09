@@ -393,7 +393,7 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 .chat-img-btn:hover{border-color:var(--ac2)}
 .chat-input-hints{font-size:.68rem;color:var(--tx2);margin-top:4px;display:flex;gap:.8rem;flex-wrap:wrap;user-select:none;opacity:.75}
 .chat-input-hints span{cursor:default}
-/* ══ BANK CUANIE ══ */
+/* ══ CBANK ══ */
 .bank-balance-card{background:linear-gradient(135deg,var(--ac) 0%,var(--ac2) 100%);border-radius:14px;padding:1.4rem 1.3rem;margin-bottom:1.1rem;position:relative;overflow:hidden}
 .bank-balance-card::after{content:'';position:absolute;right:-20px;top:-20px;width:100px;height:100px;background:rgba(255,255,255,.07);border-radius:50%}
 .bank-bal-label{font-size:.73rem;color:rgba(255,255,255,.75);font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:1px;margin-bottom:.4rem}
@@ -446,6 +446,164 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 .bank-approve-btn:hover{background:rgba(30,201,154,.22)}
 .bank-reject-btn{flex:1;background:rgba(232,84,106,.08);border:1px solid rgba(232,84,106,.2);color:var(--err);border-radius:7px;padding:.5rem;font-size:.8rem;font-weight:600;cursor:pointer;transition:background .2s}
 .bank-reject-btn:hover{background:rgba(232,84,106,.18)}
+
+/* ══ ROLE PICKER ══ */
+.role-pick-btn{
+  display:flex;align-items:center;gap:.9rem;
+  width:100%;padding:.95rem 1.05rem;
+  border-radius:12px;
+  border:1.5px solid var(--b2);
+  background:var(--s2);
+  cursor:pointer;
+  transition:all .22s cubic-bezier(.4,0,.2,1);
+  text-align:left;
+  position:relative;
+  overflow:hidden;
+  opacity:1;
+}
+/* Sebelum pilih: semua normal */
+.role-pick-btn::before{
+  content:'';
+  position:absolute;inset:0;
+  background:transparent;
+  transition:background .22s;
+  pointer-events:none;
+}
+/* Setelah pilih: yang TIDAK dipilih jadi gelap */
+.role-pick-btn.dimmed{
+  opacity:.38;
+  border-color:var(--b1);
+  background:var(--s1);
+}
+/* Yang dipilih: cerah & berglowing border */
+.role-pick-btn.selected{
+  opacity:1;
+  border-color:var(--ac);
+  background:rgba(108,78,242,.09);
+  box-shadow:0 0 0 3px rgba(108,78,242,.15),0 2px 12px rgba(108,78,242,.12);
+}
+.role-pick-btn.selected.guest-btn{
+  border-color:var(--gold);
+  background:rgba(232,184,75,.07);
+  box-shadow:0 0 0 3px rgba(232,184,75,.15),0 2px 12px rgba(232,184,75,.1);
+}
+.role-pick-btn:hover:not(.dimmed){
+  border-color:var(--ac2);
+  background:var(--s3);
+  transform:translateY(-1px);
+}
+/* Icon container */
+.role-pick-icon{
+  width:42px;height:42px;flex-shrink:0;
+  border-radius:11px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--s3);
+  transition:all .22s;
+}
+.role-pick-icon.member{
+  background:rgba(108,78,242,.12);
+  color:var(--ac2);
+}
+.role-pick-icon.guest{
+  background:rgba(232,184,75,.1);
+  color:var(--gold);
+}
+.role-pick-btn.selected .role-pick-icon.member{
+  background:rgba(108,78,242,.22);
+  color:var(--ac2);
+}
+.role-pick-btn.selected.guest-btn .role-pick-icon.guest{
+  background:rgba(232,184,75,.2);
+  color:var(--gold);
+}
+/* Text */
+.role-pick-text{flex:1;min-width:0}
+.role-pick-title{
+  font-size:.88rem;font-weight:700;
+  color:var(--tx);line-height:1.2;
+  transition:color .2s;
+}
+.role-pick-sub{
+  font-size:.72rem;color:var(--tx2);
+  margin-top:3px;line-height:1.4;
+}
+/* Radio dot */
+.role-pick-check{
+  width:20px;height:20px;flex-shrink:0;
+  border-radius:50%;
+  border:2px solid var(--b2);
+  background:var(--s1);
+  display:flex;align-items:center;justify-content:center;
+  transition:all .22s;
+}
+.role-pick-btn.selected .role-pick-check{
+  border-color:var(--ac);
+  background:var(--ac);
+}
+.role-pick-btn.selected.guest-btn .role-pick-check{
+  border-color:var(--gold);
+  background:var(--gold);
+}
+.role-pick-check::after{
+  content:'';
+  width:7px;height:7px;
+  border-radius:50%;
+  background:#fff;
+  opacity:0;transform:scale(0);
+  transition:all .18s;
+}
+.role-pick-btn.selected .role-pick-check::after{
+  opacity:1;transform:scale(1);
+}
+/* Google button state */
+.google-btn:disabled{
+  opacity:.38 !important;
+  cursor:not-allowed !important;
+  filter:grayscale(.4);
+}
+.google-btn:not(:disabled){
+  opacity:1;
+  cursor:pointer;
+  transition:opacity .2s,transform .15s;
+}
+/* Returning user banner */
+.returning-banner{
+  background:var(--s2);
+  border:1px solid var(--b1);
+  border-radius:12px;
+  padding:1rem 1.1rem;
+  margin-bottom:1rem;
+}
+.returning-label{
+  font-size:.68rem;color:var(--tx2);
+  font-family:'Syne',sans-serif;
+  text-transform:uppercase;letter-spacing:.6px;
+  margin-bottom:.6rem;
+}
+.returning-row{
+  display:flex;align-items:center;
+  gap:.75rem;margin-bottom:.8rem;
+}
+.returning-av{
+  width:42px;height:42px;
+  border-radius:10px;
+  background:linear-gradient(135deg,var(--ac),var(--ac2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:700;
+  color:#fff;font-size:.85rem;
+  overflow:hidden;flex-shrink:0;
+}
+.returning-av img{width:100%;height:100%;object-fit:cover}
+.returning-name{font-weight:700;font-size:.92rem;color:var(--tx)}
+.returning-role-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:.68rem;color:var(--tx2);
+  background:var(--s3);border:1px solid var(--b2);
+  padding:2px 8px;border-radius:4px;
+  margin-top:3px;
+}
+
+/* ══ END ROLE PICKER ══ */
 
 /* Notification badge */
 .notif-badge{position:absolute;top:-4px;right:-4px;background:var(--err);color:#fff;font-size:.6rem;font-weight:700;border-radius:8px;padding:1px 5px;font-family:'Syne',sans-serif;min-width:16px;text-align:center}
@@ -968,14 +1126,55 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
       </div>
       <!-- GUEST -->
       <div id="tab-guest">
-        <div class="closed-banner" id="closedBanner">Pendaftaran sedang ditutup. Hubungi Leader untuk info lebih lanjut.</div>
-        <p style="font-size:.81rem;color:var(--tx2);margin-bottom:1.1rem;line-height:1.65;">Login dengan akun Google yang sudah ada di perangkat kamu untuk mengisi formulir pendaftaran.</p>
-        <button class="google-btn" id="gBtn" onclick="handleGoogleLogin()">
-          <svg width="17" height="17" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-          Lanjutkan dengan Google
-        </button>
-        <div id="gBtnWrap" style="display:none;margin-bottom:.75rem;display:flex;justify-content:center;"></div>
-        <p style="font-size:.75rem;color:var(--tx2);text-align:center;">Pilih akun Google yang tersimpan di perangkat — tidak perlu ketik manual</p>
+        <!-- Returning user banner -->
+        <div id="returningUserBanner" class="returning-banner" style="display:none">
+          <div class="returning-label">Terakhir masuk sebagai</div>
+          <div class="returning-row">
+            <div class="returning-av" id="returningAv"></div>
+            <div>
+              <div class="returning-name" id="returningName"></div>
+              <div class="returning-role-tag" id="returningRole"></div>
+            </div>
+          </div>
+          <button class="full-btn" onclick="continueAsReturning()" style="margin:0;padding:.65rem">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10,17 15,12 10,7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Lanjutkan Masuk
+          </button>
+          <button onclick="clearReturningUser()" style="background:none;border:none;color:var(--tx2);font-size:.73rem;cursor:pointer;width:100%;margin-top:.55rem;padding:.3rem">Bukan kamu? Ganti akun →</button>
+        </div>
+        <!-- Role choice FIRST, then Google -->
+        <div id="roleChoiceArea">
+          <div class="closed-banner" id="closedBanner" style="display:none">Pendaftaran sedang ditutup. Hubungi Leader untuk info lebih lanjut.</div>
+          <div style="font-size:.8rem;color:var(--tx2);margin-bottom:.9rem;text-align:center">Pilih dulu mau masuk sebagai apa:</div>
+          <div style="display:flex;flex-direction:column;gap:.55rem;margin-bottom:1rem">
+            <button class="role-pick-btn" id="rolePickMember" onclick="selectRole('member')">
+              <div class="role-pick-icon member">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <div class="role-pick-text">
+                <div class="role-pick-title">Daftar sebagai Member</div>
+                <div class="role-pick-sub">Isi formulir & bergabung tim Cuanie</div>
+              </div>
+              <div class="role-pick-check" id="checkMember"></div>
+            </button>
+            <button class="role-pick-btn guest-btn" id="rolePickGuest" onclick="selectRole('guest')">
+              <div class="role-pick-icon guest">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              </div>
+              <div class="role-pick-text">
+                <div class="role-pick-title">Masuk sebagai Tamu</div>
+                <div class="role-pick-sub">Lihat CiunTik, akses Cbank & postingan</div>
+              </div>
+              <div class="role-pick-check" id="checkGuest"></div>
+            </button>
+          </div>
+          <button class="google-btn" id="gBtn" onclick="handleGoogleLogin()" disabled style="opacity:.45;cursor:not-allowed">
+            <svg width="17" height="17" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Lanjutkan dengan Google
+          </button>
+          <div id="gBtnWrap" style="display:none;margin-bottom:.75rem;justify-content:center;"></div>
+          <p style="font-size:.72rem;color:var(--tx2);text-align:center;margin-top:.5rem">Pilih peran dulu, baru login Google</p>
+        </div>
       </div>
       <!-- MEMBER -->
       <div id="tab-member" style="display:none;">
@@ -1053,11 +1252,11 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
         </button>
       </div>
     </div>
-    <!-- BANK CUANIE -->
+    <!-- CBANK -->
     <div class="panel" id="memberBankPanel">
       <div class="panel-h">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><rect x="1" y="3" width="22" height="18" rx="2"/><path d="M1 9h22"/><path d="M7 15h.01M11 15h.01"/></svg>
-        <h3>Bank Cuanie</h3>
+        <h3>Cbank</h3>
       </div>
       <div class="bank-balance-card">
         <div class="bank-bal-label">Saldo Aktif</div>
@@ -1236,6 +1435,22 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
         </div>
         <label class="tgl"><input type="checkbox" id="leaderCiunTikTgl" onchange="setCiunTikOpen(this.checked)"><span class="tgl-tr"></span></label>
       </div>
+      <div class="tgl-row" style="margin-top:.6rem">
+        <div>
+          <div class="tgl-lbl">Form Tamu</div>
+          <div class="tgl-sub">Aktifkan formulir wajib bagi tamu Google sebelum masuk</div>
+        </div>
+        <label class="tgl"><input type="checkbox" id="leaderGuestFormTgl" onchange="setGuestFormEnabled(this.checked)"><span class="tgl-tr"></span></label>
+      </div>
+    </div>
+    <!-- GUEST FORM BUILDER -->
+    <div class="panel" id="guestFormBuilderPanel" style="display:none">
+      <div class="panel-h"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg><h3>Edit Formulir Tamu</h3></div>
+      <div id="leaderGuestFormBlocks"></div>
+      <div class="p-acts">
+        <button class="add-q" onclick="addGuestFormBlock()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Tambah Pertanyaan</button>
+        <button class="save-btn" onclick="saveGuestForm()">Simpan Formulir</button>
+      </div>
     </div>
     <!-- MEMBER MANAGEMENT -->
     <div class="panel">
@@ -1247,13 +1462,18 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
     <div class="panel" id="leaderBankPanel">
       <div class="panel-h">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><rect x="1" y="3" width="22" height="18" rx="2"/><path d="M1 9h22"/><path d="M7 15h.01M11 15h.01"/></svg>
-        <h3>Bank Cuanie — Ajuan</h3>
+        <h3>Cbank — Ajuan</h3>
         <span class="notif-badge" id="bankPendingBadge" style="position:relative;top:auto;right:auto;display:none;margin-left:4px">0</span>
       </div>
       <div class="bank-tabs" id="bankLeaderTabs">
         <button class="bank-tab active" onclick="switchBankTab('pending',this)">Menunggu</button>
+        <button class="bank-tab" onclick="switchBankTab('withdraw',this)">Penarikan</button>
         <button class="bank-tab" onclick="switchBankTab('active',this)">Aktif</button>
         <button class="bank-tab" onclick="switchBankTab('history',this)">Riwayat</button>
+      </div>
+      <div class="member-search-wrap" style="margin-bottom:.7rem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="bankSearchInp" placeholder="Cari nama member..." oninput="filterBankList(this.value)"/>
       </div>
       <div id="bankLeaderList"></div>
     </div>
@@ -1678,6 +1898,7 @@ function toggleSB() {
 
 /* ══ PAGES ══ */
 function showPg(id) {
+  if (id === 'auth') { setTimeout(checkReturningUser, 50); }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const pg = document.getElementById('page-' + id);
   if (pg) pg.classList.add('active');
@@ -1692,6 +1913,7 @@ function showPg(id) {
 
 /* ══ AUTH TABS ══ */
 function switchTab(tab, btn) {
+  if (tab === 'guest') checkReturningUser();
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   ['guest','member','admin','leader'].forEach(t => {
@@ -1710,12 +1932,11 @@ function updateNav() {
 
 /* ══ GOOGLE ══ */
 function handleGoogleLogin() {
-  if (!D.regOpen) { toast('Pendaftaran sedang ditutup','error'); return; }
+  if (!_selectedRole) { toast('Pilih dulu mau masuk sebagai apa','warn'); return; }
   if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-    google.accounts.id.initialize({client_id:G_ID, callback:onGoogleResp, auto_select:true, use_fedcm_for_prompt:true});
+    google.accounts.id.initialize({client_id:G_ID, callback:onGoogleResp, auto_select:false, use_fedcm_for_prompt:false});
     google.accounts.id.prompt(notification => {
       if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-        // One Tap tidak muncul — render tombol Google Sign-In di popup kecil
         showGoogleButtonFallback();
       }
     });
@@ -1751,14 +1972,47 @@ function fallbackGuest() {
   setGuestUser(nm, em);
 }
 
+// ── Role selection state ──
+let _selectedRole = null; // 'member' | 'guest'
+
+function selectRole(role) {
+  _selectedRole = role;
+  const btnMember = document.getElementById('rolePickMember');
+  const btnGuest  = document.getElementById('rolePickGuest');
+  if (!btnMember || !btnGuest) return;
+
+  // Selected = bright, the other = dimmed
+  btnMember.classList.toggle('selected', role === 'member');
+  btnMember.classList.toggle('dimmed',   role !== 'member');
+  btnGuest.classList.toggle('selected',  role === 'guest');
+  btnGuest.classList.toggle('dimmed',    role !== 'guest');
+
+  // Activate Google button with smooth transition
+  const gBtn = document.getElementById('gBtn');
+  if (gBtn) {
+    gBtn.disabled = false;
+    gBtn.style.opacity = '1';
+    gBtn.style.cursor = 'pointer';
+    gBtn.style.filter = 'none';
+  }
+}
+
 function onGoogleResp(resp) {
   try {
     const p = JSON.parse(atob(resp.credential.split('.')[1]));
-    const fullName = p.name || p.given_name || p.email.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
-    const nm = fullName.split(' ')[0]; // Ambil nama pertama saja
+    const fullName = p.name || p.given_name || p.email.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,ch=>ch.toUpperCase());
+    const nm = fullName.split(' ')[0];
     const em = p.email || '';
-    setGuestUser(nm, em);
-  } catch { toast('Login gagal, coba lagi','error'); }
+    const user = { name: fullName, shortName: nm, email: em, picture: p.picture || null };
+    // Save to localStorage for "returning user" feature
+    localStorage.setItem('c_last_google', JSON.stringify({ ...user, role: _selectedRole, ts: Date.now() }));
+    // Route based on pre-selected role
+    if (_selectedRole === 'member') {
+      applyGoogleAsMember(user);
+    } else {
+      applyGoogleAsGuest(user);
+    }
+  } catch(e) { toast('Login gagal, coba lagi','error'); }
 }
 
 function setGuestUser(name, email) {
@@ -2042,6 +2296,13 @@ function renderAdminPanel() {
 
 /* ══ LEADER PANEL ══ */
 function renderLeaderPanel() {
+  // Load guest form toggle state
+  const gfTgl = document.getElementById('leaderGuestFormTgl');
+  if (gfTgl) gfTgl.checked = !!D.guestFormEnabled;
+  const gfPanel = document.getElementById('guestFormBuilderPanel');
+  if (gfPanel) gfPanel.style.display = D.guestFormEnabled ? 'block' : 'none';
+  if (D.guestFormEnabled) loadGuestFormBlocks();
+
   refreshDash();
   renderMemberTable('leaderMemberTbody', document.getElementById('leaderMemberSearch')?.value);
   document.getElementById('leaderRegTgl').checked = D.regOpen;
@@ -2900,6 +3161,25 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
         <h3>Riwayat Transaksi</h3>
       </div>
       <div id="bankHistoryList"><div style="color:var(--tx2);font-size:.83rem;text-align:center;padding:1.5rem">Belum ada transaksi</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- GUEST FORM PAGE -->
+<div class="page" id="page-guest-form">
+  <div class="dash" style="max-width:540px">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Formulir Tamu</div><h2>Formulir Tamu <span class="r-tag member">Guest</span></h2></div>
+      <button class="logout-btn" onclick="skipGuestForm()">Lewati</button>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><h3 id="guestFormTitle">Pertanyaan Tamu</h3></div>
+      <p style="font-size:.83rem;color:var(--tx2);margin-bottom:1.2rem" id="guestFormDesc">Isi formulir berikut untuk melanjutkan</p>
+      <div id="guestFormBuilder"></div>
+      <button class="full-btn" onclick="submitGuestForm()" style="margin-top:.8rem">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
+        Kirim & Masuk
+      </button>
     </div>
   </div>
 </div>
@@ -3846,7 +4126,7 @@ function dmKeyDown(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendDM(); }
 }
 
-// ══ BANK CUANIE SYSTEM ══
+// ══ CBANK SYSTEM ══
 const BANK_CONFIG = {
   INTEREST_RATE: 0.02,        // 2% per bulan
   DEPOSIT_ADMIN_FEE: 2000,    // Rp 2.000
@@ -3863,7 +4143,7 @@ function fmtRp(n) {
 
 // Load & show bank data for current member
 async function loadMemberBank() {
-  if (!D.user || !D.role || D.role === 'guest') return;
+  if (!D.user || !D.role) return; // guests with Google login can use bank
   const key = (D.email || D.user).replace(/[.#$/[\]]/g, '_');
   let acc = null;
   try {
@@ -3946,7 +4226,7 @@ function renderMemberBank(acc) {
 let _bankTicker = null;
 function startBankTicker() {
   if (_bankTicker) clearInterval(_bankTicker);
-  if (!D.role || D.role === 'guest') return;
+  if (!D.role) return;
   _bankTicker = setInterval(() => {
     if (document.getElementById('page-member')?.classList.contains('active')) {
       loadMemberBank();
@@ -4027,7 +4307,7 @@ function submitBankDeposit() {
 
   const msg = [
     `╔══════════════════════╗`,
-    `║   🏦 BANK CUANIE 🏦   ║`,
+    `║   🏦 CBANK 🏦   ║`,
     `║   PENGAJUAN DEPOSIT  ║`,
     `╚══════════════════════╝`,
     ``,
@@ -4057,9 +4337,27 @@ function submitBankDeposit() {
     `_Dikirim via Cuanie App_ 🎮`,
   ].join('\n');
 
-  window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
-  closeBankModal('deposit');
-  toast('Ajuan deposit dikirim ke Leader!','success');
+  // Save pending transaction to Firebase FIRST
+  const memberKey = (D.email || D.user).replace(/[.#$[\]]/g, '_');
+  fbGet('bank/' + memberKey).then(snap => {
+    let acc = snap.val() || { memberName: D.user, memberEmail: D.email, balance: 0, principal: 0, status: 'inactive', transactions: [] };
+    if (!acc.transactions) acc.transactions = [];
+    acc.transactions.push({ type: 'deposit', amount: amt, note: note, status: 'pending', ts: Date.now() });
+    acc.memberName = D.user;
+    acc.memberEmail = D.email;
+    return fbSet('bank/' + memberKey, acc);
+  }).then(() => {
+    window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
+    closeBankModal('deposit');
+    toast('Ajuan deposit dikirim ke Leader!','success');
+    loadMemberBank();
+  }).catch(err => {
+    console.error('Bank save error:', err);
+    // Still open WA even if Firebase fails
+    window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
+    closeBankModal('deposit');
+    toast('Ajuan terkirim ke WA (simpan offline)','warn');
+  });
 }
 
 function submitBankWithdraw() {
@@ -4080,7 +4378,7 @@ function submitBankWithdraw() {
 
   const msg = [
     `╔══════════════════════╗`,
-    `║   🏦 BANK CUANIE 🏦   ║`,
+    `║   🏦 CBANK 🏦   ║`,
     `║  PENGAJUAN PENARIKAN ║`,
     `╚══════════════════════╝`,
     ``,
@@ -4112,18 +4410,132 @@ function submitBankWithdraw() {
     `_Dikirim via Cuanie App_ 🎮`,
   ].join('\n');
 
-  window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
-  closeBankModal('withdraw');
-  toast('Ajuan penarikan dikirim ke Leader!','success');
+  // Save pending withdrawal to Firebase
+  const memberKey = (D.email || D.user).replace(/[.#$[\]]/g, '_');
+  fbGet('bank/' + memberKey).then(snap => {
+    let acc = snap.val() || { memberName: D.user, memberEmail: D.email, balance: 0, principal: 0, status: 'inactive', transactions: [] };
+    if (!acc.transactions) acc.transactions = [];
+    acc.transactions.push({ type: 'withdraw', amount: amt, method: method, status: 'pending', ts: Date.now() });
+    acc.memberName = D.user;
+    return fbSet('bank/' + memberKey, acc);
+  }).then(() => {
+    window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
+    closeBankModal('withdraw');
+    toast('Ajuan penarikan dikirim ke Leader!','success');
+    loadMemberBank();
+  }).catch(() => {
+    window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
+    closeBankModal('withdraw');
+    toast('Ajuan terkirim ke WA','warn');
+  });
 }
 
-// ══ LEADER: Bank approval system ══
+// ══ GOOGLE LOGIN FLOW ══
+
+// applyGoogleAsMember — dipanggil setelah Google auth jika pilih "member"
+function applyGoogleAsMember(user) {
+  const { shortName: nm, email: em } = user;
+  if (!D.regOpen) {
+    toast('Pendaftaran sedang ditutup. Tanya Leader dulu ya!','warn');
+    return;
+  }
+  const existing = D.members.find(m => m.email === em && m.status !== 'kicked');
+  if (existing) {
+    toast('Email sudah terdaftar sebagai Member. Pakai kode untuk login.','warn');
+    showPg('auth');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-btn')[1]?.classList.add('active');
+    ['guest','member','admin','leader'].forEach(t => {
+      const el = document.getElementById('tab-'+t); if (el) el.style.display = t==='member' ? 'block' : 'none';
+    });
+    const codeInp = document.getElementById('memberCode'); if (codeInp) codeInp.value = existing.code || '';
+    return;
+  }
+  D.user = nm; D.email = em; D.role = 'guest';
+  updateNav();
+  const gnEl = document.getElementById('guestName'); if (gnEl) gnEl.textContent = nm;
+  renderForm(); showPg('form');
+}
+
+// applyGoogleAsGuest — dipanggil setelah Google auth jika pilih "guest"
+function applyGoogleAsGuest(user) {
+  const { shortName: nm, email: em, name: fullName } = user;
+  D.user = nm; D.email = em; D.role = 'guest'; D.guestName = fullName;
+  updateNav(); showProfileBtn(); refreshProfileAvatar(em);
+  loadMemberBank(); startBankTicker();
+  if (D.guestFormEnabled) {
+    const gnEl = document.getElementById('guestName'); if (gnEl) gnEl.textContent = nm;
+    renderGuestForm(); showPg('guest-form');
+  } else {
+    showPg('home');
+    toast('Selamat datang, ' + nm + '!', 'success');
+    showChatSidebarLink();
+  }
+}
+
+// continueAsReturning — langsung masuk tanpa login Google lagi
+function continueAsReturning() {
+  const saved = localStorage.getItem('c_last_google');
+  if (!saved) return;
+  const user = JSON.parse(saved);
+  _selectedRole = user.role || 'guest';
+  if (_selectedRole === 'member') applyGoogleAsMember(user);
+  else applyGoogleAsGuest(user);
+}
+
+// clearReturningUser — ganti akun
+function clearReturningUser() {
+  localStorage.removeItem('c_last_google');
+  const banner = document.getElementById('returningUserBanner');
+  const roleArea = document.getElementById('roleChoiceArea');
+  if (banner) banner.style.display = 'none';
+  if (roleArea) roleArea.style.display = 'block';
+}
+
+// checkReturningUser — dipanggil saat buka tab auth
+function checkReturningUser() {
+  const saved = localStorage.getItem('c_last_google');
+  if (!saved) return;
+  try {
+    const user = JSON.parse(saved);
+    // Hanya tampilkan kalau masih fresh (7 hari)
+    if (Date.now() - user.ts > 7 * 24 * 60 * 60 * 1000) { localStorage.removeItem('c_last_google'); return; }
+    // Tampilkan banner returning user
+    const banner = document.getElementById('returningUserBanner');
+    const roleArea = document.getElementById('roleChoiceArea');
+    const avEl = document.getElementById('returningAv');
+    const nameEl = document.getElementById('returningName');
+    const roleEl = document.getElementById('returningRole');
+    if (!banner) return;
+    if (avEl) {
+      if (user.picture) avEl.innerHTML = '<img src="'+user.picture+'" style="width:100%;height:100%;object-fit:cover;border-radius:9px"/>';
+      else avEl.textContent = (user.shortName || user.name || '?').charAt(0).toUpperCase();
+    }
+    if (nameEl) nameEl.textContent = user.name || user.shortName;
+    if (roleEl) roleEl.textContent = user.role === 'member' ? 'Pendaftar Member' : 'Tamu';
+    banner.style.display = 'block';
+    if (roleArea) roleArea.style.display = 'none';
+  } catch(e) { localStorage.removeItem('c_last_google'); }
+}
+
+// ══ LEADER: Bank approval system ══// ══ LEADER: Bank approval system ══
 let _bankTab = 'pending';
 function switchBankTab(tab, btn) {
   _bankTab = tab;
   document.querySelectorAll('.bank-tab').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
+  const searchInp = document.getElementById('bankSearchInp');
+  if (searchInp) searchInp.value = '';
   loadLeaderBank();
+}
+
+function filterBankList(q) {
+  const items = document.querySelectorAll('#bankLeaderList .bank-approval-item');
+  const sq = q.toLowerCase();
+  items.forEach(el => {
+    const name = el.querySelector('.ba-name')?.textContent?.toLowerCase() || '';
+    el.style.display = (!sq || name.includes(sq)) ? '' : 'none';
+  });
 }
 
 async function loadLeaderBank() {
@@ -4138,7 +4550,8 @@ async function loadLeaderBank() {
     Object.entries(val).forEach(([memberKey, acc]) => {
       if (!acc || !acc.transactions) return;
       acc.transactions.forEach((tx, ti) => {
-        if (_bankTab === 'pending' && tx.status !== 'pending') return;
+        if (_bankTab === 'pending' && (tx.status !== 'pending')) return;
+        if (_bankTab === 'withdraw' && !(tx.type === 'withdraw' && tx.status === 'pending')) return;
         if (_bankTab === 'active' && tx.status !== 'active') return;
         if (_bankTab === 'history' && tx.status === 'pending') return;
         items.push({ memberKey, acc, tx, ti });
@@ -4150,17 +4563,19 @@ async function loadLeaderBank() {
       const d = new Date(tx.ts);
       const dateStr = d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
       const isPending = tx.status === 'pending';
-      const typeLabel = tx.type === 'deposit' ? '💰 Deposit' : '💸 Penarikan';
+      const typeLabel = tx.type === 'deposit' ? '💰 Deposit' : '💸 Tarik Tunai';
+      const typeBadgeCls = tx.type === 'deposit' ? 'bank-tx-status active' : 'bank-tx-status pending';
+      const netAmt = tx.type === 'deposit' ? tx.amount - BANK_CONFIG.DEPOSIT_ADMIN_FEE : tx.amount - BANK_CONFIG.WITHDRAW_ADMIN_FEE;
       return `<div class="bank-approval-item">
         <div class="ba-top">
           <div class="ba-name">${acc.memberName || memberKey}</div>
-          <span class="bank-tx-status ${tx.status||'pending'}">${tx.status==='pending'?'Menunggu':tx.status==='active'?'Aktif':'Selesai'}</span>
+          <span class="${typeBadgeCls}" style="font-size:.65rem">${typeLabel}</span>
         </div>
         <div class="ba-info">
-          ${typeLabel} · *${fmtRp(tx.amount)}*<br>
-          ${tx.note ? '📝 '+tx.note+'<br>' : ''}
-          📅 ${dateStr}
-          ${tx.method ? '<br>🏧 '+tx.method : ''}
+          <strong>${fmtRp(tx.amount)}</strong> ${tx.type==='deposit'?'→ Aktif '+fmtRp(netAmt):'→ Terima '+fmtRp(netAmt)}<br>
+          ${tx.note ? '📝 <em>'+tx.note+'</em><br>' : ''}
+          ${tx.method ? '🏧 <strong>'+tx.method+'</strong><br>' : ''}
+          📅 ${dateStr} · <span class="bank-tx-status ${tx.status||'pending'}" style="font-size:.62rem">${tx.status==='pending'?'Menunggu':tx.status==='active'?'Aktif':tx.status==='done'?'Selesai':'Ditolak'}</span>
         </div>
         ${isPending ? `<div class="bank-approval-btns">
           <button class="bank-approve-btn" onclick="bankApprove('${memberKey}',${ti})">✓ Terima</button>
@@ -4219,6 +4634,124 @@ async function bankReject(memberKey, txIdx) {
     toast('Ajuan ditolak','warn');
     loadLeaderBank();
   } catch(e) { toast('Gagal','error'); }
+}
+
+// ══ GUEST FORM SYSTEM ══
+async function setGuestFormEnabled(v) {
+  D.guestFormEnabled = v;
+  const panel = document.getElementById('guestFormBuilderPanel');
+  if (panel) panel.style.display = v ? 'block' : 'none';
+  await fbSet('settings/guestFormEnabled', v).catch(()=>localStorage.setItem('c_guestFormEnabled', JSON.stringify(v)));
+  if (v) loadGuestFormBlocks();
+  toast(v ? 'Form tamu diaktifkan' : 'Form tamu dinonaktifkan', v ? 'success' : 'warn');
+}
+
+let _guestFormBlocks = [];
+function addGuestFormBlock() {
+  _guestFormBlocks.push({ q: '', type: 'text', required: true });
+  renderGuestFormBuilder();
+}
+function renderGuestFormBuilder() {
+  const el = document.getElementById('leaderGuestFormBlocks');
+  if (!el) return;
+  if (!_guestFormBlocks.length) { el.innerHTML = '<div style="color:var(--tx2);font-size:.82rem;text-align:center;padding:1rem">Belum ada pertanyaan</div>'; return; }
+  el.innerHTML = _guestFormBlocks.map((b,i) => `<div class="form-q" style="background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:.9rem;margin-bottom:.6rem">
+    <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.5rem">
+      <input type="text" value="${b.q.replace(/"/g,'&quot;')}" placeholder="Teks pertanyaan..." oninput="_guestFormBlocks[${i}].q=this.value"
+        style="flex:1;background:var(--s1);border:1px solid var(--b2);border-radius:6px;padding:.5rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none"/>
+      <button onclick="_guestFormBlocks.splice(${i},1);renderGuestFormBuilder()" style="background:rgba(232,84,106,.08);border:1px solid rgba(232,84,106,.2);color:var(--err);border-radius:5px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <select onchange="_guestFormBlocks[${i}].type=this.value" style="background:var(--s1);border:1px solid var(--b2);border-radius:5px;padding:.4rem .6rem;color:var(--tx);font-size:.8rem;outline:none">
+      <option value="text" ${b.type==='text'?'selected':''}>Teks Pendek</option>
+      <option value="textarea" ${b.type==='textarea'?'selected':''}>Teks Panjang</option>
+      <option value="minecraft" ${b.type==='minecraft'?'selected':''}>Username Minecraft (auto-verify)</option>
+    </select>
+  </div>`).join('');
+}
+async function loadGuestFormBlocks() {
+  try {
+    const snap = await fbGet('settings/guestForm');
+    if (snap.val()) { _guestFormBlocks = snap.val(); renderGuestFormBuilder(); }
+  } catch(e) {
+    const saved = localStorage.getItem('c_guestForm');
+    if (saved) { _guestFormBlocks = JSON.parse(saved); renderGuestFormBuilder(); }
+  }
+}
+async function saveGuestForm() {
+  await fbSet('settings/guestForm', _guestFormBlocks).catch(()=>localStorage.setItem('c_guestForm', JSON.stringify(_guestFormBlocks)));
+  toast('Formulir tamu disimpan','success');
+}
+
+// Render guest form for guest to fill
+async function renderGuestForm() {
+  let blocks = _guestFormBlocks;
+  if (!blocks.length) {
+    try {
+      const snap = await fbGet('settings/guestForm');
+      blocks = snap.val() || [];
+    } catch(e) {
+      blocks = JSON.parse(localStorage.getItem('c_guestForm') || '[]');
+    }
+  }
+  const el = document.getElementById('guestFormBuilder');
+  if (!el) return;
+  if (!blocks.length) { skipGuestForm(); return; }
+  el.innerHTML = blocks.map((b,i) => {
+    if (b.type === 'textarea') return `<div class="form-q"><label>${b.q}</label><textarea id="gf_${i}" rows="3" placeholder="Jawaban..." style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:6px;padding:.6rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;resize:none;box-sizing:border-box"></textarea></div>`;
+    if (b.type === 'minecraft') return `<div class="form-q"><label>${b.q}</label><div style="display:flex;gap:6px"><input type="text" id="gf_${i}" placeholder="Username Minecraft Java..." style="flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:6px;padding:.6rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none"/><button onclick="verifyMinecraft(${i})" style="background:var(--s3);border:1px solid var(--b2);border-radius:6px;padding:.5rem .8rem;color:var(--tx2);cursor:pointer;font-size:.78rem;white-space:nowrap">Verifikasi</button></div><div id="gf_mc_status_${i}" style="font-size:.73rem;margin-top:.3rem"></div></div>`;
+    return `<div class="form-q"><label>${b.q}</label><input type="text" id="gf_${i}" placeholder="Jawaban..." style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:6px;padding:.6rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;box-sizing:border-box"/></div>`;
+  }).join('');
+}
+
+async function verifyMinecraft(idx) {
+  const inp = document.getElementById('gf_'+idx);
+  const statusEl = document.getElementById('gf_mc_status_'+idx);
+  if (!inp || !inp.value.trim()) { toast('Masukkan username Minecraft','warn'); return; }
+  const username = inp.value.trim();
+  statusEl.innerHTML = '<span style="color:var(--tx2)">Memverifikasi...</span>';
+  try {
+    const res = await fetch('https://api.mojang.com/users/profiles/minecraft/' + encodeURIComponent(username));
+    if (res.ok) {
+      const data = await res.json();
+      statusEl.innerHTML = `<span style="color:var(--ok)">✓ Verified: <strong>${data.name}</strong> (UUID: ${data.id.slice(0,8)}...)</span>`;
+      inp.dataset.verified = 'true';
+      inp.dataset.uuid = data.id;
+      inp.dataset.mcName = data.name;
+      inp.value = data.name; // Use the exact casing from Mojang
+    } else {
+      statusEl.innerHTML = '<span style="color:var(--err)">✗ Username tidak ditemukan di Minecraft Java</span>';
+      inp.dataset.verified = 'false';
+    }
+  } catch(e) {
+    statusEl.innerHTML = '<span style="color:var(--warn)">⚠ Tidak bisa terhubung ke Mojang API. Coba lagi.</span>';
+  }
+}
+
+function submitGuestForm() {
+  let blocks = _guestFormBlocks;
+  const answers = {};
+  for (let i = 0; i < blocks.length; i++) {
+    const inp = document.getElementById('gf_'+i);
+    if (!inp) continue;
+    if (blocks[i].type === 'minecraft' && inp.dataset.verified !== 'true') {
+      toast('Verifikasi username Minecraft dulu!','warn'); return;
+    }
+    answers[blocks[i].q || 'Q'+(i+1)] = inp.value.trim();
+    if (blocks[i].type === 'minecraft' && inp.dataset.mcName) {
+      D.gamertag = inp.dataset.mcName;
+      D.minecraftUUID = inp.dataset.uuid;
+    }
+  }
+  D.guestAnswers = answers;
+  skipGuestForm();
+}
+
+function skipGuestForm() {
+  showPg('home');
+  toast('Selamat datang, ' + D.user + '!', 'success');
+  showChatSidebarLink();
 }
 
 // Hook into bootApp to also load CiunTik and set up listener
