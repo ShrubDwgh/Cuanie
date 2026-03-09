@@ -374,24 +374,79 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 .msg-act-btn{background:none;border:none;color:var(--tx2);cursor:pointer;font-size:.72rem;padding:3px 6px;border-radius:5px;transition:background .15s,color .15s;display:flex;align-items:center;gap:3px;white-space:nowrap}
 .msg-act-btn:hover{background:var(--s3);color:var(--tx)}
 /* Chat Input */
-.chat-input-area{padding:.65rem .9rem;border-top:1px solid var(--b1);background:var(--s1);flex-shrink:0;padding-bottom:calc(.65rem + env(safe-area-inset-bottom,0px))}
+.chat-input-area{padding:.7rem .9rem;border-top:1px solid var(--b1);background:var(--s1);flex-shrink:0;padding-bottom:calc(.7rem + env(safe-area-inset-bottom,0px));position:relative}
 .mention-suggestions{background:var(--s2);border:1px solid var(--b2);border-radius:8px;margin-bottom:8px;overflow:hidden;display:none;max-height:160px;overflow-y:auto}
 .mention-sug-item{display:flex;align-items:center;gap:8px;padding:.5rem .85rem;cursor:pointer;transition:background .15s;font-size:.84rem}
 .mention-sug-item:hover{background:var(--s3)}
 .mention-sug-item .sug-av{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff}
 .mention-sug-item .sug-name{font-weight:500}
 .mention-sug-item .sug-role{font-size:.72rem;color:var(--tx2);margin-left:4px}
-.chat-input-row{display:flex;gap:7px;align-items:flex-end}
-.chat-input-box{flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:.7rem 1rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.92rem;outline:none;resize:none;min-height:46px;max-height:160px;transition:border-color .2s;line-height:1.6;-webkit-user-select:text;user-select:text}
+.chat-input-row{display:flex;flex-direction:column;gap:6px}
+.chat-input-actions{display:flex;gap:5px;align-items:center}
+.chat-input-box{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:14px;padding:.85rem 1.15rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.96rem;outline:none;resize:none;min-height:52px;max-height:200px;transition:border-color .2s;line-height:1.7;-webkit-user-select:text;user-select:text;box-sizing:border-box;display:block}
 .chat-input-box:focus{border-color:var(--ac)}
-.chat-input-box::placeholder{color:var(--tx2)}
-.chat-input-btn{width:40px;height:40px;border-radius:9px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
-.chat-send-btn{background:var(--ac)}
+.chat-input-box::placeholder{color:var(--tx2);opacity:.7}
+.chat-input-btn{width:38px;height:38px;border-radius:9px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.chat-send-btn{background:var(--ac);margin-left:auto}
 .chat-send-btn:hover{background:#7b60f4;transform:scale(1.05)}
 .chat-img-btn{background:var(--s3);border:1px solid var(--b2)}
 .chat-img-btn:hover{border-color:var(--ac2)}
 .chat-input-hints{font-size:.68rem;color:var(--tx2);margin-top:4px;display:flex;gap:.8rem;flex-wrap:wrap;user-select:none;opacity:.75}
 .chat-input-hints span{cursor:default}
+/* ══ BANK CUANIE ══ */
+.bank-balance-card{background:linear-gradient(135deg,var(--ac) 0%,var(--ac2) 100%);border-radius:14px;padding:1.4rem 1.3rem;margin-bottom:1.1rem;position:relative;overflow:hidden}
+.bank-balance-card::after{content:'';position:absolute;right:-20px;top:-20px;width:100px;height:100px;background:rgba(255,255,255,.07);border-radius:50%}
+.bank-bal-label{font-size:.73rem;color:rgba(255,255,255,.75);font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:1px;margin-bottom:.4rem}
+.bank-bal-amount{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;color:#fff;letter-spacing:-.5px;line-height:1.1}
+.bank-bal-sub{font-size:.75rem;color:rgba(255,255,255,.65);margin-top:.35rem}
+.bank-growth{display:flex;align-items:center;gap:5px;margin-top:.5rem;color:rgba(255,255,255,.85);font-size:.78rem}
+.bank-history-hd{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx2);margin-bottom:.7rem}
+.bank-history-list{display:flex;flex-direction:column;gap:.5rem}
+.bank-empty{text-align:center;color:var(--tx2);font-size:.82rem;padding:1.5rem}
+.bank-tx-item{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:.75rem 1rem;display:flex;align-items:flex-start;gap:.8rem}
+.bank-tx-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bank-tx-icon.dep{background:rgba(30,201,154,.12)}
+.bank-tx-icon.wd{background:rgba(232,84,106,.12)}
+.bank-tx-icon.grow{background:rgba(108,78,242,.12)}
+.bank-tx-body{flex:1;min-width:0}
+.bank-tx-title{font-size:.84rem;font-weight:600;color:var(--tx)}
+.bank-tx-sub{font-size:.73rem;color:var(--tx2);margin-top:2px}
+.bank-tx-amount{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;flex-shrink:0}
+.bank-tx-amount.in{color:var(--ok)}
+.bank-tx-amount.out{color:var(--err)}
+.bank-tx-status{font-size:.67rem;padding:2px 7px;border-radius:10px;font-family:'Syne',sans-serif;font-weight:600;text-transform:uppercase}
+.bank-tx-status.pending{background:rgba(245,158,11,.12);color:var(--warn)}
+.bank-tx-status.active{background:rgba(30,201,154,.12);color:var(--ok)}
+.bank-tx-status.done{background:rgba(148,148,170,.12);color:var(--tx2)}
+.bank-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:480;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(3px)}
+.bank-modal-bg.show{opacity:1;pointer-events:all}
+.bank-modal{position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-radius:18px 18px 0 0;z-index:490;transform:translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);max-height:90dvh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,0px)}
+.bank-modal.open{transform:translateY(0)}
+@media(min-width:600px){.bank-modal{left:50%;right:auto;bottom:50%;width:460px;border-radius:16px;transform:translate(-50%,50%) scale(.96)}.bank-modal.open{transform:translate(-50%,50%) scale(1)}}
+.bank-modal-hd{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.3rem .6rem;border-bottom:1px solid var(--b1);font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx2)}
+.bank-modal-body{padding:1.2rem 1.3rem 1.5rem}
+.bank-rate-info{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:.85rem 1rem;margin-bottom:1rem;display:flex;flex-direction:column;gap:.45rem}
+.bank-rate-row{display:flex;justify-content:space-between;font-size:.83rem}
+.bank-rate-row .ok{color:var(--ok);font-weight:600}
+.bank-rate-row .warn{color:var(--warn);font-weight:600}
+.bank-field{margin-bottom:.9rem}
+.bank-field label{display:block;font-size:.78rem;color:var(--tx2);margin-bottom:.4rem;font-weight:500}
+.bank-preview{background:var(--s3);border:1px solid var(--b2);border-radius:10px;padding:.85rem 1rem;margin-bottom:1rem}
+.bank-prev-row{display:flex;justify-content:space-between;font-size:.83rem;padding:.25rem 0}
+.bank-prev-row.total{border-top:1px solid var(--b2);margin-top:.3rem;padding-top:.5rem;font-weight:700}
+.bank-tabs{display:flex;gap:4px;background:var(--s2);border-radius:7px;padding:3px;margin-bottom:.9rem}
+.bank-tab{flex:1;padding:.38rem;border:none;border-radius:5px;background:none;color:var(--tx2);font-family:'DM Sans',sans-serif;font-size:.78rem;cursor:pointer;transition:all .2s}
+.bank-tab.active{background:var(--s3);color:var(--tx);font-weight:600}
+.bank-approval-item{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:.9rem 1rem;margin-bottom:.6rem}
+.bank-approval-item .ba-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem}
+.bank-approval-item .ba-name{font-weight:700;font-size:.88rem;color:var(--tx)}
+.bank-approval-item .ba-info{font-size:.78rem;color:var(--tx2);line-height:1.6;margin-bottom:.7rem}
+.bank-approval-btns{display:flex;gap:.5rem}
+.bank-approve-btn{flex:1;background:rgba(30,201,154,.12);border:1px solid rgba(30,201,154,.25);color:var(--ok);border-radius:7px;padding:.5rem;font-size:.8rem;font-weight:600;cursor:pointer;transition:background .2s}
+.bank-approve-btn:hover{background:rgba(30,201,154,.22)}
+.bank-reject-btn{flex:1;background:rgba(232,84,106,.08);border:1px solid rgba(232,84,106,.2);color:var(--err);border-radius:7px;padding:.5rem;font-size:.8rem;font-weight:600;cursor:pointer;transition:background .2s}
+.bank-reject-btn:hover{background:rgba(232,84,106,.18)}
+
 /* Notification badge */
 .notif-badge{position:absolute;top:-4px;right:-4px;background:var(--err);color:#fff;font-size:.6rem;font-weight:700;border-radius:8px;padding:1px 5px;font-family:'Syne',sans-serif;min-width:16px;text-align:center}
 .mention-nav{position:fixed;bottom:0;right:0;left:0;z-index:55;display:none;flex-direction:row;justify-content:flex-end;padding:.5rem 1rem;pointer-events:none}
@@ -496,7 +551,7 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 .emoji-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:.5rem;max-height:180px;overflow-y:auto}
 .emoji-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:5px;cursor:pointer;font-size:1.1rem;border:none;background:none;transition:background .15s;line-height:1}
 .emoji-btn:hover{background:var(--s3)}
-.emoji-input-wrap{position:relative;flex:1}
+.emoji-input-wrap{display:none}
 
 /* ══ CIUNTIK ══ */
 .ciuntik-wrap{min-height:100vh;padding:5rem .9rem 4rem;max-width:680px;margin:0 auto}
@@ -651,7 +706,7 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
   .chat-header{padding:.6rem .9rem}
   .chat-msgs{padding:.75rem .9rem}
   .chat-input-area{padding:.55rem .75rem;padding-bottom:calc(.55rem + env(safe-area-inset-bottom,0px))}
-  .chat-input-box{font-size:.88rem;min-height:42px}
+  .chat-input-box{font-size:.9rem;min-height:50px}
   .chat-input-btn{width:38px;height:38px}
   .sticker-panel{bottom:calc(env(safe-area-inset-bottom,0px) + 4rem);width:min(340px,94vw)}
 
@@ -704,7 +759,7 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
   /* Chat input */
   .chat-input-area{padding:.5rem .65rem;padding-bottom:calc(.5rem + env(safe-area-inset-bottom,0px))}
   .chat-input-btn{width:36px;height:36px}
-  .chat-input-box{min-height:40px;font-size:.86rem}
+  .chat-input-box{min-height:48px;font-size:.9rem}
   .chat-msgs{padding:.6rem .7rem}
 
   /* Form */
@@ -998,6 +1053,105 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
         </button>
       </div>
     </div>
+    <!-- BANK CUANIE -->
+    <div class="panel" id="memberBankPanel">
+      <div class="panel-h">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><rect x="1" y="3" width="22" height="18" rx="2"/><path d="M1 9h22"/><path d="M7 15h.01M11 15h.01"/></svg>
+        <h3>Bank Cuanie</h3>
+      </div>
+      <div class="bank-balance-card">
+        <div class="bank-bal-label">Saldo Aktif</div>
+        <div class="bank-bal-amount" id="memberBankBalance">Rp 0</div>
+        <div class="bank-bal-sub" id="memberBankSub">Belum ada deposit aktif</div>
+        <div class="bank-growth" id="memberBankGrowth" style="display:none">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.5"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg>
+          <span id="memberBankGrowthTxt"></span>
+        </div>
+      </div>
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem">
+        <button class="btn-p" onclick="openBankDeposit()" style="flex:1;font-size:.84rem;padding:.6rem .9rem;min-width:120px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Ajukan Deposit
+        </button>
+        <button class="btn-s" onclick="openBankWithdraw()" style="flex:1;font-size:.84rem;padding:.6rem .9rem;min-width:120px" id="memberWithdrawBtn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5,12 12,5 19,12"/></svg>
+          Tarik Tunai
+        </button>
+      </div>
+      <div class="bank-history-hd">Riwayat Transaksi</div>
+      <div class="bank-history-list" id="memberBankHistory">
+        <div class="bank-empty">Belum ada transaksi</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BANK DEPOSIT MODAL -->
+<div class="bank-modal-bg" id="bankDepositBg" onclick="closeBankModal('deposit')"></div>
+<div class="bank-modal" id="bankDepositModal">
+  <div class="bank-modal-hd">
+    <span>Ajukan Deposit</span>
+    <button onclick="closeBankModal('deposit')" class="pp-cls"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="bank-modal-body">
+    <div class="bank-rate-info">
+      <div class="bank-rate-row"><span>Bunga</span><span class="ok">+2% / bulan</span></div>
+      <div class="bank-rate-row"><span>Biaya Admin</span><span class="warn">Rp 2.000</span></div>
+      <div class="bank-rate-row"><span>Min. Deposit</span><span>Rp 50.000</span></div>
+    </div>
+    <div class="bank-field">
+      <label>Jumlah Deposit (Rp)</label>
+      <input type="number" id="depositAmount" placeholder="Contoh: 100000" min="50000" step="1000" oninput="calcDepositPreview()" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:.72rem .9rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:1rem;outline:none;box-sizing:border-box"/>
+    </div>
+    <div class="bank-preview" id="depositPreview" style="display:none">
+      <div class="bank-prev-row"><span>Jumlah deposit</span><span id="dpAmt">-</span></div>
+      <div class="bank-prev-row"><span>Biaya admin</span><span id="dpAdmin" style="color:var(--err)">- Rp 2.000</span></div>
+      <div class="bank-prev-row total"><span>Dana aktif</span><span id="dpNet" style="color:var(--ok)">-</span></div>
+      <div class="bank-prev-row"><span>Pertumbuhan /bln</span><span id="dpGrowth" style="color:var(--ok)">-</span></div>
+    </div>
+    <div class="bank-field">
+      <label>Catatan (opsional)</label>
+      <textarea id="depositNote" placeholder="Misal: transfer BCA..." rows="2" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:.72rem .9rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;resize:none;box-sizing:border-box"></textarea>
+    </div>
+    <button class="full-btn" onclick="submitBankDeposit()" style="margin-top:.5rem">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Kirim ke Leader via WhatsApp
+    </button>
+    <p style="font-size:.73rem;color:var(--tx2);text-align:center;margin-top:.6rem">Ajuan deposit akan dikonfirmasi manual oleh Leader</p>
+  </div>
+</div>
+
+<!-- BANK WITHDRAW MODAL -->
+<div class="bank-modal-bg" id="bankWithdrawBg" onclick="closeBankModal('withdraw')"></div>
+<div class="bank-modal" id="bankWithdrawModal">
+  <div class="bank-modal-hd">
+    <span>Tarik Tunai</span>
+    <button onclick="closeBankModal('withdraw')" class="pp-cls"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="bank-modal-body">
+    <div id="withdrawBalDisplay" class="bank-rate-info">
+      <div class="bank-rate-row"><span>Saldo saat ini</span><span class="ok" id="wdCurrentBal">Rp 0</span></div>
+      <div class="bank-rate-row"><span>Biaya Admin Tarik</span><span class="warn">Rp 3.000</span></div>
+    </div>
+    <div class="bank-field">
+      <label>Jumlah Penarikan (Rp)</label>
+      <input type="number" id="withdrawAmount" placeholder="Contoh: 50000" min="10000" step="1000" oninput="calcWithdrawPreview()" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:.72rem .9rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:1rem;outline:none;box-sizing:border-box"/>
+    </div>
+    <div class="bank-preview" id="withdrawPreview" style="display:none">
+      <div class="bank-prev-row"><span>Penarikan</span><span id="wdAmt">-</span></div>
+      <div class="bank-prev-row"><span>Biaya admin</span><span id="wdAdmin" style="color:var(--err)">- Rp 3.000</span></div>
+      <div class="bank-prev-row total"><span>Diterima</span><span id="wdNet" style="color:var(--ok)">-</span></div>
+      <div class="bank-prev-row" id="wdSisaRow"><span>Sisa saldo</span><span id="wdSisa">-</span></div>
+    </div>
+    <div class="bank-field">
+      <label>Metode Pembayaran</label>
+      <input type="text" id="withdrawMethod" placeholder="Misal: BCA 1234567, OVO 081..." style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:.72rem .9rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;box-sizing:border-box"/>
+    </div>
+    <button class="full-btn" onclick="submitBankWithdraw()" style="margin-top:.5rem">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Kirim ke Leader via WhatsApp
+    </button>
+    <p style="font-size:.73rem;color:var(--tx2);text-align:center;margin-top:.6rem">Penarikan diproses manual oleh Leader dalam 1×24 jam</p>
   </div>
 </div>
 
@@ -1068,12 +1222,19 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
         <button class="btn-p" onclick="goToChat()" style="font-size:.83rem;padding:.6rem 1.2rem">Buka Chat</button>
       </div>
     </div>
-    <!-- REG TOGGLE -->
+    <!-- REG & CIUNTIK TOGGLES -->
     <div class="panel">
-      <div class="panel-h"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg><h3>Status Pendaftaran</h3></div>
+      <div class="panel-h"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg><h3>Pengaturan Fitur</h3></div>
       <div class="tgl-row">
         <div><div class="tgl-lbl">Buka Pendaftaran Anggota</div><div class="tgl-sub">Jika dinonaktifkan, tombol daftar dikunci untuk tamu</div></div>
         <label class="tgl"><input type="checkbox" id="leaderRegTgl" onchange="setReg(this.checked)"><span class="tgl-tr"></span></label>
+      </div>
+      <div class="tgl-row" style="margin-top:.6rem">
+        <div>
+          <div class="tgl-lbl">CiunTik Upload</div>
+          <div class="tgl-sub">Jika dinonaktifkan, member hanya bisa menonton, like, dan komentar</div>
+        </div>
+        <label class="tgl"><input type="checkbox" id="leaderCiunTikTgl" onchange="setCiunTikOpen(this.checked)"><span class="tgl-tr"></span></label>
       </div>
     </div>
     <!-- MEMBER MANAGEMENT -->
@@ -1082,6 +1243,21 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
       <div class="member-search-wrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="leaderMemberSearch" placeholder="Cari nama / gamertag / kode..." oninput="renderMemberTable('leaderMemberTbody',this.value)"/></div>
       <div style="overflow-x:auto"><table class="dtable"><thead><tr><th>Nama</th><th>Email</th><th>Kode</th><th>Gamertag</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="leaderMemberTbody"></tbody></table></div>
     </div>
+    <!-- BANK APPROVAL PANEL -->
+    <div class="panel" id="leaderBankPanel">
+      <div class="panel-h">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><rect x="1" y="3" width="22" height="18" rx="2"/><path d="M1 9h22"/><path d="M7 15h.01M11 15h.01"/></svg>
+        <h3>Bank Cuanie — Ajuan</h3>
+        <span class="notif-badge" id="bankPendingBadge" style="position:relative;top:auto;right:auto;display:none;margin-left:4px">0</span>
+      </div>
+      <div class="bank-tabs" id="bankLeaderTabs">
+        <button class="bank-tab active" onclick="switchBankTab('pending',this)">Menunggu</button>
+        <button class="bank-tab" onclick="switchBankTab('active',this)">Aktif</button>
+        <button class="bank-tab" onclick="switchBankTab('history',this)">Riwayat</button>
+      </div>
+      <div id="bankLeaderList"></div>
+    </div>
+
     <!-- QUESTIONS -->
     <div class="panel">
       <div class="panel-h"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><h3>Kelola Pertanyaan Formulir</h3></div>
@@ -1128,27 +1304,30 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
     <div class="chat-input-area">
       <div class="img-preview-strip" id="imgPreviewStrip"></div>
       <div class="mention-suggestions" id="mentionSuggestions"></div>
+      <!-- Emoji Picker (above input row) -->
+      <div class="emoji-picker" id="emojiPicker">
+        <div class="emoji-search"><input type="text" placeholder="Cari emoji..." oninput="filterEmoji(this.value)" id="emojiSearch"/></div>
+        <div class="emoji-grid" id="emojiGrid"></div>
+      </div>
       <div class="chat-input-row">
-        <button class="chat-input-btn chat-img-btn" onclick="triggerImgUpload()" title="Kirim gambar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
-        </button>
-        <button class="chat-input-btn chat-img-btn" onclick="toggleStickerPanel()" title="Stiker" id="stickerBtn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-        </button>
-        <div class="emoji-input-wrap">
-          <div class="emoji-picker" id="emojiPicker">
-            <div class="emoji-search"><input type="text" placeholder="Cari emoji..." oninput="filterEmoji(this.value)" id="emojiSearch"/></div>
-            <div class="emoji-grid" id="emojiGrid"></div>
-          </div>
-          <button class="chat-input-btn chat-img-btn" onclick="toggleEmojiPicker()" title="Emoji" style="position:absolute;right:8px;bottom:4px;width:28px;height:28px;z-index:2;border-radius:6px" id="emojiBtn">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        <!-- Textarea — full width -->
+        <textarea class="chat-input-box" id="chatInput" placeholder="Ketik pesan..." rows="1"
+          onkeydown="chatKeyDown(event)" oninput="chatInputChange(this)"></textarea>
+        <!-- Actions row below textarea -->
+        <div class="chat-input-actions">
+          <button class="chat-input-btn chat-img-btn" onclick="triggerImgUpload()" title="Gambar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
           </button>
-          <textarea class="chat-input-box" id="chatInput" placeholder="Ketik pesan..." rows="1" style="padding-right:44px"
-            onkeydown="chatKeyDown(event)" oninput="chatInputChange(this)"></textarea>
+          <button class="chat-input-btn chat-img-btn" onclick="toggleStickerPanel()" title="Stiker" id="stickerBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </button>
+          <button class="chat-input-btn chat-img-btn" onclick="toggleEmojiPicker()" title="Emoji" id="emojiBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </button>
+          <button class="chat-input-btn chat-send-btn" onclick="sendChatMsg()" title="Kirim">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
+          </button>
         </div>
-        <button class="chat-input-btn chat-send-btn" onclick="sendChatMsg()" title="Kirim">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
-        </button>
       </div>
 
       <input type="file" id="imgUploadInput" accept="image/*" multiple style="display:none" onchange="handleImgUpload(this)"/>
@@ -1322,6 +1501,8 @@ function bootApp() {
     fbGet('settings/pixabayKey'),
   ]).then(async ([regSnap, qSnap, memSnap, evSnap, ruSnap, pkSnap]) => {
     D.regOpen   = regSnap.val() !== null ? regSnap.val() : true;
+    const ctSnap = await fbGet('settings/ciuntikOpen');
+    D.ciuntikOpen = ctSnap.val() !== null ? ctSnap.val() : true;
     D.questions = qSnap.val()   || DEFAULT_QUESTIONS;
     D.members   = memSnap.val() ? Object.values(memSnap.val()) : [];
     D.events    = evSnap.val()  ? Object.values(evSnap.val())  : [];
@@ -1382,6 +1563,7 @@ function setupRealtimeListeners() {
 
   // Settings
   fbOn('settings/regOpen', val => { if (val !== null) { D.regOpen = val; applyReg(); } });
+  fbOn('settings/ciuntikOpen', val => { if (val !== null) { D.ciuntikOpen = val; applyCiunTikMode(); } });
   fbOn('settings/questions', val => { if (val) D.questions = val; });
   fbOn('events', val => { D.events = val ? Object.values(val) : []; renderPubBlocks('events'); });
   fbOn('rules',  val => { D.rules  = val ? Object.values(val) : []; renderPubBlocks('rules'); });
@@ -1389,7 +1571,7 @@ function setupRealtimeListeners() {
 
 window.addEventListener('fb-ready', () => { _fbReady = true; bootApp(); });
 // If Firebase is slow or blocked, boot after 4s anyway
-setTimeout(() => { if (!_fbReady) { console.warn('Firebase timeout, using localStorage'); D.regOpen=JSON.parse(localStorage.getItem('c_reg')?? 'true'); D.questions=JSON.parse(localStorage.getItem('c_q')||'null')||DEFAULT_QUESTIONS; D.members=JSON.parse(localStorage.getItem('c_members')||'[]'); D.events=JSON.parse(localStorage.getItem('c_events')||'[]'); D.rules=JSON.parse(localStorage.getItem('c_rules')||'[]'); applyReg(); renderPubPages(); showLoadingOverlay(false); } }, 4000);
+setTimeout(() => { if (!_fbReady) { console.warn('Firebase timeout, using localStorage'); D.regOpen=JSON.parse(localStorage.getItem('c_reg')?? 'true'); D.ciuntikOpen=JSON.parse(localStorage.getItem('c_ciuntikOpen')?? 'true'); D.questions=JSON.parse(localStorage.getItem('c_q')||'null')||DEFAULT_QUESTIONS; D.members=JSON.parse(localStorage.getItem('c_members')||'[]'); D.events=JSON.parse(localStorage.getItem('c_events')||'[]'); D.rules=JSON.parse(localStorage.getItem('c_rules')||'[]'); applyReg(); renderPubPages(); showLoadingOverlay(false); } }, 4000);
 
 /* ══ REG STATUS ══ */
 function applyReg() {
@@ -1420,6 +1602,29 @@ function setReg(v) {
   fbSet('settings/regOpen', v).catch(()=>localStorage.setItem('c_reg', JSON.stringify(v)));
   applyReg();
   toast(v ? 'Pendaftaran dibuka' : 'Pendaftaran ditutup', v ? 'success' : 'error');
+}
+
+function setCiunTikOpen(v) {
+  D.ciuntikOpen = v;
+  fbSet('settings/ciuntikOpen', v).catch(()=>localStorage.setItem('c_ciuntikOpen', JSON.stringify(v)));
+  applyCiunTikMode();
+  toast(v ? 'CiunTik dibuka untuk upload' : 'CiunTik hanya mode tonton', v ? 'success' : 'warn');
+}
+
+function applyCiunTikMode() {
+  // Show/hide upload panel and create button based on ciuntikOpen
+  const panel = document.getElementById('ctUploadPanel');
+  const createBtn = document.getElementById('ctCreateToggle');
+  const closedBanner = document.getElementById('ctClosedBanner');
+  const canUpload = D.ciuntikOpen && D.role && D.role !== 'guest';
+  if (createBtn) createBtn.style.display = canUpload ? 'flex' : 'none';
+  if (panel) panel.style.display = 'none'; // always reset
+  if (closedBanner) closedBanner.style.display = D.ciuntikOpen ? 'none' : 'flex';
+  // Sync toggle states in admin/leader panels
+  ['adminCiunTikTgl','leaderCiunTikTgl'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.checked = D.ciuntikOpen;
+  });
 }
 
 function handleRegClick() {
@@ -1624,7 +1829,7 @@ function loginAs(role) {
     document.getElementById('memberWelcome').innerHTML = `${mem.name} <span class="r-tag member">Member</span>`;
     document.getElementById('mId').textContent = String(D.members.filter(m=>m.status==='active').indexOf(mem)+1).padStart(2,'0');
     document.getElementById('mGametag').textContent = mem.gamertag || '—';
-    updateNav(); showPg('member'); showChatSidebarLink(); showProfileBtn(); checkChatNotifs(); toast('Selamat datang, '+mem.name,'success');
+    updateNav(); showPg('member'); showChatSidebarLink(); showProfileBtn(); checkChatNotifs(); toast('Selamat datang, '+mem.name,'success'); loadMemberBank(); startBankTicker();
 
   } else if (role === 'admin') {
     if (document.getElementById('adminUser').value.trim()!=='admin'||document.getElementById('adminPass').value!=='admin123')
@@ -1636,7 +1841,7 @@ function loginAs(role) {
     if (document.getElementById('leaderPass').value!=='leader@cuanie')
       { toast('Password leader salah','error'); return; }
     D.user='Leader'; D.role='leader';
-    renderLeaderPanel(); updateNav(); showPg('leader'); showChatSidebarLink(); showProfileBtn(); checkChatNotifs(); toast('Masuk sebagai Leader','success');
+    renderLeaderPanel(); updateNav(); showPg('leader'); showChatSidebarLink(); showProfileBtn(); checkChatNotifs(); toast('Masuk sebagai Leader','success'); setTimeout(loadLeaderBank, 500);
   }
 }
 
@@ -1840,6 +2045,8 @@ function renderLeaderPanel() {
   refreshDash();
   renderMemberTable('leaderMemberTbody', document.getElementById('leaderMemberSearch')?.value);
   document.getElementById('leaderRegTgl').checked = D.regOpen;
+  const ctTgl = document.getElementById('leaderCiunTikTgl');
+  if (ctTgl) ctTgl.checked = D.ciuntikOpen !== false;
   renderQB();
   renderBlockBuilder('events','leader');
   renderBlockBuilder('rules','leader');
@@ -2523,6 +2730,10 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
 <div class="page" id="page-ciuntik">
   <div class="ciuntik-wrap">
     <!-- Header -->
+    <div id="ctClosedBanner" style="display:none;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:10px;padding:.8rem 1rem;margin-bottom:.9rem;gap:9px;align-items:center;color:var(--warn);font-size:.84rem">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>Upload dinonaktifkan oleh Leader. Kamu masih bisa menonton, like, dan komentar.</span>
+    </div>
     <div class="ct-page-hd">
       <div class="ct-logo-row">
         <div class="ciuntik-logo">CT</div>
@@ -2608,6 +2819,87 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
           </button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- BANK PAGE -->
+<div class="page" id="page-bank">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Keuangan</div><h2>Cuanie Bank</h2></div>
+      <button onclick="showPg('member')" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+
+    <!-- Balance card -->
+    <div class="bank-balance-card" id="bankBalanceCard">
+      <div class="bank-bal-label">Saldo Aktif</div>
+      <div class="bank-bal-amount" id="bankBalDisplay">Rp 0</div>
+      <div class="bank-bal-sub" id="bankBalSub">Belum ada deposit aktif</div>
+      <div class="bank-bal-rate">+1.5% / hari · Biaya Admin 2.5%</div>
+    </div>
+
+    <!-- Deposit form -->
+    <div class="panel">
+      <div class="panel-h">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><polyline points="16,3 21,3 21,8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21,16 21,21 16,21"/><line x1="4" y1="4" x2="21" y2="21"/></svg>
+        <h3>Ajukan Deposit</h3>
+      </div>
+      <div id="bankDepositStatus"></div>
+      <div class="form-q">
+        <label>Jumlah Deposit (Rp)</label>
+        <input type="number" id="bankDepositAmt" placeholder="Contoh: 1000000" min="10000" step="1000"/>
+      </div>
+      <div class="form-q">
+        <label>Metode Pembayaran</label>
+        <select id="bankDepositMethod" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:6px;padding:.6rem .9rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.87rem;outline:none">
+          <option value="Transfer Bank">Transfer Bank</option>
+          <option value="DANA">DANA</option>
+          <option value="OVO">OVO</option>
+          <option value="GoPay">GoPay</option>
+          <option value="Tunai Langsung">Tunai Langsung</option>
+        </select>
+      </div>
+      <div class="form-q">
+        <label>Catatan (opsional)</label>
+        <input type="text" id="bankDepositNote" placeholder="Misal: sudah transfer ke rekening X"/>
+      </div>
+      <div class="bank-fee-preview" id="bankFeePreview" style="display:none"></div>
+      <button class="wa-btn" onclick="submitDepositWA()" style="margin-top:.9rem">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+        Kirim Pengajuan Deposit ke Leader
+      </button>
+      <p style="font-size:.72rem;color:var(--tx2);text-align:center;margin-top:.6rem">Setelah pengajuan disetujui Leader, saldo akan aktif secara otomatis</p>
+    </div>
+
+    <!-- Withdraw form -->
+    <div class="panel" id="bankWithdrawPanel">
+      <div class="panel-h">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <h3>Ajukan Penarikan</h3>
+      </div>
+      <div id="bankWithdrawStatus"></div>
+      <div class="form-q">
+        <label>Jumlah Tarik (Rp)</label>
+        <input type="number" id="bankWithdrawAmt" placeholder="Maks sesuai saldo" min="10000" step="1000"/>
+      </div>
+      <div class="form-q">
+        <label>Rekening / Dompet Tujuan</label>
+        <input type="text" id="bankWithdrawDest" placeholder="Contoh: BCA 1234567890 a/n Nama"/>
+      </div>
+      <button class="wa-btn" onclick="submitWithdrawWA()" style="margin-top:.9rem;background:#16a34a">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+        Kirim Pengajuan Penarikan ke Leader
+      </button>
+    </div>
+
+    <!-- History -->
+    <div class="panel">
+      <div class="panel-h">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+        <h3>Riwayat Transaksi</h3>
+      </div>
+      <div id="bankHistoryList"><div style="color:var(--tx2);font-size:.83rem;text-align:center;padding:1.5rem">Belum ada transaksi</div></div>
     </div>
   </div>
 </div>
@@ -3552,6 +3844,381 @@ function sendDM() {
 
 function dmKeyDown(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendDM(); }
+}
+
+// ══ BANK CUANIE SYSTEM ══
+const BANK_CONFIG = {
+  INTEREST_RATE: 0.02,        // 2% per bulan
+  DEPOSIT_ADMIN_FEE: 2000,    // Rp 2.000
+  WITHDRAW_ADMIN_FEE: 3000,   // Rp 3.000
+  MIN_DEPOSIT: 50000,         // Rp 50.000
+  MIN_WITHDRAW: 10000,        // Rp 10.000
+  GROWTH_INTERVAL_MS: 60000,  // tick setiap 1 menit (real-time growth sim)
+};
+
+function fmtRp(n) {
+  if (n == null) return 'Rp 0';
+  return 'Rp ' + Math.floor(n).toLocaleString('id-ID');
+}
+
+// Load & show bank data for current member
+async function loadMemberBank() {
+  if (!D.user || !D.role || D.role === 'guest') return;
+  const key = (D.email || D.user).replace(/[.#$/[\]]/g, '_');
+  let acc = null;
+  try {
+    const snap = await fbGet('bank/' + key);
+    acc = snap.val();
+  } catch(e) {
+    acc = JSON.parse(localStorage.getItem('c_bank_' + key) || 'null');
+  }
+  renderMemberBank(acc);
+}
+
+function renderMemberBank(acc) {
+  const balEl = document.getElementById('memberBankBalance');
+  const subEl = document.getElementById('memberBankSub');
+  const growEl = document.getElementById('memberBankGrowth');
+  const growTxt = document.getElementById('memberBankGrowthTxt');
+  const wdBtn = document.getElementById('memberWithdrawBtn');
+  const histEl = document.getElementById('memberBankHistory');
+  if (!balEl) return;
+
+  if (!acc || !acc.balance) {
+    balEl.textContent = 'Rp 0';
+    if (subEl) subEl.textContent = 'Belum ada deposit aktif';
+    if (growEl) growEl.style.display = 'none';
+    if (wdBtn) wdBtn.disabled = true;
+    if (histEl) histEl.innerHTML = '<div class="bank-empty">Belum ada transaksi</div>';
+    return;
+  }
+
+  // Compute real-time balance with growth
+  const now = Date.now();
+  const principal = acc.principal || 0;
+  const lastTick = acc.lastTick || acc.depositedAt || now;
+  const monthsElapsed = (now - lastTick) / (1000 * 60 * 60 * 24 * 30);
+  const growthSinceLastTick = principal * BANK_CONFIG.INTEREST_RATE * monthsElapsed;
+  const liveBalance = (acc.balance || 0) + growthSinceLastTick;
+
+  balEl.textContent = fmtRp(liveBalance);
+  if (subEl) subEl.textContent = acc.status === 'active' ? 'Tumbuh +2% per bulan' : (acc.status === 'pending' ? 'Menunggu konfirmasi Leader' : 'Tidak aktif');
+  if (growEl) {
+    if (acc.status === 'active') {
+      growEl.style.display = 'flex';
+      const monthlyGrowth = principal * BANK_CONFIG.INTEREST_RATE;
+      if (growTxt) growTxt.textContent = '+' + fmtRp(monthlyGrowth) + '/bulan';
+    } else {
+      growEl.style.display = 'none';
+    }
+  }
+  if (wdBtn) wdBtn.disabled = acc.status !== 'active';
+
+  // Render history
+  if (histEl) {
+    const txs = acc.transactions || [];
+    if (!txs.length) {
+      histEl.innerHTML = '<div class="bank-empty">Belum ada transaksi</div>';
+    } else {
+      histEl.innerHTML = txs.slice().reverse().map(tx => {
+        const d = new Date(tx.ts);
+        const timeStr = d.toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'});
+        const isIn = tx.type === 'deposit' || tx.type === 'interest';
+        const icon = tx.type === 'deposit' ? '💰' : tx.type === 'interest' ? '📈' : '💸';
+        const iconClass = tx.type === 'deposit' ? 'dep' : tx.type === 'interest' ? 'grow' : 'wd';
+        const label = tx.type === 'deposit' ? 'Deposit' : tx.type === 'interest' ? 'Bunga' : 'Penarikan';
+        const statusHtml = tx.status ? `<span class="bank-tx-status ${tx.status}">${tx.status==='pending'?'Menunggu':tx.status==='active'?'Aktif':'Selesai'}</span>` : '';
+        return `<div class="bank-tx-item">
+          <div class="bank-tx-icon ${iconClass}">${icon}</div>
+          <div class="bank-tx-body">
+            <div class="bank-tx-title">${label}</div>
+            <div class="bank-tx-sub">${timeStr} ${tx.note ? '· '+tx.note : ''}</div>
+            ${statusHtml}
+          </div>
+          <div class="bank-tx-amount ${isIn?'in':'out'}">${isIn?'+':'-'}${fmtRp(tx.amount)}</div>
+        </div>`;
+      }).join('');
+    }
+  }
+}
+
+// Live balance ticker — updates every minute
+let _bankTicker = null;
+function startBankTicker() {
+  if (_bankTicker) clearInterval(_bankTicker);
+  if (!D.role || D.role === 'guest') return;
+  _bankTicker = setInterval(() => {
+    if (document.getElementById('page-member')?.classList.contains('active')) {
+      loadMemberBank();
+    }
+  }, BANK_CONFIG.GROWTH_INTERVAL_MS);
+}
+
+function openBankDeposit() {
+  document.getElementById('bankDepositBg').classList.add('show');
+  document.getElementById('bankDepositModal').classList.add('open');
+  document.getElementById('depositAmount').value = '';
+  document.getElementById('depositNote').value = '';
+  document.getElementById('depositPreview').style.display = 'none';
+}
+function openBankWithdraw() {
+  const key = (D.email || D.user).replace(/[.#$/[\]]/g,'_');
+  fbGet('bank/'+key).then(snap => {
+    const acc = snap.val();
+    const bal = acc ? acc.balance || 0 : 0;
+    const wdEl = document.getElementById('wdCurrentBal');
+    if (wdEl) wdEl.textContent = fmtRp(bal);
+    window._bankWithdrawAcc = acc;
+  }).catch(() => {
+    window._bankWithdrawAcc = null;
+  });
+  document.getElementById('bankWithdrawBg').classList.add('show');
+  document.getElementById('bankWithdrawModal').classList.add('open');
+  document.getElementById('withdrawAmount').value = '';
+  document.getElementById('withdrawMethod').value = '';
+  document.getElementById('withdrawPreview').style.display = 'none';
+}
+function closeBankModal(type) {
+  document.getElementById('bank'+type.charAt(0).toUpperCase()+type.slice(1)+'Bg').classList.remove('show');
+  document.getElementById('bank'+type.charAt(0).toUpperCase()+type.slice(1)+'Modal').classList.remove('open');
+}
+
+function calcDepositPreview() {
+  const amt = parseFloat(document.getElementById('depositAmount').value) || 0;
+  const prev = document.getElementById('depositPreview');
+  if (amt < BANK_CONFIG.MIN_DEPOSIT) { prev.style.display = 'none'; return; }
+  const adminFee = BANK_CONFIG.DEPOSIT_ADMIN_FEE;
+  const net = amt - adminFee;
+  const monthlyGrowth = net * BANK_CONFIG.INTEREST_RATE;
+  prev.style.display = 'block';
+  document.getElementById('dpAmt').textContent = fmtRp(amt);
+  document.getElementById('dpAdmin').textContent = '- ' + fmtRp(adminFee);
+  document.getElementById('dpNet').textContent = fmtRp(net);
+  document.getElementById('dpGrowth').textContent = '+' + fmtRp(monthlyGrowth) + '/bulan';
+}
+
+function calcWithdrawPreview() {
+  const amt = parseFloat(document.getElementById('withdrawAmount').value) || 0;
+  const acc = window._bankWithdrawAcc;
+  const bal = acc ? acc.balance || 0 : 0;
+  const prev = document.getElementById('withdrawPreview');
+  if (amt < BANK_CONFIG.MIN_WITHDRAW) { prev.style.display = 'none'; return; }
+  const adminFee = BANK_CONFIG.WITHDRAW_ADMIN_FEE;
+  const net = Math.max(0, amt - adminFee);
+  const sisa = Math.max(0, bal - amt);
+  prev.style.display = 'block';
+  document.getElementById('wdAmt').textContent = fmtRp(amt);
+  document.getElementById('wdAdmin').textContent = '- ' + fmtRp(adminFee);
+  document.getElementById('wdNet').textContent = fmtRp(net);
+  document.getElementById('wdSisa').textContent = fmtRp(sisa);
+  document.getElementById('wdSisa').style.color = sisa === 0 ? 'var(--err)' : 'var(--tx)';
+}
+
+function submitBankDeposit() {
+  const amt = parseFloat(document.getElementById('depositAmount').value) || 0;
+  const note = document.getElementById('depositNote').value.trim();
+  if (amt < BANK_CONFIG.MIN_DEPOSIT) { toast('Minimum deposit Rp 50.000','warn'); return; }
+  const adminFee = BANK_CONFIG.DEPOSIT_ADMIN_FEE;
+  const net = amt - adminFee;
+  const growth = net * BANK_CONFIG.INTEREST_RATE;
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const timeStr = now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+
+  const msg = [
+    `╔══════════════════════╗`,
+    `║   🏦 BANK CUANIE 🏦   ║`,
+    `║   PENGAJUAN DEPOSIT  ║`,
+    `╚══════════════════════╝`,
+    ``,
+    `📋 *DETAIL AJUAN DEPOSIT*`,
+    `━━━━━━━━━━━━━━━━━━━━━━━`,
+    `👤 *Nama Member  :* ${D.user}`,
+    `📧 *Email         :* _${D.email || '-'}_`,
+    ``,
+    `💰 *RINCIAN KEUANGAN*`,
+    `━━━━━━━━━━━━━━━━━━━━━━━`,
+    `▸ Jumlah Deposit : *${fmtRp(amt)}*`,
+    `▸ Biaya Admin    : _- ${fmtRp(adminFee)}_`,
+    `▸ Dana Aktif     : *${fmtRp(net)}*`,
+    `▸ Bunga /bulan   : *+${fmtRp(growth)} (+2%)*`,
+    ``,
+    `📝 *Catatan :* ${note || '_tidak ada_'}`,
+    ``,
+    `📅 *Tanggal :* ${dateStr}`,
+    `🕐 *Waktu   :* ${timeStr} WIB`,
+    ``,
+    `━━━━━━━━━━━━━━━━━━━━━━━`,
+    `⚠️ _Mohon konfirmasi deposit ini._`,
+    `_Setelah dikonfirmasi, saldo akan_`,
+    `_langsung aktif dan mulai bertumbuh._`,
+    `━━━━━━━━━━━━━━━━━━━━━━━`,
+    ``,
+    `_Dikirim via Cuanie App_ 🎮`,
+  ].join('\n');
+
+  window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
+  closeBankModal('deposit');
+  toast('Ajuan deposit dikirim ke Leader!','success');
+}
+
+function submitBankWithdraw() {
+  const amt = parseFloat(document.getElementById('withdrawAmount').value) || 0;
+  const method = document.getElementById('withdrawMethod').value.trim();
+  const acc = window._bankWithdrawAcc;
+  const bal = acc ? acc.balance || 0 : 0;
+  if (amt < BANK_CONFIG.MIN_WITHDRAW) { toast('Minimum penarikan Rp 10.000','warn'); return; }
+  if (amt > bal) { toast('Saldo tidak mencukupi','error'); return; }
+  if (!method) { toast('Isi metode pembayaran','warn'); return; }
+  const adminFee = BANK_CONFIG.WITHDRAW_ADMIN_FEE;
+  const net = Math.max(0, amt - adminFee);
+  const sisa = Math.max(0, bal - amt);
+  const isFullWithdraw = sisa < 1;
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const timeStr = now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+
+  const msg = [
+    `╔══════════════════════╗`,
+    `║   🏦 BANK CUANIE 🏦   ║`,
+    `║  PENGAJUAN PENARIKAN ║`,
+    `╚══════════════════════╝`,
+    ``,
+    `📋 *DETAIL AJUAN TARIK TUNAI*`,
+    `━━━━━━━━━━━━━━━━━━━━━━━`,
+    `👤 *Nama Member  :* ${D.user}`,
+    `📧 *Email         :* _${D.email || '-'}_`,
+    ``,
+    `💸 *RINCIAN PENARIKAN*`,
+    `━━━━━━━━━━━━━━━━━━━━━━━`,
+    `▸ Saldo Sekarang : *${fmtRp(bal)}*`,
+    `▸ Jumlah Tarik   : *${fmtRp(amt)}*`,
+    `▸ Biaya Admin    : _- ${fmtRp(adminFee)}_`,
+    `▸ Dana Diterima  : *${fmtRp(net)}*`,
+    `▸ Sisa Saldo     : *${fmtRp(sisa)}*`,
+    ``,
+    `🏧 *Metode Bayar :* ${method}`,
+    ``,
+    `${isFullWithdraw ? '⚠️ *PENARIKAN PENUH* — saldo akan nol' : ''}`,
+    `${isFullWithdraw ? '_Pertumbuhan berhenti sampai deposit lagi_' : ''}`,
+    `📅 *Tanggal :* ${dateStr}`,
+    `🕐 *Waktu   :* ${timeStr} WIB`,
+    ``,
+    `━━━━━━━━━━━━━━━━━━━━━━━`,
+    `⚠️ _Mohon proses penarikan ini._`,
+    `_Transfer sesuai metode di atas._`,
+    `━━━━━━━━━━━━━━━━━━━━━━━`,
+    ``,
+    `_Dikirim via Cuanie App_ 🎮`,
+  ].join('\n');
+
+  window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
+  closeBankModal('withdraw');
+  toast('Ajuan penarikan dikirim ke Leader!','success');
+}
+
+// ══ LEADER: Bank approval system ══
+let _bankTab = 'pending';
+function switchBankTab(tab, btn) {
+  _bankTab = tab;
+  document.querySelectorAll('.bank-tab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  loadLeaderBank();
+}
+
+async function loadLeaderBank() {
+  const listEl = document.getElementById('bankLeaderList');
+  if (!listEl) return;
+  listEl.innerHTML = '<div class="bank-empty">Memuat...</div>';
+  try {
+    const snap = await fbGet('bank');
+    const val = snap.val();
+    if (!val) { listEl.innerHTML = '<div class="bank-empty">Belum ada ajuan bank</div>'; return; }
+    let items = [];
+    Object.entries(val).forEach(([memberKey, acc]) => {
+      if (!acc || !acc.transactions) return;
+      acc.transactions.forEach((tx, ti) => {
+        if (_bankTab === 'pending' && tx.status !== 'pending') return;
+        if (_bankTab === 'active' && tx.status !== 'active') return;
+        if (_bankTab === 'history' && tx.status === 'pending') return;
+        items.push({ memberKey, acc, tx, ti });
+      });
+    });
+    items.sort((a,b) => b.tx.ts - a.tx.ts);
+    if (!items.length) { listEl.innerHTML = '<div class="bank-empty">Tidak ada data</div>'; updateBankBadge(val); return; }
+    listEl.innerHTML = items.map(({memberKey, acc, tx, ti}) => {
+      const d = new Date(tx.ts);
+      const dateStr = d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+      const isPending = tx.status === 'pending';
+      const typeLabel = tx.type === 'deposit' ? '💰 Deposit' : '💸 Penarikan';
+      return `<div class="bank-approval-item">
+        <div class="ba-top">
+          <div class="ba-name">${acc.memberName || memberKey}</div>
+          <span class="bank-tx-status ${tx.status||'pending'}">${tx.status==='pending'?'Menunggu':tx.status==='active'?'Aktif':'Selesai'}</span>
+        </div>
+        <div class="ba-info">
+          ${typeLabel} · *${fmtRp(tx.amount)}*<br>
+          ${tx.note ? '📝 '+tx.note+'<br>' : ''}
+          📅 ${dateStr}
+          ${tx.method ? '<br>🏧 '+tx.method : ''}
+        </div>
+        ${isPending ? `<div class="bank-approval-btns">
+          <button class="bank-approve-btn" onclick="bankApprove('${memberKey}',${ti})">✓ Terima</button>
+          <button class="bank-reject-btn" onclick="bankReject('${memberKey}',${ti})">✗ Tolak</button>
+        </div>` : ''}
+      </div>`;
+    }).join('');
+    updateBankBadge(val);
+  } catch(e) { listEl.innerHTML = '<div class="bank-empty">Gagal memuat data bank</div>'; }
+}
+
+function updateBankBadge(val) {
+  const badge = document.getElementById('bankPendingBadge');
+  if (!badge || !val) return;
+  let count = 0;
+  Object.values(val).forEach(acc => {
+    if (acc && acc.transactions) acc.transactions.forEach(tx => { if (tx.status === 'pending') count++; });
+  });
+  badge.textContent = count;
+  badge.style.display = count > 0 ? 'inline-flex' : 'none';
+}
+
+async function bankApprove(memberKey, txIdx) {
+  try {
+    const snap = await fbGet('bank/' + memberKey);
+    let acc = snap.val() || {};
+    const tx = acc.transactions[txIdx];
+    if (!tx) { toast('Data tidak ditemukan','error'); return; }
+    tx.status = 'active';
+    tx.approvedAt = Date.now();
+    if (tx.type === 'deposit') {
+      const net = tx.amount - BANK_CONFIG.DEPOSIT_ADMIN_FEE;
+      acc.balance = (acc.balance || 0) + net;
+      acc.principal = (acc.principal || 0) + net;
+      acc.status = 'active';
+      acc.lastTick = Date.now();
+    } else if (tx.type === 'withdraw') {
+      acc.balance = Math.max(0, (acc.balance || 0) - tx.amount);
+      acc.principal = Math.max(0, (acc.principal || 0) - tx.amount);
+      if (acc.balance < 1) { acc.status = 'inactive'; acc.principal = 0; }
+      tx.status = 'done';
+    }
+    await fbSet('bank/' + memberKey, acc);
+    toast('Ajuan disetujui','success');
+    loadLeaderBank();
+  } catch(e) { toast('Gagal memperbarui','error'); }
+}
+
+async function bankReject(memberKey, txIdx) {
+  if (!confirm('Tolak ajuan ini?')) return;
+  try {
+    const snap = await fbGet('bank/' + memberKey);
+    let acc = snap.val() || {};
+    acc.transactions[txIdx].status = 'rejected';
+    await fbSet('bank/' + memberKey, acc);
+    toast('Ajuan ditolak','warn');
+    loadLeaderBank();
+  } catch(e) { toast('Gagal','error'); }
 }
 
 // Hook into bootApp to also load CiunTik and set up listener
