@@ -40,8 +40,9 @@ window.dispatchEvent(new Event('fb-ready'));
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
-nav,nav *:not(input),.sidebar,.sidebar *:not(input):not(textarea),.sb-lnk,.sb-sec,.stat,.stat *,.panel-h,.pp-hd,.mem-prof-hd,.msg-meta,.msg-badge,.msg-name,.msg-time,.ct-page-hd,.ct-author,.ct-name,.ct-role,.ct-time,.ct-actions{user-select:none;-webkit-user-select:none}
-.chat-bubble,.ct-caption,.ct-comment{user-select:text;-webkit-user-select:text}
+body{-webkit-user-select:none;user-select:none}
+nav,nav *:not(input),.sidebar,.sidebar *:not(input):not(textarea),.sb-lnk,.sb-sec,.stat,.stat *,.panel-h,.pp-hd,.mem-prof-hd,.msg-meta,.msg-badge,.msg-name,.msg-time,.ct-page-hd,.ct-author,.ct-name,.ct-role,.ct-time,.ct-actions,.panel,.panel *:not(input):not(textarea):not(.chat-bubble):not(.ct-caption):not(.ct-comment),.dash,.dash *:not(input):not(textarea),.bank-approval-item,.bank-tx-item,.auth-card,.auth-card *:not(input):not(textarea),.info-wrap,.info-wrap *:not(input){user-select:none;-webkit-user-select:none}
+.chat-bubble,.ct-caption,.ct-comment,input,textarea,.dm-bubble{user-select:text!important;-webkit-user-select:text!important}
 body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(108,78,242,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(108,78,242,.02) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
 
 /* NAV */
@@ -83,6 +84,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 /* PAGES */
 .page{display:none;position:relative;z-index:1}
 .page.active{display:block}
+#page-dm.active,#page-chat.active{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
+#page-dm .chat-page-wrap,#page-chat .chat-page-wrap{height:100%;padding-top:0;flex:1;overflow:hidden}
+#page-dm .chat-wrap,#page-chat .chat-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+#page-dm .chat-msgs,#page-chat .chat-msgs{flex:1;overflow-y:auto;min-height:0}
+#page-dm .chat-header,#page-chat .chat-header{flex-shrink:0}
+#page-dm .chat-input-area,#page-chat .chat-input-area{flex-shrink:0}
 
 /* HERO */
 .hero{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 1.25rem 3.5rem;position:relative}
@@ -447,165 +454,100 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 .bank-reject-btn{flex:1;background:rgba(232,84,106,.08);border:1px solid rgba(232,84,106,.2);color:var(--err);border-radius:7px;padding:.5rem;font-size:.8rem;font-weight:600;cursor:pointer;transition:background .2s}
 .bank-reject-btn:hover{background:rgba(232,84,106,.18)}
 
-/* ══ ROLE PICKER ══ */
+/* ══ AUTH PAGE ══ */
+.auth-pick-label{font-size:.8rem;color:var(--tx2);margin-bottom:.75rem;text-align:center;-webkit-user-select:none;user-select:none}
+.auth-role-list{display:flex;flex-direction:column;gap:.55rem;margin-bottom:1.1rem}
+
+/* Role pick buttons */
 .role-pick-btn{
   display:flex;align-items:center;gap:.9rem;
-  width:100%;padding:.95rem 1.05rem;
-  border-radius:12px;
-  border:1.5px solid var(--b2);
-  background:var(--s2);
-  cursor:pointer;
+  width:100%;padding:.9rem 1rem;
+  border-radius:12px;border:1.5px solid var(--b2);
+  background:var(--s2);cursor:pointer;
   transition:all .22s cubic-bezier(.4,0,.2,1);
-  text-align:left;
-  position:relative;
-  overflow:hidden;
-  opacity:1;
+  text-align:left;position:relative;
 }
-/* Sebelum pilih: semua normal */
-.role-pick-btn::before{
-  content:'';
-  position:absolute;inset:0;
-  background:transparent;
-  transition:background .22s;
-  pointer-events:none;
-}
-/* Setelah pilih: yang TIDAK dipilih jadi gelap */
-.role-pick-btn.dimmed{
-  opacity:.38;
-  border-color:var(--b1);
-  background:var(--s1);
-}
-/* Yang dipilih: cerah & berglowing border */
-.role-pick-btn.selected{
-  opacity:1;
-  border-color:var(--ac);
-  background:rgba(108,78,242,.09);
-  box-shadow:0 0 0 3px rgba(108,78,242,.15),0 2px 12px rgba(108,78,242,.12);
-}
-.role-pick-btn.selected.guest-btn{
-  border-color:var(--gold);
-  background:rgba(232,184,75,.07);
-  box-shadow:0 0 0 3px rgba(232,184,75,.15),0 2px 12px rgba(232,184,75,.1);
-}
-.role-pick-btn:hover:not(.dimmed){
-  border-color:var(--ac2);
-  background:var(--s3);
-  transform:translateY(-1px);
-}
-/* Icon container */
-.role-pick-icon{
-  width:42px;height:42px;flex-shrink:0;
-  border-radius:11px;
-  display:flex;align-items:center;justify-content:center;
-  background:var(--s3);
-  transition:all .22s;
-}
-.role-pick-icon.member{
-  background:rgba(108,78,242,.12);
-  color:var(--ac2);
-}
-.role-pick-icon.guest{
-  background:rgba(232,184,75,.1);
-  color:var(--gold);
-}
-.role-pick-btn.selected .role-pick-icon.member{
-  background:rgba(108,78,242,.22);
-  color:var(--ac2);
-}
-.role-pick-btn.selected.guest-btn .role-pick-icon.guest{
-  background:rgba(232,184,75,.2);
-  color:var(--gold);
-}
-/* Text */
+.role-pick-btn.dimmed{opacity:.35;border-color:var(--b1);background:var(--s1)}
+.role-pick-btn.selected{border-color:var(--ac);background:rgba(108,78,242,.09);box-shadow:0 0 0 3px rgba(108,78,242,.15)}
+.role-pick-btn.selected.guest-btn{border-color:var(--gold);background:rgba(232,184,75,.07);box-shadow:0 0 0 3px rgba(232,184,75,.15)}
+.role-pick-btn:hover:not(.dimmed){border-color:var(--ac2);background:var(--s3);transform:translateY(-1px)}
+.role-pick-icon{width:42px;height:42px;flex-shrink:0;border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--s3);transition:all .22s}
+.role-pick-icon.member{background:rgba(108,78,242,.12);color:var(--ac2)}
+.role-pick-icon.guest{background:rgba(232,184,75,.1);color:var(--gold)}
+.role-pick-btn.selected .role-pick-icon.member{background:rgba(108,78,242,.22)}
+.role-pick-btn.selected.guest-btn .role-pick-icon.guest{background:rgba(232,184,75,.2)}
 .role-pick-text{flex:1;min-width:0}
-.role-pick-title{
-  font-size:.88rem;font-weight:700;
-  color:var(--tx);line-height:1.2;
-  transition:color .2s;
+.role-pick-title{font-size:.88rem;font-weight:700;color:var(--tx);line-height:1.2;transition:color .2s}
+.role-pick-sub{font-size:.72rem;color:var(--tx2);margin-top:3px;line-height:1.4}
+.role-pick-check{width:20px;height:20px;flex-shrink:0;border-radius:50%;border:2px solid var(--b2);background:var(--s1);display:flex;align-items:center;justify-content:center;transition:all .22s}
+.role-pick-btn.selected .role-pick-check{border-color:var(--ac);background:var(--ac)}
+.role-pick-btn.selected.guest-btn .role-pick-check{border-color:var(--gold);background:var(--gold)}
+.role-pick-check::after{content:'';width:7px;height:7px;border-radius:50%;background:#fff;opacity:0;transform:scale(0);transition:all .18s}
+.role-pick-btn.selected .role-pick-check::after{opacity:1;transform:scale(1)}
+
+/* Google button */
+.google-btn:disabled{opacity:.38!important;cursor:not-allowed!important;filter:grayscale(.4)}
+.google-btn:not(:disabled){opacity:1;cursor:pointer;transition:opacity .2s,transform .15s}
+.auth-hint{font-size:.72rem;color:var(--tx2);text-align:center;margin-top:.5rem;-webkit-user-select:none;user-select:none}
+
+/* Divider "atau" */
+.auth-divider{display:flex;align-items:center;gap:.75rem;margin:1.1rem 0}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--b2)}
+.auth-divider span{font-size:.72rem;color:var(--tx2);white-space:nowrap;-webkit-user-select:none;user-select:none}
+
+/* Secondary button (sudah punya kode) */
+.auth-secondary-btn{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:.55rem;
+  padding:.75rem 1rem;border-radius:10px;
+  border:1.5px solid var(--b2);background:var(--s2);
+  color:var(--tx2);font-size:.84rem;font-family:'DM Sans',sans-serif;
+  font-weight:600;cursor:pointer;transition:all .2s;
 }
-.role-pick-sub{
-  font-size:.72rem;color:var(--tx2);
-  margin-top:3px;line-height:1.4;
+.auth-secondary-btn:hover{border-color:var(--b2);color:var(--tx);background:var(--s3)}
+
+/* Tab row di section member/admin/leader */
+.auth-tab-row{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:3px;margin-bottom:1.1rem}
+.auth-tab{padding:.5rem 0;border:none;border-radius:7px;background:none;color:var(--tx2);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;transition:all .2s;-webkit-user-select:none;user-select:none}
+.auth-tab.active{background:var(--s3);color:var(--tx);font-weight:700}
+
+/* Kembali button */
+.auth-back-btn{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:.5rem;
+  margin-top:1rem;padding:.65rem;border-radius:9px;
+  border:1px solid var(--b1);background:none;
+  color:var(--tx2);font-size:.82rem;font-family:'DM Sans',sans-serif;
+  cursor:pointer;transition:all .2s;
 }
-/* Radio dot */
-.role-pick-check{
-  width:20px;height:20px;flex-shrink:0;
-  border-radius:50%;
-  border:2px solid var(--b2);
-  background:var(--s1);
-  display:flex;align-items:center;justify-content:center;
-  transition:all .22s;
-}
-.role-pick-btn.selected .role-pick-check{
-  border-color:var(--ac);
-  background:var(--ac);
-}
-.role-pick-btn.selected.guest-btn .role-pick-check{
-  border-color:var(--gold);
-  background:var(--gold);
-}
-.role-pick-check::after{
-  content:'';
-  width:7px;height:7px;
-  border-radius:50%;
-  background:#fff;
-  opacity:0;transform:scale(0);
-  transition:all .18s;
-}
-.role-pick-btn.selected .role-pick-check::after{
-  opacity:1;transform:scale(1);
-}
-/* Google button state */
-.google-btn:disabled{
-  opacity:.38 !important;
-  cursor:not-allowed !important;
-  filter:grayscale(.4);
-}
-.google-btn:not(:disabled){
-  opacity:1;
-  cursor:pointer;
-  transition:opacity .2s,transform .15s;
-}
+.auth-back-btn:hover{color:var(--tx);background:var(--s2)}
+
+/* Ghost button (ganti akun) */
+.auth-ghost-btn{background:none;border:none;color:var(--tx2);font-size:.73rem;cursor:pointer;width:100%;margin-top:.5rem;padding:.3rem;font-family:'DM Sans',sans-serif;transition:color .2s}
+.auth-ghost-btn:hover{color:var(--tx)}
+
 /* Returning user banner */
-.returning-banner{
-  background:var(--s2);
-  border:1px solid var(--b1);
-  border-radius:12px;
-  padding:1rem 1.1rem;
-  margin-bottom:1rem;
-}
-.returning-label{
-  font-size:.68rem;color:var(--tx2);
-  font-family:'Syne',sans-serif;
-  text-transform:uppercase;letter-spacing:.6px;
-  margin-bottom:.6rem;
-}
-.returning-row{
-  display:flex;align-items:center;
-  gap:.75rem;margin-bottom:.8rem;
-}
-.returning-av{
-  width:42px;height:42px;
-  border-radius:10px;
-  background:linear-gradient(135deg,var(--ac),var(--ac2));
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Syne',sans-serif;font-weight:700;
-  color:#fff;font-size:.85rem;
-  overflow:hidden;flex-shrink:0;
-}
+.returning-banner{background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:1rem 1.1rem;margin-bottom:1rem}
+.returning-label{font-size:.68rem;color:var(--tx2);font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.6px;margin-bottom:.6rem;-webkit-user-select:none;user-select:none}
+.returning-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.8rem}
+.returning-av{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;color:#fff;font-size:.85rem;overflow:hidden;flex-shrink:0}
 .returning-av img{width:100%;height:100%;object-fit:cover}
-.returning-name{font-weight:700;font-size:.92rem;color:var(--tx)}
-.returning-role-tag{
-  display:inline-flex;align-items:center;gap:4px;
-  font-size:.68rem;color:var(--tx2);
-  background:var(--s3);border:1px solid var(--b2);
-  padding:2px 8px;border-radius:4px;
-  margin-top:3px;
-}
+.returning-name{font-weight:700;font-size:.92rem;color:var(--tx);-webkit-user-select:none;user-select:none}
+.returning-role-tag{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;color:var(--tx2);background:var(--s3);border:1px solid var(--b2);padding:2px 8px;border-radius:4px;margin-top:3px;-webkit-user-select:none;user-select:none}
 
-/* ══ END ROLE PICKER ══ */
 
-/* Notification badge */
+/* ══ ANALYTICS ══ */
+.analytics-member-card{background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem 1rem;margin-bottom:.6rem;transition:border-color .2s}
+.analytics-member-card:hover{border-color:var(--b2)}
+.analytics-mc-top{display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem}
+.analytics-mc-av{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;color:#fff;font-size:.8rem;flex-shrink:0}
+.analytics-mc-name{font-weight:700;font-size:.88rem;color:var(--tx)}
+.analytics-mc-role{font-size:.7rem;color:var(--tx2)}
+.analytics-mc-bal{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;color:var(--ok);margin-left:auto}
+.analytics-mc-bar-wrap{background:var(--s1);border-radius:4px;height:5px;overflow:hidden;margin-top:.3rem}
+.analytics-mc-bar{height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:4px;transition:width .6s ease}
+.analytics-mc-growth{font-size:.73rem;color:var(--ac2);margin-top:.35rem;display:flex;align-items:center;gap:4px}
+canvas{-webkit-user-select:none;user-select:none}
+
+/* ══ ANALYTICS ══ */
 .notif-badge{position:absolute;top:-4px;right:-4px;background:var(--err);color:#fff;font-size:.6rem;font-weight:700;border-radius:8px;padding:1px 5px;font-family:'Syne',sans-serif;min-width:16px;text-align:center}
 .mention-nav{position:fixed;bottom:0;right:0;left:0;z-index:55;display:none;flex-direction:row;justify-content:flex-end;padding:.5rem 1rem;pointer-events:none}
 .mention-nav-btn{background:var(--ac);color:#fff;border:none;border-radius:20px;padding:.42rem 1rem;font-size:.76rem;font-family:'Syne',sans-serif;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 3px 12px rgba(108,78,242,.45);transition:all .2s;pointer-events:all}
@@ -978,12 +920,6 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
     <button class="sb-lnk" onclick="showPg('info-events');toggleSB()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>Event &amp; Jadwal</button>
     <button class="sb-lnk" onclick="showPg('info-rules');toggleSB()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Peraturan Tim</button>
     <div class="sb-div"></div>
-    <div class="sb-sec">Komunitas Publik</div>
-    <button class="sb-lnk" onclick="showPg('ciuntik');toggleSB()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="5,3 19,12 5,21 5,3"/></svg>
-      CiunTik
-    </button>
-    <div class="sb-div"></div>
     <div id="sb-chat-link" style="display:none">
       <div class="sb-sec">Komunitas</div>
       <button class="sb-lnk chat-sb-btn" onclick="goToChat();toggleSB()" id="sbChatBtn">
@@ -994,6 +930,14 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
       <button class="sb-lnk" onclick="showPg('ciuntik');toggleSB()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="5,3 19,12 5,21 5,3"/></svg>
         CiunTik
+      </button>
+      <button class="sb-lnk" id="sbCbankBtn" onclick="showGuestCbank();toggleSB()" style="display:none">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="22" height="18" rx="2"/><path d="M1 9h22"/><path d="M7 15h.01M11 15h.01"/></svg>
+        Cbank
+      </button>
+      <button class="sb-lnk" onclick="showPg('analytics');toggleSB()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+        Analisis Cbank
       </button>
     </div>
   </div>
@@ -1086,6 +1030,10 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
     <div class="sec-tag">// Info Tim</div>
     <h2>Anggota Aktif</h2>
     <p class="sub">Daftar anggota resmi Team Cuanie yang sedang aktif</p>
+    <div class="member-search-wrap" style="margin-bottom:1rem">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="pubMemberSearch" placeholder="Cari nama atau gamertag..." oninput="filterPubMembers(this.value)" style="-webkit-user-select:text;user-select:text"/>
+    </div>
     <div class="member-grid" id="pubMemberGrid"><div class="empty-state">Belum ada data anggota.</div></div>
     <a href="#" class="back-link" onclick="showPg('home')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>Kembali ke Beranda</a>
   </div>
@@ -1117,16 +1065,17 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 <div class="page" id="page-auth">
   <div class="auth-screen">
     <div class="auth-card">
-      <div class="auth-head"><h2>Akses Cuanie</h2><p>Pilih metode masuk sesuai status kamu</p></div>
-      <div class="tab-row">
-        <button class="tab-btn active" onclick="switchTab('guest',this)">Guest</button>
-        <button class="tab-btn" onclick="switchTab('member',this)">Member</button>
-        <button class="tab-btn" onclick="switchTab('admin',this)">Admin</button>
-        <button class="tab-btn" onclick="switchTab('leader',this)">Leader</button>
+
+      <!-- HEADER -->
+      <div class="auth-head">
+        <h2>Akses Cuanie</h2>
+        <p>Pilih cara masuk sesuai statusmu</p>
       </div>
-      <!-- GUEST -->
-      <div id="tab-guest">
-        <!-- Returning user banner -->
+
+      <!-- ══ SECTION A: TAMU / DAFTAR (default) ══ -->
+      <div id="authGuestSection">
+
+        <!-- Returning user banner (hidden by default) -->
         <div id="returningUserBanner" class="returning-banner" style="display:none">
           <div class="returning-label">Terakhir masuk sebagai</div>
           <div class="returning-row">
@@ -1140,64 +1089,146 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10,17 15,12 10,7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
             Lanjutkan Masuk
           </button>
-          <button onclick="clearReturningUser()" style="background:none;border:none;color:var(--tx2);font-size:.73rem;cursor:pointer;width:100%;margin-top:.55rem;padding:.3rem">Bukan kamu? Ganti akun →</button>
+          <button onclick="clearReturningUser()" class="auth-ghost-btn">Bukan kamu? Ganti akun →</button>
         </div>
-        <!-- Role choice FIRST, then Google -->
+
+        <!-- Role choice -->
         <div id="roleChoiceArea">
-          <div class="closed-banner" id="closedBanner" style="display:none">Pendaftaran sedang ditutup. Hubungi Leader untuk info lebih lanjut.</div>
-          <div style="font-size:.8rem;color:var(--tx2);margin-bottom:.9rem;text-align:center">Pilih dulu mau masuk sebagai apa:</div>
-          <div style="display:flex;flex-direction:column;gap:.55rem;margin-bottom:1rem">
+          <div class="closed-banner" id="closedBanner" style="display:none">
+            Pendaftaran sedang ditutup. Hubungi Leader untuk info lebih lanjut.
+          </div>
+
+          <p class="auth-pick-label">Pilih cara masuk:</p>
+
+          <div class="auth-role-list">
+            <!-- Daftar Member -->
             <button class="role-pick-btn" id="rolePickMember" onclick="selectRole('member')">
               <div class="role-pick-icon member">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
               </div>
               <div class="role-pick-text">
                 <div class="role-pick-title">Daftar sebagai Member</div>
-                <div class="role-pick-sub">Isi formulir & bergabung tim Cuanie</div>
+                <div class="role-pick-sub">Isi formulir &amp; bergabung tim Cuanie</div>
               </div>
               <div class="role-pick-check" id="checkMember"></div>
             </button>
+
+            <!-- Masuk Tamu -->
             <button class="role-pick-btn guest-btn" id="rolePickGuest" onclick="selectRole('guest')">
               <div class="role-pick-icon guest">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="8" r="4"/>
+                  <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                </svg>
               </div>
               <div class="role-pick-text">
                 <div class="role-pick-title">Masuk sebagai Tamu</div>
-                <div class="role-pick-sub">Lihat CiunTik, akses Cbank & postingan</div>
+                <div class="role-pick-sub">Lihat CiunTik, akses Cbank &amp; postingan</div>
               </div>
               <div class="role-pick-check" id="checkGuest"></div>
             </button>
           </div>
-          <button class="google-btn" id="gBtn" onclick="handleGoogleLogin()" disabled style="opacity:.45;cursor:not-allowed">
-            <svg width="17" height="17" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+
+          <!-- Google button -->
+          <button class="google-btn" id="gBtn" onclick="handleGoogleLogin()" disabled>
+            <svg width="17" height="17" viewBox="0 0 24 24">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
             Lanjutkan dengan Google
           </button>
-          <div id="gBtnWrap" style="display:none;margin-bottom:.75rem;justify-content:center;"></div>
-          <p style="font-size:.72rem;color:var(--tx2);text-align:center;margin-top:.5rem">Pilih peran dulu, baru login Google</p>
+          <div id="gBtnWrap" style="display:none"></div>
+          <p class="auth-hint">Pilih peran dulu, baru tombol Google aktif</p>
         </div>
-      </div>
-      <!-- MEMBER -->
-      <div id="tab-member" style="display:none;">
-        <div class="field"><label>Kode Member</label><input type="text" id="memberCode" placeholder="Kode 6 karakter" maxlength="6" style="text-transform:uppercase;letter-spacing:3px;font-weight:600"/></div>
-        <div class="field"><label>Password</label><input type="password" id="memberPass" placeholder="Password member"/></div>
-        <button class="full-btn" onclick="loginAs('member')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10,17 15,12 10,7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Masuk sebagai Member</button>
-        <div class="pending-notice" id="pendingNotice">
-          <h4>Menunggu Persetujuan</h4>
-          <p>Pendaftaranmu sudah diterima! Kodenya valid, tapi kamu perlu menunggu Admin atau Leader menyetujui akunmu terlebih dahulu.<br><br>Silakan hubungi Leader jika sudah lama menunggu.</p>
-          <button onclick="openWAMenu()" style="margin-top:1rem;width:100%;padding:.65rem;background:#22c55e;border:none;border-radius:5px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;">Hubungi Leader</button>
+
+        <!-- Link ke login akun -->
+        <div class="auth-divider">
+          <span>atau</span>
         </div>
-      </div>
-      <!-- ADMIN -->
-      <div id="tab-admin" style="display:none;">
-        <div class="field"><label>Username</label><input type="text" id="adminUser" placeholder="admin"/></div>
-        <div class="field"><label>Password</label><input type="password" id="adminPass" placeholder="Password admin"/></div>
-        <button class="full-btn" onclick="loginAs('admin')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10,17 15,12 10,7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Masuk sebagai Admin</button>
-      </div>
-      <!-- LEADER -->
-      <div id="tab-leader" style="display:none;">
-        <div class="field"><label>Password Leader</label><input type="password" id="leaderPass" placeholder="Password eksklusif leader"/></div>
-        <button class="full-btn" onclick="loginAs('leader')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10,17 15,12 10,7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Masuk sebagai Leader</button>
-      </div>
+        <button class="auth-secondary-btn" onclick="toggleAuthSection()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          Sudah punya kode member / akun tim
+        </button>
+
+      </div><!-- /authGuestSection -->
+
+      <!-- ══ SECTION B: LOGIN AKUN TIM (hidden by default) ══ -->
+      <div id="authMemberSection" style="display:none">
+
+        <!-- Tab selector -->
+        <div class="auth-tab-row">
+          <button class="auth-tab active" id="tabBtnMember" onclick="switchMemberTab('member',this)">Member</button>
+          <button class="auth-tab" id="tabBtnAdmin" onclick="switchMemberTab('admin',this)">Admin</button>
+          <button class="auth-tab" id="tabBtnLeader" onclick="switchMemberTab('leader',this)">Leader</button>
+        </div>
+
+        <!-- Member login -->
+        <div id="tab-member">
+          <div class="field">
+            <label>Kode Member</label>
+            <input type="text" id="memberCode" placeholder="Kode 6 karakter" maxlength="6" style="text-transform:uppercase;letter-spacing:3px;font-weight:600"/>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" id="memberPass" placeholder="Password member"/>
+          </div>
+          <button class="full-btn" onclick="loginAs('member')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10,17 15,12 10,7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Masuk sebagai Member
+          </button>
+          <div class="pending-notice" id="pendingNotice" style="display:none">
+            <h4>Menunggu Persetujuan</h4>
+            <p>Pendaftaranmu sudah diterima! Kodenya valid, tapi kamu perlu menunggu Admin atau Leader menyetujui akunmu.<br><br>Hubungi Leader jika sudah lama menunggu.</p>
+            <button onclick="openWAMenu()" style="margin-top:.9rem;width:100%;padding:.65rem;background:#22c55e;border:none;border-radius:8px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer">Hubungi Leader</button>
+          </div>
+        </div>
+
+        <!-- Admin login -->
+        <div id="tab-admin" style="display:none">
+          <div class="field">
+            <label>Username</label>
+            <input type="text" id="adminUser" placeholder="admin"/>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" id="adminPass" placeholder="Password admin"/>
+          </div>
+          <button class="full-btn" onclick="loginAs('admin')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10,17 15,12 10,7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Masuk sebagai Admin
+          </button>
+        </div>
+
+        <!-- Leader login -->
+        <div id="tab-leader" style="display:none">
+          <div class="field">
+            <label>Password Leader</label>
+            <input type="password" id="leaderPass" placeholder="Password eksklusif leader"/>
+          </div>
+          <button class="full-btn" onclick="loginAs('leader')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10,17 15,12 10,7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Masuk sebagai Leader
+          </button>
+        </div>
+
+        <!-- Kembali -->
+        <button class="auth-back-btn" onclick="toggleAuthSection()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>
+          Kembali ke pilihan masuk
+        </button>
+
+      </div><!-- /authMemberSection -->
+
       <p class="sub-note"><a href="#" onclick="showPg('home')">← Kembali ke Beranda</a></p>
     </div>
   </div>
@@ -1281,6 +1312,10 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
       <div class="bank-history-list" id="memberBankHistory">
         <div class="bank-empty">Belum ada transaksi</div>
       </div>
+      <button onclick="showPg('analytics')" style="width:100%;margin-top:.8rem;background:rgba(108,78,242,.07);border:1px dashed rgba(108,78,242,.3);color:var(--ac2);border-radius:8px;padding:.55rem;font-size:.8rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+        Lihat Analisis Cbank Global
+      </button>
     </div>
   </div>
 </div>
@@ -1343,7 +1378,7 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
       <div class="bank-prev-row" id="wdSisaRow"><span>Sisa saldo</span><span id="wdSisa">-</span></div>
     </div>
     <div class="bank-field">
-      <label>Metode Pembayaran</label>
+      <label>Metode Transfer Ingame</label>
       <input type="text" id="withdrawMethod" placeholder="Misal: BCA 1234567, OVO 081..." style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:.72rem .9rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;box-sizing:border-box"/>
     </div>
     <button class="full-btn" onclick="submitBankWithdraw()" style="margin-top:.5rem">
@@ -1476,6 +1511,10 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
         <input type="text" id="bankSearchInp" placeholder="Cari nama member..." oninput="filterBankList(this.value)"/>
       </div>
       <div id="bankLeaderList"></div>
+      <button onclick="showPg('analytics')" style="width:100%;margin-top:.6rem;background:rgba(108,78,242,.07);border:1px dashed rgba(108,78,242,.3);color:var(--ac2);border-radius:8px;padding:.5rem;font-size:.78rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:3px"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+        Buka Analisis Global
+      </button>
     </div>
 
     <!-- QUESTIONS -->
@@ -1870,7 +1909,7 @@ function renderPubMembers() {
   if (!active.length) { grid.innerHTML = '<div class="empty-state">Belum ada anggota aktif.</div>'; return; }
   grid.innerHTML = active.map(m => {
     const init = (m.name||'?').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
-    return `<div class="m-card">
+    return `<div class="m-card" data-name="${(m.name||'').toLowerCase()}" data-gt="${(m.gamertag||'').toLowerCase()}">
       <div class="m-av">${init}</div>
       <div class="m-info">
         <div class="m-name">${m.name}</div>
@@ -1899,6 +1938,7 @@ function toggleSB() {
 /* ══ PAGES ══ */
 function showPg(id) {
   if (id === 'auth') { setTimeout(checkReturningUser, 50); }
+  if (id === 'analytics') { setTimeout(loadAnalytics, 100); }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const pg = document.getElementById('page-' + id);
   if (pg) pg.classList.add('active');
@@ -1912,15 +1952,30 @@ function showPg(id) {
 }
 
 /* ══ AUTH TABS ══ */
-function switchTab(tab, btn) {
-  if (tab === 'guest') checkReturningUser();
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  ['guest','member','admin','leader'].forEach(t => {
-    document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
+function toggleAuthSection() {
+  const guestSec = document.getElementById('authGuestSection');
+  const memberSec = document.getElementById('authMemberSection');
+  if (!guestSec || !memberSec) return;
+  const guestVisible = guestSec.style.display !== 'none';
+  guestSec.style.display = guestVisible ? 'none' : '';
+  memberSec.style.display = guestVisible ? '' : 'none';
+  if (!guestVisible) checkReturningUser();
+}
+
+function switchMemberTab(tab, btn) {
+  ['member','admin','leader'].forEach(t => {
+    const el = document.getElementById('tab-'+t);
+    if (el) el.style.display = t===tab ? 'block' : 'none';
   });
-  // Hide pending notice when switching tabs
-  document.getElementById('pendingNotice').style.display = 'none';
+  document.querySelectorAll('#authMemberSection .auth-tab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+function switchTab(tab, btn) {
+  // Legacy — now handled by toggleAuthSection
+  if (tab === 'guest') checkReturningUser();
+  const pn = document.getElementById('pendingNotice');
+  if (pn) pn.style.display = 'none';
 }
 
 /* ══ NAV ══ */
@@ -2099,10 +2154,50 @@ function loginAs(role) {
   }
 }
 
-function logout() { D.user=null; D.role=null; D.email=null; updateNav(); const cl=document.getElementById('sb-chat-link'); if(cl) cl.style.display='none'; const pb=document.getElementById('navProfileBtn'); if(pb) pb.style.display='none'; showPg('home'); toast('Berhasil keluar','success'); }
+function logout() {
+  // Cek apakah member mau logout permanen (hapus kode)
+  if (D.role === 'member') {
+    if (confirm('Logout permanen? Kode member kamu akan dinonaktifkan dan tidak bisa digunakan lagi.\n\nPilih Batal untuk logout biasa saja.')) {
+      logoutPermanent();
+      return;
+    }
+  }
+  doLogout();
+}
+
+async function logoutPermanent() {
+  // Nonaktifkan member dari Firebase
+  if (D.email) {
+    const idx = D.members.findIndex(m => m.email === D.email);
+    if (idx !== -1) {
+      D.members[idx].status = 'deactivated';
+      D.members[idx].code = '------'; // Kode di-invalidate
+      D.members[idx].deactivatedAt = Date.now();
+      try {
+        await fbSet('members', D.members);
+      } catch(e) { console.error('FB error:', e); }
+    }
+  }
+  // Hapus semua data lokal
+  ['c_last_google','c_bank_'+( D.email||'').replace(/[.#$[\]]/g,'_')].forEach(k => localStorage.removeItem(k));
+  doLogout();
+  toast('Akun dinonaktifkan permanen. Kode tidak bisa digunakan lagi.','warn');
+}
+
+function doLogout() {
+  D.user=null; D.role=null; D.email=null; D.guestJoinDate=null; _selectedRole=null;
+  updateNav();
+  const cl=document.getElementById('sb-chat-link'); if(cl) cl.style.display='none';
+  const cb=document.getElementById('sbCbankBtn'); if(cb) cb.style.display='none';
+  const pb=document.getElementById('navProfileBtn'); if(pb) pb.style.display='none';
+  showPg('home');
+  if (!arguments[0]) toast('Berhasil keluar','success');
+}
 
 /* ══ FORM ══ */
 function renderForm() {
+  // Kalau sudah member aktif, jangan buka form
+  if (D.role === 'member') { toast('Kamu sudah terdaftar sebagai member','warn'); showPg('member'); return; }
   document.getElementById('formQuestions').innerHTML = D.questions.map((q,i) => {
     const inp = q.type==='textarea'
       ? `<textarea id="a${q.id}" placeholder="Tulis jawaban kamu..."></textarea>`
@@ -2467,7 +2562,7 @@ function renderChat() {
   });
 
   container.innerHTML = html || '<div style="text-align:center;color:var(--tx2);font-size:.84rem;padding:3rem 1rem;">Belum ada pesan. Mulai percakapan! 👋</div>';
-  container.scrollTop = container.scrollHeight;
+  requestAnimationFrame(()=>{ container.scrollTop = container.scrollHeight; });
   updateMentionNav();
   updateOnlineCount();
 }
@@ -2869,6 +2964,9 @@ function updateOnlineCount() {
 function showChatSidebarLink() {
   const el = document.getElementById('sb-chat-link');
   if (el) el.style.display = 'block';
+  // Cbank sidebar link hanya tampil untuk guest
+  const cbankBtn = document.getElementById('sbCbankBtn');
+  if (cbankBtn) cbankBtn.style.display = (D.role === 'guest') ? '' : 'none';
 }
 
 /* Check notifications on load */
@@ -3070,8 +3168,8 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
           </div>
         </div>
       </div>
-      <div class="chat-msgs" id="dmMsgs" style="-webkit-user-select:text;user-select:text"></div>
-      <div class="chat-input-area" id="dmInputArea" style="display:none">
+      <div class="chat-msgs" id="dmMsgs" style="-webkit-user-select:text;user-select:text;overflow-y:auto;flex:1;min-height:0"></div>
+      <div class="chat-input-area" id="dmInputArea" style="display:none;flex-shrink:0">
         <div class="chat-input-row">
           <textarea class="chat-input-box" id="dmInput" placeholder="Pesan ke..." rows="1"
             onkeydown="dmKeyDown(event)" oninput="autoResizeInput(this)"></textarea>
@@ -3114,11 +3212,10 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
       <div class="form-q">
         <label>Metode Pembayaran</label>
         <select id="bankDepositMethod" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:6px;padding:.6rem .9rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.87rem;outline:none">
-          <option value="Transfer Bank">Transfer Bank</option>
-          <option value="DANA">DANA</option>
-          <option value="OVO">OVO</option>
-          <option value="GoPay">GoPay</option>
-          <option value="Tunai Langsung">Tunai Langsung</option>
+          <option value="TF Ingame">TF Ingame (Transfer In-Game)</option>
+          <option value="Gold Ingame">Gold Ingame</option>
+          <option value="Item Ingame">Item Ingame</option>
+          <option value="Koin Ingame">Koin / Diamond Ingame</option>
         </select>
       </div>
       <div class="form-q">
@@ -3146,7 +3243,7 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
       </div>
       <div class="form-q">
         <label>Rekening / Dompet Tujuan</label>
-        <input type="text" id="bankWithdrawDest" placeholder="Contoh: BCA 1234567890 a/n Nama"/>
+        <input type="text" id="bankWithdrawDest" placeholder="Contoh: username ingame / ID karakter"/>
       </div>
       <button class="wa-btn" onclick="submitWithdrawWA()" style="margin-top:.9rem;background:#16a34a">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
@@ -3161,6 +3258,99 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
         <h3>Riwayat Transaksi</h3>
       </div>
       <div id="bankHistoryList"><div style="color:var(--tx2);font-size:.83rem;text-align:center;padding:1.5rem">Belum ada transaksi</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CBANK ANALYTICS PAGE -->
+<div class="page" id="page-analytics">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Analisis</div><h2>Cbank <span class="r-tag leader">Analitik</span></h2></div>
+      <button onclick="history.back()||showPg('home')" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <!-- Search -->
+    <div class="member-search-wrap" style="margin-bottom:1rem">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="analyticsSearch" placeholder="Cari member..." oninput="filterAnalytics(this.value)" style="-webkit-user-select:text;user-select:text"/>
+    </div>
+    <!-- Global stats -->
+    <div class="stats-row" id="analyticsGlobalStats">
+      <div class="stat"><div class="v" id="anTotalMembers">0</div><div class="l">Investor</div></div>
+      <div class="stat"><div class="v" id="anTotalFunds" style="color:var(--ok)">Rp 0</div><div class="l">Total Dana</div></div>
+      <div class="stat"><div class="v" id="anTotalGrowth" style="color:var(--ac2)">+0</div><div class="l">Total Bunga</div></div>
+    </div>
+    <!-- Chart global -->
+    <div class="panel">
+      <div class="panel-h"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg><h3>Pertumbuhan Global</h3></div>
+      <canvas id="analyticsGlobalChart" height="160" style="width:100%;display:block"></canvas>
+      <div style="font-size:.72rem;color:var(--tx2);text-align:center;margin-top:.5rem">Simulasi akumulasi dana tim 30 hari ke depan</div>
+    </div>
+    <!-- Per-member list -->
+    <div class="panel">
+      <div class="panel-h"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><h3>Data per Member</h3></div>
+      <div id="analyticsMemberList"><div class="bank-empty">Memuat data...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- GUEST DASHBOARD PAGE -->
+<div class="page" id="page-guest">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Tamu</div><h2>Hai, <span id="guestWelcomeName" class="r-tag member">Tamu</span> 👋</h2></div>
+      <button class="logout-btn" onclick="logout()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Keluar</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><div class="v" style="color:var(--gold)">Tamu</div><div class="l">Status</div></div>
+      <div class="stat"><div class="v" id="guestJoinDateStat" style="font-size:.85rem">—</div><div class="l">Bergabung</div></div>
+      <div class="stat"><div class="v" id="guestBankBalStat" style="color:var(--ok)">Rp 0</div><div class="l">Saldo Cbank</div></div>
+    </div>
+    <!-- Daftar jadi Member -->
+    <div class="panel" style="border-color:rgba(108,78,242,.3);background:rgba(108,78,242,.04)">
+      <div class="panel-h"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-1.5-3.1"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/></svg><h3>Daftar sebagai Member</h3></div>
+      <p style="color:var(--tx2);font-size:.83rem;line-height:1.7;margin-bottom:1rem">Kamu masuk sebagai tamu. Daftar jadi Member untuk akses penuh Team Chat, profil, dan fitur lainnya!</p>
+      <button class="btn-p" onclick="guestApplyMember()" style="font-size:.84rem;padding:.65rem 1.2rem">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        Daftar Sekarang
+      </button>
+    </div>
+    <!-- Cbank section -->
+    <div class="panel" id="guestBankPanel">
+      <div class="panel-h">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><rect x="1" y="3" width="22" height="18" rx="2"/><path d="M1 9h22"/><path d="M7 15h.01M11 15h.01"/></svg>
+        <h3>Cbank</h3>
+      </div>
+      <div class="bank-balance-card">
+        <div class="bank-bal-label">Saldo Aktif</div>
+        <div class="bank-bal-amount" id="guestBankBalance">Rp 0</div>
+        <div class="bank-bal-sub" id="guestBankSub">Belum ada deposit aktif</div>
+        <div class="bank-growth" id="guestBankGrowth" style="display:none">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.5"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg>
+          <span id="guestBankGrowthTxt"></span>
+        </div>
+      </div>
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem">
+        <button class="btn-p" onclick="openBankDeposit()" style="flex:1;font-size:.84rem;padding:.6rem .9rem;min-width:120px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Ajukan Deposit
+        </button>
+        <button class="btn-s" onclick="openBankWithdraw()" style="flex:1;font-size:.84rem;padding:.6rem .9rem;min-width:120px" id="guestWithdrawBtn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5,12 12,5 19,12"/></svg>
+          Tarik Tunai
+        </button>
+      </div>
+      <div class="bank-history-hd">Riwayat Transaksi</div>
+      <div class="bank-history-list" id="guestBankHistory">
+        <div class="bank-empty">Belum ada transaksi</div>
+      </div>
+    </div>
+    <!-- CiunTik shortcut -->
+    <div class="panel" style="padding:1.1rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem">
+        <div><div class="panel-h" style="margin-bottom:3px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><polygon points="5,3 19,12 5,21 5,3"/></svg><h3>CiunTik</h3></div><p style="color:var(--tx2);font-size:.8rem">Tonton konten dari Cuanie</p></div>
+        <button class="btn-p" onclick="showPg('ciuntik')" style="font-size:.83rem;padding:.6rem 1.2rem">Buka</button>
+      </div>
     </div>
   </div>
 </div>
@@ -4230,6 +4420,8 @@ function startBankTicker() {
   _bankTicker = setInterval(() => {
     if (document.getElementById('page-member')?.classList.contains('active')) {
       loadMemberBank();
+    } else if (document.getElementById('page-guest')?.classList.contains('active')) {
+      loadGuestBank();
     }
   }, BANK_CONFIG.GROWTH_INTERVAL_MS);
 }
@@ -4395,7 +4587,7 @@ function submitBankWithdraw() {
     `▸ Dana Diterima  : *${fmtRp(net)}*`,
     `▸ Sisa Saldo     : *${fmtRp(sisa)}*`,
     ``,
-    `🏧 *Metode Bayar :* ${method}`,
+    `🎮 *Metode TF    :* ${method} (Ingame)`,
     ``,
     `${isFullWithdraw ? '⚠️ *PENARIKAN PENUH* — saldo akan nol' : ''}`,
     `${isFullWithdraw ? '_Pertumbuhan berhenti sampai deposit lagi_' : ''}`,
@@ -4403,8 +4595,8 @@ function submitBankWithdraw() {
     `🕐 *Waktu   :* ${timeStr} WIB`,
     ``,
     `━━━━━━━━━━━━━━━━━━━━━━━`,
-    `⚠️ _Mohon proses penarikan ini._`,
-    `_Transfer sesuai metode di atas._`,
+    `⚠️ _Mohon proses penarikan ini via Ingame Transfer._`,
+    `_Kirim ke akun ingame yang disebutkan di atas._`,
     `━━━━━━━━━━━━━━━━━━━━━━━`,
     ``,
     `_Dikirim via Cuanie App_ 🎮`,
@@ -4461,16 +4653,127 @@ function applyGoogleAsMember(user) {
 function applyGoogleAsGuest(user) {
   const { shortName: nm, email: em, name: fullName } = user;
   D.user = nm; D.email = em; D.role = 'guest'; D.guestName = fullName;
+  // Simpan/ambil tanggal bergabung dari localStorage
+  const joinKey = 'c_guest_join_' + em.replace(/[^a-z0-9]/gi,'_');
+  if (!localStorage.getItem(joinKey)) localStorage.setItem(joinKey, new Date().toISOString());
+  D.guestJoinDate = localStorage.getItem(joinKey);
   updateNav(); showProfileBtn(); refreshProfileAvatar(em);
-  loadMemberBank(); startBankTicker();
+  showChatSidebarLink();
+  loadGuestBank();
+  startBankTicker();
   if (D.guestFormEnabled) {
     const gnEl = document.getElementById('guestName'); if (gnEl) gnEl.textContent = nm;
     renderGuestForm(); showPg('guest-form');
   } else {
-    showPg('home');
+    renderGuestDash();
+    showPg('guest');
     toast('Selamat datang, ' + nm + '!', 'success');
-    showChatSidebarLink();
   }
+}
+
+function renderGuestDash() {
+  const nameEl = document.getElementById('guestWelcomeName');
+  if (nameEl) nameEl.textContent = D.user || 'Tamu';
+  // Tanggal bergabung
+  const joinEl = document.getElementById('guestJoinDateStat');
+  if (joinEl && D.guestJoinDate) {
+    const d = new Date(D.guestJoinDate);
+    joinEl.textContent = d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+  }
+  // Sidebar Cbank button visible for guest
+  const cbankBtn = document.getElementById('sbCbankBtn');
+  if (cbankBtn) cbankBtn.style.display = '';
+}
+
+function showGuestCbank() {
+  renderGuestDash();
+  showPg('guest');
+  // Scroll to bank section
+  setTimeout(() => {
+    const el = document.getElementById('guestBankPanel');
+    if (el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  }, 150);
+}
+
+// loadGuestBank — sama seperti loadMemberBank tapi render ke elemen guest
+async function loadGuestBank() {
+  if (!D.email) return;
+  const key = D.email.replace(/[.#$[\]]/g,'_');
+  let acc = null;
+  try { const snap = await fbGet('bank/'+key); acc = snap.val(); }
+  catch(e) { acc = JSON.parse(localStorage.getItem('c_bank_'+key)||'null'); }
+  renderGuestBankUI(acc);
+  // Also update stat
+  const statEl = document.getElementById('guestBankBalStat');
+  if (statEl && acc) statEl.textContent = fmtRp(acc.balance||0);
+}
+
+function renderGuestBankUI(acc) {
+  const balEl = document.getElementById('guestBankBalance');
+  const subEl = document.getElementById('guestBankSub');
+  const growEl = document.getElementById('guestBankGrowth');
+  const growTxt = document.getElementById('guestBankGrowthTxt');
+  const wdBtn = document.getElementById('guestWithdrawBtn');
+  const histEl = document.getElementById('guestBankHistory');
+  if (!balEl) return;
+  if (!acc || !acc.balance) {
+    balEl.textContent = 'Rp 0';
+    if (subEl) subEl.textContent = 'Belum ada deposit aktif';
+    if (growEl) growEl.style.display = 'none';
+    if (wdBtn) wdBtn.disabled = true;
+    if (histEl) histEl.innerHTML = '<div class="bank-empty">Belum ada transaksi</div>';
+    return;
+  }
+  const now = Date.now();
+  const principal = acc.principal || 0;
+  const lastTick = acc.lastTick || acc.depositedAt || now;
+  const monthsElapsed = (now - lastTick) / (1000*60*60*24*30);
+  const liveBalance = (acc.balance||0) + principal * BANK_CONFIG.INTEREST_RATE * monthsElapsed;
+  balEl.textContent = fmtRp(liveBalance);
+  const statEl = document.getElementById('guestBankBalStat');
+  if (statEl) statEl.textContent = fmtRp(liveBalance);
+  if (subEl) subEl.textContent = acc.status==='active' ? 'Tumbuh +2% per bulan' : (acc.status==='pending' ? 'Menunggu konfirmasi' : 'Tidak aktif');
+  if (growEl) {
+    if (acc.status==='active') {
+      growEl.style.display='flex';
+      if (growTxt) growTxt.textContent = '+'+fmtRp(principal*BANK_CONFIG.INTEREST_RATE)+'/bulan';
+    } else growEl.style.display='none';
+  }
+  if (wdBtn) wdBtn.disabled = acc.status !== 'active';
+  if (histEl) {
+    const txs = acc.transactions||[];
+    if (!txs.length) { histEl.innerHTML = '<div class="bank-empty">Belum ada transaksi</div>'; return; }
+    histEl.innerHTML = txs.slice().reverse().map(tx => {
+      const d = new Date(tx.ts);
+      const timeStr = d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+      const isIn = tx.type==='deposit'||tx.type==='interest';
+      const icon = tx.type==='deposit'?'💰':tx.type==='interest'?'📈':'💸';
+      const iconClass = tx.type==='deposit'?'dep':tx.type==='interest'?'grow':'wd';
+      const label = tx.type==='deposit'?'Deposit':tx.type==='interest'?'Bunga':'Penarikan';
+      const statusHtml = tx.status?`<span class="bank-tx-status ${tx.status}">${tx.status==='pending'?'Menunggu':tx.status==='active'?'Aktif':'Selesai'}</span>`:'';
+      return `<div class="bank-tx-item">
+        <div class="bank-tx-icon ${iconClass}">${icon}</div>
+        <div class="bank-tx-body"><div class="bank-tx-title">${label}</div><div class="bank-tx-sub">${timeStr}${tx.note?' · '+tx.note:''}</div>${statusHtml}</div>
+        <div class="bank-tx-amount ${isIn?'in':'out'}">${isIn?'+':'-'}${fmtRp(tx.amount)}</div>
+      </div>`;
+    }).join('');
+  }
+}
+
+// guestApplyMember — tamu mau daftar jadi member
+function guestApplyMember() {
+  if (!D.regOpen) { toast('Pendaftaran sedang ditutup. Tanya Leader dulu!','warn'); return; }
+  const gnEl = document.getElementById('guestName'); if (gnEl) gnEl.textContent = D.user||'';
+  // Setelah submit form, returning user role berubah jadi 'member'
+  const saved = localStorage.getItem('c_last_google');
+  if (saved) {
+    try {
+      const u = JSON.parse(saved);
+      u.role = 'member';
+      localStorage.setItem('c_last_google', JSON.stringify(u));
+    } catch(e) {}
+  }
+  renderForm(); showPg('form');
 }
 
 // continueAsReturning — langsung masuk tanpa login Google lagi
@@ -4577,11 +4880,20 @@ async function loadLeaderBank() {
           ${tx.method ? '🏧 <strong>'+tx.method+'</strong><br>' : ''}
           📅 ${dateStr} · <span class="bank-tx-status ${tx.status||'pending'}" style="font-size:.62rem">${tx.status==='pending'?'Menunggu':tx.status==='active'?'Aktif':tx.status==='done'?'Selesai':'Ditolak'}</span>
         </div>
-        ${isPending ? `<div class="bank-approval-btns">
-          <button class="bank-approve-btn" onclick="bankApprove('${memberKey}',${ti})">✓ Terima</button>
-          <button class="bank-reject-btn" onclick="bankReject('${memberKey}',${ti})">✗ Tolak</button>
-        </div>` : ''}
-      </div>`;
+        <div class="bank-approval-btns" style="flex-wrap:wrap;gap:.4rem">
+          ${isPending ? `<button class="bank-approve-btn" onclick="bankApprove('${memberKey}',${ti})">✓ Terima</button>
+          <button class="bank-reject-btn" onclick="bankReject('${memberKey}',${ti})">✗ Tolak</button>` : ''}
+          <button onclick="leaderSendTxWA('${memberKey}',${ti})" style="flex:1;background:rgba(30,201,154,.08);border:1px solid rgba(30,201,154,.2);color:var(--ok);border-radius:7px;padding:.45rem .5rem;font-size:.75rem;font-weight:600;cursor:pointer;min-width:60px">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M5.421 20.923h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884"/></svg>
+            WA
+          </button>
+          <button onclick="leaderDeleteTx('${memberKey}',${ti})" style="background:rgba(232,84,106,.08);border:1px solid rgba(232,84,106,.18);color:var(--err);border-radius:7px;padding:.45rem .5rem;font-size:.75rem;font-weight:600;cursor:pointer">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+      ${_bankTab !== 'history' ? '' : `<button onclick="leaderDeleteAllTx('${memberKey}')" style="width:100%;margin-top:.5rem;background:rgba(232,84,106,.06);border:1px solid rgba(232,84,106,.15);color:var(--err);border-radius:7px;padding:.4rem;font-size:.73rem;cursor:pointer;font-weight:500">Hapus Semua Transaksi Member Ini</button>`}
+      `;
     }).join('');
     updateBankBadge(val);
   } catch(e) { listEl.innerHTML = '<div class="bank-empty">Gagal memuat data bank</div>'; }
@@ -4749,9 +5061,220 @@ function submitGuestForm() {
 }
 
 function skipGuestForm() {
-  showPg('home');
-  toast('Selamat datang, ' + D.user + '!', 'success');
+  renderGuestDash();
+  showPg('guest');
+  toast('Selamat datang, ' + (D.user||'Tamu') + '!', 'success');
   showChatSidebarLink();
+}
+
+// ══ CBANK ANALYTICS ══
+
+let _analyticsData = null;
+
+async function loadAnalytics() {
+  const listEl = document.getElementById('analyticsMemberList');
+  if (listEl) listEl.innerHTML = '<div class="bank-empty">Memuat...</div>';
+  try {
+    const snap = await fbGet('bank');
+    _analyticsData = snap.val() || {};
+  } catch(e) {
+    _analyticsData = {};
+  }
+  renderAnalytics(_analyticsData);
+}
+
+function renderAnalytics(data, filter='') {
+  const members = Object.entries(data || {}).filter(([k,v]) => v && (v.balance||0) > 0);
+  const fq = filter.toLowerCase();
+  const filtered = fq ? members.filter(([k,v]) => (v.memberName||k).toLowerCase().includes(fq)) : members;
+
+  // Global stats
+  const totalFunds = members.reduce((s,[,v]) => s + (v.balance||0), 0);
+  const totalPrincipal = members.reduce((s,[,v]) => s + (v.principal||0), 0);
+  const totalGrowth = totalFunds - totalPrincipal;
+  const tnEl=document.getElementById('anTotalMembers'); if(tnEl) tnEl.textContent = members.length;
+  const tfEl=document.getElementById('anTotalFunds'); if(tfEl) tfEl.textContent = fmtRp(totalFunds);
+  const tgEl=document.getElementById('anTotalGrowth'); if(tgEl) tgEl.textContent = '+'+fmtRp(Math.max(0,totalGrowth));
+
+  // Draw global chart
+  drawAnalyticsChart(members);
+
+  // Member list
+  const listEl = document.getElementById('analyticsMemberList');
+  if (!listEl) return;
+  if (!filtered.length) { listEl.innerHTML = '<div class="bank-empty">Tidak ada data</div>'; return; }
+
+  // Sort by balance desc
+  filtered.sort((a,b) => (b[1].balance||0)-(a[1].balance||0));
+  const maxBal = filtered[0][1].balance || 1;
+
+  listEl.innerHTML = filtered.map(([key, acc]) => {
+    const name = acc.memberName || key;
+    const init = name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+    const bal = acc.balance || 0;
+    const principal = acc.principal || 0;
+    const growth = Math.max(0, bal - principal);
+    const monthlyGrowth = principal * BANK_CONFIG.INTEREST_RATE;
+    const pct = Math.round((bal / maxBal) * 100);
+    const statusColor = acc.status === 'active' ? 'var(--ok)' : 'var(--tx2)';
+    return `<div class="analytics-member-card">
+      <div class="analytics-mc-top">
+        <div class="analytics-mc-av">${init}</div>
+        <div>
+          <div class="analytics-mc-name">${name}</div>
+          <div class="analytics-mc-role">${acc.status==='active'?'Aktif':'Tidak aktif'}</div>
+        </div>
+        <div class="analytics-mc-bal">${fmtRp(bal)}</div>
+      </div>
+      <div class="analytics-mc-bar-wrap"><div class="analytics-mc-bar" style="width:${pct}%"></div></div>
+      <div class="analytics-mc-growth">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2.5"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/></svg>
+        +${fmtRp(monthlyGrowth)}/bln · Total bunga: +${fmtRp(growth)} · Modal: ${fmtRp(principal)}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterAnalytics(q) {
+  if (_analyticsData) renderAnalytics(_analyticsData, q);
+}
+
+function drawAnalyticsChart(members) {
+  const canvas = document.getElementById('analyticsGlobalChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth || 320;
+  const H = 160;
+  canvas.width = W;
+  canvas.height = H;
+
+  const days = 30;
+  const totalPrincipal = members.reduce((s,[,v]) => s+(v.principal||0), 0);
+  const rate = BANK_CONFIG.INTEREST_RATE;
+
+  // Generate data points with slight random noise for realism
+  const points = [];
+  let base = members.reduce((s,[,v]) => s+(v.balance||0), 0);
+  for (let d = 0; d <= days; d++) {
+    const growth = totalPrincipal * rate * (d/30);
+    const noise = (Math.random()-0.5) * totalPrincipal * 0.002; // ±0.2% noise
+    points.push(base + growth + noise);
+  }
+  const minV = Math.min(...points) * 0.995;
+  const maxV = Math.max(...points) * 1.005;
+  const range = maxV - minV || 1;
+
+  const pad = {t:16,r:12,b:28,l:72};
+  const cW = W - pad.l - pad.r;
+  const cH = H - pad.t - pad.b;
+
+  ctx.clearRect(0,0,W,H);
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(46,46,66,.6)';
+  ctx.lineWidth = 1;
+  for (let i=0;i<=4;i++) {
+    const y = pad.t + cH*(1-i/4);
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(W-pad.r,y); ctx.stroke();
+    // Y label
+    ctx.fillStyle='rgba(148,148,170,.7)';
+    ctx.font='9px DM Sans,sans-serif';
+    ctx.textAlign='right';
+    const val = minV + range*(i/4);
+    ctx.fillText(fmtRp(val).replace('Rp ',''), pad.l-4, y+3);
+  }
+
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0,pad.t,0,pad.t+cH);
+  grad.addColorStop(0,'rgba(108,78,242,.35)');
+  grad.addColorStop(1,'rgba(108,78,242,.01)');
+
+  // Draw area
+  ctx.beginPath();
+  points.forEach((v,i) => {
+    const x = pad.l + (i/days)*cW;
+    const y = pad.t + cH*(1-(v-minV)/range);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  const lastX = pad.l+cW, lastY = pad.t+cH;
+  ctx.lineTo(lastX,lastY); ctx.lineTo(pad.l,lastY); ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+
+  // Draw line
+  ctx.beginPath();
+  points.forEach((v,i) => {
+    const x = pad.l+(i/days)*cW;
+    const y = pad.t+cH*(1-(v-minV)/range);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle='rgba(108,78,242,.9)'; ctx.lineWidth=2; ctx.lineJoin='round'; ctx.stroke();
+
+  // X labels
+  ctx.fillStyle='rgba(148,148,170,.7)'; ctx.font='9px DM Sans,sans-serif'; ctx.textAlign='center';
+  [0,7,14,21,30].forEach(d => {
+    ctx.fillText('H+'+d, pad.l+(d/days)*cW, H-6);
+  });
+}
+
+// Leader: send transaction history to WA
+function leaderSendTxWA(memberKey, txIdx) {
+  const acc = _analyticsData?.[memberKey];
+  if (!acc) { toast('Data tidak ditemukan','error'); return; }
+  const tx = acc.transactions?.[txIdx];
+  if (!tx) { toast('Transaksi tidak ada','error'); return; }
+  const phone = prompt('Nomor WA penerima (contoh: 628xxx):','');
+  if (!phone) return;
+  const d = new Date(tx.ts);
+  const dateStr = d.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const typeLabel = tx.type==='deposit'?'Deposit':'Penarikan';
+  const msg = [
+    `╔══════════════════════╗`,
+    `║   🏦  C B A N K  🏦   ║`,
+    `║   RIWAYAT TRANSAKSI  ║`,
+    `╚══════════════════════╝`,
+    ``,
+    `📋 *DETAIL TRANSAKSI*`,
+    `━━━━━━━━━━━━━━━━━━━━━━━`,
+    `👤 *Member  :* ${acc.memberName||memberKey}`,
+    `💼 *Jenis   :* ${typeLabel}`,
+    `💰 *Jumlah  :* *${fmtRp(tx.amount)}*`,
+    `📊 *Status  :* ${tx.status==='active'||tx.status==='done'?'✅ Selesai':'⏳ '+tx.status}`,
+    `${tx.method?'🏧 *Metode  :* '+tx.method:''}`,
+    `${tx.note?'📝 *Catatan :* '+tx.note:''}`,
+    `📅 *Tanggal :* ${dateStr}`,
+    ``,
+    `━━━━━━━━━━━━━━━━━━━━━━━`,
+    `_Dikirim oleh Leader Cuanie_ 🎮`,
+  ].filter(Boolean).join('\n');
+  window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+// Leader: delete transaction
+async function leaderDeleteTx(memberKey, txIdx) {
+  if (!confirm('Hapus transaksi ini?')) return;
+  try {
+    const snap = await fbGet('bank/'+memberKey);
+    let acc = snap.val();
+    if (!acc || !acc.transactions) return;
+    acc.transactions.splice(txIdx,1);
+    await fbSet('bank/'+memberKey, acc);
+    toast('Transaksi dihapus','success');
+    if (_analyticsData) delete _analyticsData[memberKey]; // force reload
+    loadLeaderBank();
+    if (document.getElementById('page-analytics')?.classList.contains('active')) loadAnalytics();
+  } catch(e) { toast('Gagal hapus','error'); }
+}
+
+// Leader: delete all transactions for a member
+async function leaderDeleteAllTx(memberKey) {
+  if (!confirm('Hapus SEMUA transaksi member ini? Saldo juga akan direset.')) return;
+  try {
+    await fbSet('bank/'+memberKey, { memberName: _analyticsData?.[memberKey]?.memberName||memberKey, balance:0, principal:0, status:'inactive', transactions:[] });
+    toast('Semua transaksi dihapus','success');
+    if (_analyticsData) delete _analyticsData[memberKey];
+    loadLeaderBank();
+    if (document.getElementById('page-analytics')?.classList.contains('active')) loadAnalytics();
+  } catch(e) { toast('Gagal','error'); }
 }
 
 // Hook into bootApp to also load CiunTik and set up listener
