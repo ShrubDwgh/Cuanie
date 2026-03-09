@@ -40,6 +40,8 @@ window.dispatchEvent(new Event('fb-ready'));
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+nav,nav *:not(input),.sidebar,.sidebar *:not(input):not(textarea),.sb-lnk,.sb-sec,.stat,.stat *,.panel-h,.pp-hd,.mem-prof-hd,.msg-meta,.msg-badge,.msg-name,.msg-time,.ct-page-hd,.ct-author,.ct-name,.ct-role,.ct-time,.ct-actions{user-select:none;-webkit-user-select:none}
+.chat-bubble,.ct-caption,.ct-comment{user-select:text;-webkit-user-select:text}
 body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(108,78,242,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(108,78,242,.02) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
 
 /* NAV */
@@ -328,44 +330,48 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 .chat-header h3{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:8px}
 .chat-online-dot{width:6px;height:6px;border-radius:50%;background:var(--ok);animation:blink 2s infinite}
 .chat-online-count{font-size:.7rem;color:var(--tx2);font-weight:400;font-family:'DM Sans',sans-serif}
-.chat-msgs{flex:1;overflow-y:auto;padding:1rem 1.2rem;display:flex;flex-direction:column;gap:1px;scroll-behavior:smooth;overscroll-behavior:contain}
-.chat-msgs::-webkit-scrollbar{width:3px}
+.chat-msgs{flex:1;overflow-y:auto;padding:1rem 1rem 1rem;display:flex;flex-direction:column;gap:0;scroll-behavior:smooth;overscroll-behavior:contain}
+.chat-msgs::-webkit-scrollbar{width:4px}
 .chat-msgs::-webkit-scrollbar-track{background:transparent}
 .chat-msgs::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
-.chat-day-sep{text-align:center;margin:.8rem 0;position:relative}
+.chat-day-sep{text-align:center;margin:1rem 0 .7rem;position:relative}
 .chat-day-sep::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--b1)}
-.chat-day-sep span{position:relative;background:var(--bg);padding:0 .7rem;font-size:.65rem;color:var(--tx2);font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:1px}
-.chat-msg{display:flex;gap:8px;padding:.3rem 0;position:relative}
+.chat-day-sep span{position:relative;background:var(--bg);padding:0 .8rem;font-size:.64rem;color:var(--tx2);font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:1px}
+/* Group messages — same author within 2min get no avatar repeat */
+.chat-msg{display:flex;gap:12px;padding:.55rem .7rem;position:relative;border-radius:10px;transition:background .15s}
+.chat-msg:hover{background:rgba(255,255,255,.023)}
 .chat-msg:hover .msg-actions{opacity:1;pointer-events:all}
-.chat-msg.mention-me .chat-bubble{background:rgba(108,78,242,.08);border-left:2px solid var(--ac2);padding-left:8px;border-radius:0 4px 4px 0}
-.chat-msg.mention-me{background:rgba(108,78,242,.03);border-radius:6px;margin:0 -6px;padding:.3rem 6px}
-.msg-av{width:30px;height:30px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700;color:#fff;margin-top:3px}
+.chat-msg.mention-me{background:rgba(108,78,242,.05)!important}
+.chat-msg.mention-me .chat-bubble{border-left:2px solid var(--ac2);padding-left:8px}
+.msg-av{width:40px;height:40px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;color:#fff;margin-top:1px;overflow:hidden;cursor:pointer;transition:opacity .2s}
+.msg-av:hover{opacity:.8}
 .msg-av.admin{background:linear-gradient(135deg,#e8b84b,#f5c842)}
 .msg-av.leader{background:linear-gradient(135deg,#e8546a,#f06080)}
 .msg-av.member{background:linear-gradient(135deg,var(--ac),var(--ac2))}
 .msg-av.bot{background:linear-gradient(135deg,#06b6d4,#0ea5e9)}
+.msg-av img{width:100%;height:100%;object-fit:cover;display:block}
 .msg-right{flex:1;min-width:0}
-.msg-meta{display:flex;align-items:baseline;gap:7px;margin-bottom:3px;user-select:none}
-.msg-name{font-size:.82rem;font-weight:600;cursor:pointer}
+.msg-meta{display:flex;align-items:center;gap:7px;margin-bottom:5px;user-select:none;flex-wrap:wrap}
+.msg-name{font-size:.88rem;font-weight:700;cursor:pointer;line-height:1.2}
 .msg-name:hover{text-decoration:underline}
 .msg-name.admin{color:var(--gold)}
 .msg-name.leader{color:var(--err)}
 .msg-name.member{color:var(--ac2)}
 .msg-name.bot{color:#06b6d4}
-.msg-time{font-size:.68rem;color:var(--tx2)}
-.msg-badge{font-size:.6rem;font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.5px;padding:1px 5px;border-radius:3px;font-weight:700;user-select:none}
+.msg-time{font-size:.67rem;color:var(--tx2);opacity:.7}
+.msg-badge{font-size:.58rem;font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.5px;padding:2px 6px;border-radius:3px;font-weight:700;user-select:none}
 .msg-badge.admin{background:rgba(232,184,75,.15);color:var(--gold)}
 .msg-badge.leader{background:rgba(232,84,106,.15);color:var(--err)}
 .msg-badge.bot{background:rgba(6,182,212,.15);color:#06b6d4}
-.chat-bubble{font-size:.86rem;line-height:1.65;color:var(--tx);word-break:break-word;padding:2px 0}
-.chat-bubble img{max-width:280px;max-height:220px;border-radius:8px;margin-top:6px;display:block;object-fit:cover;cursor:zoom-in;border:1px solid var(--b1)}
-.chat-bubble img.bot-img{max-width:240px;max-height:180px;border-radius:8px;margin-top:6px}
-.mention-tag{color:var(--ac2);font-weight:600;background:rgba(108,78,242,.1);padding:1px 4px;border-radius:3px;cursor:pointer}
-.mention-tag.everyone{color:var(--gold);background:rgba(232,184,75,.1)}
-.mention-tag:hover{background:rgba(108,78,242,.2)}
-.msg-img-attach{max-width:260px;max-height:200px;border-radius:8px;margin-top:6px;object-fit:cover;display:block;border:1px solid var(--b1);cursor:zoom-in}
-.msg-actions{opacity:0;position:absolute;right:0;top:0;display:flex;gap:3px;transition:opacity .2s;background:var(--s2);border:1px solid var(--b1);border-radius:6px;padding:2px 5px;pointer-events:none}
-.msg-act-btn{background:none;border:none;color:var(--tx2);cursor:pointer;font-size:.75rem;padding:2px 5px;border-radius:4px;transition:background .15s,color .15s;display:flex;align-items:center;gap:3px}
+.chat-bubble{font-size:.93rem;line-height:1.7;color:var(--tx);word-break:break-word;margin-top:2px}
+.chat-bubble img{max-width:min(300px,75vw);max-height:240px;border-radius:10px;margin-top:6px;display:block;object-fit:cover;cursor:zoom-in;border:1px solid var(--b1)}
+.chat-bubble img.bot-img{max-width:min(260px,70vw);max-height:200px;border-radius:10px;margin-top:6px}
+.mention-tag{color:var(--ac2);font-weight:600;background:rgba(108,78,242,.12);padding:1px 5px;border-radius:4px;cursor:pointer}
+.mention-tag.everyone{color:var(--gold);background:rgba(232,184,75,.12)}
+.mention-tag:hover{background:rgba(108,78,242,.22)}
+.msg-img-attach{max-width:min(280px,75vw);max-height:220px;border-radius:10px;margin-top:6px;object-fit:cover;display:block;border:1px solid var(--b1);cursor:zoom-in}
+.msg-actions{opacity:0;position:absolute;right:4px;top:4px;display:flex;gap:3px;transition:opacity .2s;background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:3px 6px;pointer-events:none;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.msg-act-btn{background:none;border:none;color:var(--tx2);cursor:pointer;font-size:.72rem;padding:3px 6px;border-radius:5px;transition:background .15s,color .15s;display:flex;align-items:center;gap:3px;white-space:nowrap}
 .msg-act-btn:hover{background:var(--s3);color:var(--tx)}
 /* Chat Input */
 .chat-input-area{padding:.6rem .9rem .6rem;border-top:1px solid var(--b1);background:var(--s1);flex-shrink:0;padding-bottom:calc(.6rem + env(safe-area-inset-bottom))}
@@ -420,7 +426,7 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 
 
 /* ══ PROFILE PANEL ══ */
-.profile-btn{position:relative;width:36px;height:36px;border-radius:8px;border:1px solid var(--b2);background:var(--s2);cursor:pointer;overflow:hidden;display:none;align-items:center;justify-content:center;transition:border-color .2s;flex-shrink:0;padding:0}
+.profile-btn{position:relative;width:38px;height:38px;border-radius:9px;border:1px solid var(--b2);background:var(--s2);cursor:pointer;overflow:hidden;display:none;align-items:center;justify-content:center;transition:border-color .2s;flex-shrink:0;padding:0}
 .profile-btn:hover{border-color:var(--ac2)}
 .profile-btn img{width:100%;height:100%;object-fit:cover}
 .profile-btn .pb-init{font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;color:var(--tx);width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative}
@@ -538,6 +544,49 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 .ct-act.liked{color:var(--err)}
 .ct-act.liked svg{fill:var(--err);stroke:var(--err)}
 .ct-empty{text-align:center;padding:3.5rem 1rem}
+.ct-comments{padding:.5rem .9rem .8rem;border-top:1px solid var(--b1);display:flex;flex-direction:column;gap:.45rem}
+.ct-comment{font-size:.82rem;line-height:1.5;color:var(--tx)}
+.ct-cm-name{font-weight:700;color:var(--ac2);margin-right:5px;cursor:pointer}
+.ct-cm-name:hover{text-decoration:underline}
+.ct-cm-text{color:var(--tx)}
+.ct-comment-inp-row{display:flex;gap:6px;margin-top:.4rem}
+.ct-comment-inp{flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:.42rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.83rem;outline:none;transition:border-color .2s}
+.ct-comment-inp:focus{border-color:var(--ac)}
+.ct-cm-send{background:var(--ac);border:none;color:#fff;border-radius:7px;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s}
+.ct-cm-send:hover{background:#7b60f4}
+
+/* ══ MEMBER PROFILE MODAL ══ */
+.mem-prof-bg{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:480;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(4px)}
+.mem-prof-bg.show{opacity:1;pointer-events:all}
+.mem-prof-panel{position:fixed;bottom:0;left:0;right:0;max-height:90dvh;background:var(--s1);border-radius:18px 18px 0 0;z-index:490;transform:translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,0px)}
+.mem-prof-panel.open{transform:translateY(0)}
+@media(min-width:600px){.mem-prof-panel{left:50%;right:auto;bottom:50%;transform:translate(-50%,50%) scale(.96);width:440px;border-radius:16px;max-height:85dvh}.mem-prof-panel.open{transform:translate(-50%,50%) scale(1)}}
+.mem-prof-hd{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.3rem .6rem;border-bottom:1px solid var(--b1);font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx2);flex-shrink:0}
+.mem-prof-body{padding:1.4rem 1.3rem 2rem;display:flex;flex-direction:column;align-items:center;gap:.5rem}
+.mem-prof-av-wrap{margin-bottom:.3rem}
+.mem-prof-av{width:80px;height:80px;border-radius:18px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;overflow:hidden;position:relative;border:2px solid var(--b2)}
+.mem-prof-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.mem-prof-name{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;color:var(--tx);letter-spacing:-.3px}
+.mem-prof-role{font-size:.75rem;padding:3px 10px;border-radius:20px;font-family:'Syne',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.mem-prof-role.member{background:rgba(108,78,242,.15);color:var(--ac2)}
+.mem-prof-role.admin{background:rgba(232,184,75,.15);color:var(--gold)}
+.mem-prof-role.leader{background:rgba(232,84,106,.15);color:var(--err)}
+.mem-prof-info{width:100%;background:var(--s2);border-radius:10px;padding:.85rem 1rem;display:flex;flex-direction:column;gap:.6rem;margin-top:.4rem}
+.mem-prof-info .row{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;font-size:.83rem}
+.mem-prof-info .row label{color:var(--tx2);flex-shrink:0;font-size:.76rem}
+.mem-prof-info .row .val{color:var(--tx);font-weight:500;text-align:right}
+.mem-prof-info .bio-row{flex-direction:column;align-items:flex-start}
+.mem-prof-info .bio-row .val{text-align:left;color:var(--tx2);line-height:1.6;font-size:.83rem;font-weight:400}
+.mem-prof-actions{width:100%;display:flex;gap:.6rem;margin-top:.2rem}
+.mem-prof-pm-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:var(--ac);border:none;color:#fff;padding:.65rem 1rem;border-radius:9px;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:background .2s}
+.mem-prof-pm-btn:hover{background:#7b60f4}
+.mem-prof-posts{width:100%;margin-top:.5rem}
+.mem-prof-posts-hd{font-family:'Syne',sans-serif;font-size:.73rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx2);margin-bottom:.7rem;padding-left:.1rem}
+.mem-prof-posts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;border-radius:8px;overflow:hidden}
+.mem-prof-post-thumb{aspect-ratio:1;background:var(--s3);overflow:hidden;cursor:pointer;position:relative}
+.mem-prof-post-thumb img,.mem-prof-post-thumb video{width:100%;height:100%;object-fit:cover;display:block}
+.mem-prof-post-thumb .vid-badge{position:absolute;top:4px;left:4px;background:rgba(0,0,0,.6);border-radius:4px;padding:2px 5px;font-size:.62rem;color:#fff;font-family:'Syne',sans-serif}
+.mem-prof-empty-posts{text-align:center;color:var(--tx2);font-size:.82rem;padding:1.5rem;width:100%}
 
 /* ══ RESPONSIVE — MOBILE FIRST ══ */
 @media(max-width:768px){
@@ -1959,13 +2008,18 @@ function buildMsgHTML(m, idx, isMentionMe) {
 
   const replyHTML = m.replyTo ? `<div style="background:var(--s3);border-left:2px solid var(--ac);border-radius:4px;padding:4px 8px;margin-bottom:5px;font-size:.77rem;color:var(--tx2);cursor:pointer" onclick="scrollToMsg(${m.replyTo.idx})"><span style="color:var(--ac2);font-weight:600">${m.replyTo.name}</span>: ${m.replyTo.text.slice(0,60)}${m.replyTo.text.length>60?'...':''}</div>` : '';
 
-  const prof = m.email ? getProfile(m.email) : null;
-  const avHTML = (prof && prof.avatar) ? '<img src="'+prof.avatar+'" style="width:32px;height:32px;border-radius:7px;object-fit:cover;flex-shrink:0;margin-top:2px"/>' : '<div class="msg-av '+(m.bot?'bot':roleClass)+'">'+(m.bot?'🤖':initials)+'</div>';
+  const prof = m.email ? getProfile(m.email) : (m.name ? getProfile(m.name) : null);
+  const clickOpen = m.bot ? '' : `onclick="openMemberProfile('${(m.email||m.name||'').replace(/'/g,'')}','${m.name.replace(/'/g,'')}')"`;
+  let avInner;
+  if (m.bot) { avInner = '🤖'; }
+  else if (prof && prof.avatar) { avInner = '<img src="'+prof.avatar+'" style="width:100%;height:100%;object-fit:cover;display:block"/>'; }
+  else { avInner = initials; }
+  const avHTML = `<div class="msg-av ${m.bot?'bot':roleClass}" ${clickOpen} title="${m.name}">${avInner}</div>`;
   return '<div class="chat-msg'+(isMentionMe?' mention-me':'')+'" id="msg-'+idx+'" data-idx="'+idx+'">' +
     avHTML +
     `<div class="msg-right">
       <div class="msg-meta">
-        <span class="msg-name ${m.bot?'bot':roleClass}" onclick="mentionUser('${m.name}')">${m.name}</span>
+        <span class="msg-name ${m.bot?'bot':roleClass}" ${clickOpen}>${m.name}</span>
         ${badge}${botBadge}
         <span class="msg-time">${timeStr}</span>
       </div>
@@ -2586,13 +2640,18 @@ function refreshProfileAvatar(key) {
   const profileKey = key || D.email || D.user;
   const prof = profileKey ? getProfile(profileKey) : {};
   const initials = (D.user || '?').split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
-  // Update nav profile button
-  const navInit = document.getElementById('navProfileInit');
-  if (navInit) {
+  // Update nav profile button — replace entire inner content
+  const navBtn = document.getElementById('navProfileBtn');
+  if (navBtn) {
     if (prof && prof.avatar) {
-      navInit.innerHTML = '<img src="'+prof.avatar+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:7px;display:block"/>';
+      const img = document.createElement('img');
+      img.src = prof.avatar;
+      img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:7px;display:block';
+      img.onerror = function() { navBtn.innerHTML = '<span style="font-size:.7rem;font-weight:700;font-family:Syne,sans-serif;line-height:1;color:var(--tx)">'+initials+'</span>'; };
+      navBtn.innerHTML = '';
+      navBtn.appendChild(img);
     } else {
-      navInit.innerHTML = '<span style="font-size:.7rem;font-weight:700;font-family:Syne,sans-serif;line-height:1">'+initials+'</span>';
+      navBtn.innerHTML = '<span style="font-size:.7rem;font-weight:700;font-family:Syne,sans-serif;line-height:1;color:var(--tx)">'+initials+'</span>';
     }
   }
   // Update profile panel avatar
@@ -2900,9 +2959,9 @@ function buildCTCard(p, i) {
   let mediaHTML = '';
   if (p.media) {
     if (p.type === 'video') {
-      mediaHTML = `<div class="ct-media-wrap"><video class="ct-media" src="${p.media}" preload="metadata" playsinline></video><div class="ct-play-btn" onclick="ctToggleVideo(this)"><div class="ct-play-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21 5,3"/></svg></div></div></div>`;
+      mediaHTML = `<div class="ct-media-wrap"><video class="ct-media" src="${p.media}" preload="metadata" playsinline controlsList="nodownload nofullscreen" disablePictureInPicture oncontextmenu="return false"></video><div class="ct-play-btn" onclick="ctToggleVideo(this)"><div class="ct-play-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21 5,3"/></svg></div></div></div>`;
     } else {
-      mediaHTML = `<div class="ct-media-wrap"><img class="ct-media img-media" src="${p.media}" loading="lazy" alt="post"/></div>`;
+      mediaHTML = `<div class="ct-media-wrap"><img class="ct-media img-media" src="${p.media}" loading="lazy" alt="post" oncontextmenu="return false" draggable="false"/></div>`;
     }
   }
   const likes = p.likes || 0;
@@ -2927,7 +2986,18 @@ function buildCTCard(p, i) {
         <svg width="14" height="14" viewBox="0 0 24 24" fill="${myLike?'var(--err)':'none'}" stroke="${myLike?'var(--err)':'currentColor'}" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         <span>${likes}</span>
       </button>
+      <button class="ct-act" onclick="ctToggleComments('${p._key||i}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>${(p.comments||[]).length||''}</span>
+      </button>
+      <button class="ct-act" onclick="openMemberProfile('${(p.email||'').replace(/'/g,'')}','${(p.author||'').replace(/'/g,'')}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </button>
       ${canDel ? `<button class="ct-act" onclick="ctDelete('${p._key||i}',${i})" style="margin-left:auto;color:var(--err)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6"/></svg></button>` : ''}
+    </div>
+    <div class="ct-comments" id="comments-${p._key||i}" style="display:none">
+      ${(p.comments||[]).map(cm=>`<div class="ct-comment"><span class="ct-cm-name">${cm.author}</span> <span class="ct-cm-text">${cm.text.replace(/</g,'&lt;')}</span></div>`).join('')}
+      ${D.role&&D.role!=='guest'?`<div class="ct-comment-inp-row"><input class="ct-comment-inp" id="cm-inp-${p._key||i}" placeholder="Komentar..." onkeydown="if(event.key==='Enter')ctAddComment('${p._key||i}',${i})"/><button class="ct-cm-send" onclick="ctAddComment('${p._key||i}',${i})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg></button></div>`:''}
     </div>
   </div>`;
 }
@@ -3083,9 +3153,207 @@ function setupCiunTikListener() {
   });
 }
 
+// ══ MEMBER PROFILE MODAL ══
+function openMemberProfile(emailOrKey, displayName) {
+  if (!emailOrKey && !displayName) return;
+  const key = emailOrKey || displayName;
+  const prof = getProfile(key);
+  const mem = D.members ? D.members.find(m => m.email === key || m.name === displayName) : null;
+  const name = mem ? mem.name : (displayName || key);
+  const role = mem ? mem.role || 'member' : 'member';
+  const initials = name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+
+  // Avatar
+  const avEl = document.getElementById('memProfAv');
+  if (prof.avatar) {
+    avEl.innerHTML = '<img src="'+prof.avatar+'" alt="'+name+'"/>';
+    avEl.style.background = '';
+  } else {
+    avEl.innerHTML = initials;
+    const roleGrad = role==='admin'?'linear-gradient(135deg,#e8b84b,#f5c842)':role==='leader'?'linear-gradient(135deg,#e8546a,#f06080)':'linear-gradient(135deg,var(--ac),var(--ac2))';
+    avEl.style.background = roleGrad;
+  }
+
+  document.getElementById('memProfName').textContent = name;
+  const roleChip = document.getElementById('memProfRoleChip');
+  roleChip.textContent = role.charAt(0).toUpperCase()+role.slice(1);
+  roleChip.className = 'mem-prof-role ' + role;
+
+  // Info rows
+  let infoHTML = '';
+  if (mem) infoHTML += `<div class="row"><label>Bergabung</label><div class="val">${mem.date || '—'}</div></div>`;
+  if (mem && mem.gamertag) infoHTML += `<div class="row"><label>Gamertag</label><div class="val">${mem.gamertag}</div></div>`;
+  if (prof.gameRole) infoHTML += `<div class="row"><label>Role Game</label><div class="val">${prof.gameRole}</div></div>`;
+  if (prof.bio) infoHTML += `<div class="row bio-row"><label>Bio</label><div class="val">${prof.bio}</div></div>`;
+  document.getElementById('memProfInfo').innerHTML = infoHTML || '<div style="color:var(--tx2);font-size:.8rem;text-align:center">Belum ada informasi profil</div>';
+
+  // Actions — PM button (only if not self)
+  const actEl = document.getElementById('memProfActions');
+  const isSelf = key === D.email || name === D.user;
+  if (!isSelf && D.role && D.role !== 'guest') {
+    actEl.innerHTML = `<button class="mem-prof-pm-btn" onclick="openPM('${name.replace(/'/g,'')}');closeMemberProfile()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Pesan Pribadi</button>`;
+  } else { actEl.innerHTML = ''; }
+
+  // CiunTik posts
+  const posts = CIUNTIK.posts.filter(p => p.email === key || p.author === displayName);
+  const grid = document.getElementById('memProfPostsGrid');
+  if (posts.length) {
+    grid.innerHTML = posts.slice(0,9).map((p,i) => {
+      if (p.type === 'video' && p.media) {
+        return `<div class="mem-prof-post-thumb" onclick="openCTPostModal('${p._key||i}')"><video src="${p.media}" muted preload="metadata" style="pointer-events:none" controlsList="nodownload" disablePictureInPicture></video><div class="vid-badge">▶</div></div>`;
+      } else if (p.media) {
+        return `<div class="mem-prof-post-thumb" onclick="openCTPostModal('${p._key||i}')"><img src="${p.media}" loading="lazy"/></div>`;
+      }
+      return `<div class="mem-prof-post-thumb" onclick="openCTPostModal('${p._key||i}')" style="display:flex;align-items:center;justify-content:center;padding:.5rem;font-size:.72rem;color:var(--tx2)">${(p.caption||'').slice(0,40)}</div>`;
+    }).join('');
+  } else {
+    grid.innerHTML = '<div class="mem-prof-empty-posts">Belum ada postingan</div>';
+  }
+
+  document.getElementById('memProfBg').classList.add('show');
+  document.getElementById('memProfPanel').classList.add('open');
+}
+function closeMemberProfile() {
+  document.getElementById('memProfBg').classList.remove('show');
+  document.getElementById('memProfPanel').classList.remove('open');
+}
+
+// PM (Private Message) — sends to team chat with @mention for now
+function openPM(name) {
+  goToChat();
+  const inp = document.getElementById('chatInput');
+  if (inp) {
+    inp.value = '@' + name + ' ';
+    inp.focus();
+    autoResizeInput(inp);
+  }
+  toast('Mention @'+name+' siap dikirim','success');
+}
+
+// ══ CIUNTIK LIKE & DELETE (were missing!) ══
+async function ctLike(key, i) {
+  if (!D.user || !D.role || D.role === 'guest') { toast('Login dulu','warn'); return; }
+  const userKey = D.email || D.user;
+  const post = CIUNTIK.posts[i];
+  if (!post) return;
+  const liked = (post.likedBy || []).includes(userKey);
+  const newLikedBy = liked ? (post.likedBy||[]).filter(u=>u!==userKey) : [...(post.likedBy||[]), userKey];
+  const newLikes = Math.max(0, liked ? (post.likes||1)-1 : (post.likes||0)+1);
+  // Optimistic UI update
+  post.likedBy = newLikedBy;
+  post.likes = newLikes;
+  // Update button immediately
+  const card = document.getElementById('ct-'+key);
+  if (card) {
+    const btn = card.querySelector('.ct-act');
+    if (btn) {
+      btn.className = 'ct-act' + (!liked ? ' liked' : '');
+      const svg = btn.querySelector('svg');
+      if (svg) { svg.setAttribute('fill', !liked?'var(--err)':'none'); svg.setAttribute('stroke', !liked?'var(--err)':'currentColor'); }
+      const span = btn.querySelector('span');
+      if (span) span.textContent = newLikes;
+    }
+  }
+  // Persist to Firebase
+  if (key && !String(key).startsWith('local_')) {
+    try {
+      await fbUpdate('ciuntik/' + key, { likes: newLikes, likedBy: newLikedBy });
+    } catch(e) {
+      console.warn('Like sync failed', e);
+    }
+  } else {
+    // update localStorage
+    const saved = JSON.parse(localStorage.getItem('c_ciuntik')||'[]');
+    const localPost = saved.find(p=>p._key===key);
+    if (localPost) { localPost.likes=newLikes; localPost.likedBy=newLikedBy; localStorage.setItem('c_ciuntik',JSON.stringify(saved)); }
+  }
+}
+
+async function ctDelete(key, i) {
+  if (!confirm('Hapus post ini?')) return;
+  const post = CIUNTIK.posts[i];
+  if (!post) return;
+  CIUNTIK.posts.splice(i,1);
+  renderCiunTik();
+  if (key && !String(key).startsWith('local_')) {
+    try { await fbRemove('ciuntik/'+key); }
+    catch(e) { toast('Gagal hapus dari server','error'); }
+  } else {
+    const saved = JSON.parse(localStorage.getItem('c_ciuntik')||'[]');
+    localStorage.setItem('c_ciuntik', JSON.stringify(saved.filter(p=>p._key!==key)));
+  }
+  toast('Post dihapus','success');
+}
+
+// open single CiunTik post (for member profile thumb click)
+function openCTPostModal(key) {
+  closeMemberProfile();
+  showPg('ciuntik');
+  setTimeout(() => {
+    const el = document.getElementById('ct-'+key);
+    if (el) el.scrollIntoView({behavior:'smooth', block:'center'});
+  }, 300);
+}
+
+function ctToggleComments(key) {
+  const el = document.getElementById('comments-'+key);
+  if (!el) return;
+  const isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen) {
+    const inp = document.getElementById('cm-inp-'+key);
+    if (inp) inp.focus();
+  }
+}
+
+async function ctAddComment(key, i) {
+  const inp = document.getElementById('cm-inp-'+key);
+  if (!inp) return;
+  const text = inp.value.trim();
+  if (!text) return;
+  if (!D.user || !D.role || D.role === 'guest') { toast('Login dulu','warn'); return; }
+  const comment = { author: D.user, email: D.email||null, text, ts: Date.now() };
+  const post = CIUNTIK.posts[i];
+  if (!post) return;
+  if (!post.comments) post.comments = [];
+  post.comments.push(comment);
+  inp.value = '';
+  // Add to DOM immediately
+  const commentDiv = document.createElement('div');
+  commentDiv.className = 'ct-comment';
+  commentDiv.innerHTML = `<span class="ct-cm-name">${comment.author}</span> <span class="ct-cm-text">${comment.text.replace(/</g,'&lt;')}</span>`;
+  inp.parentElement.before(commentDiv);
+  // Persist
+  if (key && !String(key).startsWith('local_')) {
+    try { await fbUpdate('ciuntik/'+key, { comments: post.comments }); }
+    catch(e) { console.warn('comment sync fail', e); }
+  }
+}
+
 // Hook into bootApp to also load CiunTik and set up listener
 const _origBootApp = window.bootApp;
 
 </script>
+<!-- MEMBER PROFILE MODAL -->
+<div class="mem-prof-bg" id="memProfBg" onclick="closeMemberProfile()"></div>
+<div class="mem-prof-panel" id="memProfPanel">
+  <div class="mem-prof-hd">
+    <span id="memProfTitle">Profil Member</span>
+    <button onclick="closeMemberProfile()" class="pp-cls"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="mem-prof-body" id="memProfBody">
+    <div class="mem-prof-av-wrap">
+      <div class="mem-prof-av" id="memProfAv"></div>
+    </div>
+    <div class="mem-prof-name" id="memProfName">—</div>
+    <div class="mem-prof-role" id="memProfRoleChip"></div>
+    <div class="mem-prof-info" id="memProfInfo"></div>
+    <div class="mem-prof-actions" id="memProfActions"></div>
+    <div class="mem-prof-posts">
+      <div class="mem-prof-posts-hd">Postingan CiunTik</div>
+      <div class="mem-prof-posts-grid" id="memProfPostsGrid"></div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
