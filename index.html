@@ -768,6 +768,58 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 .gacha-down:hover:not(:disabled){background:linear-gradient(135deg,rgba(232,84,106,.3),rgba(232,84,106,.15));transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,84,106,.2)}
 .gacha-btn:disabled{opacity:.35;cursor:not-allowed;transform:none !important}
 
+
+/* ══ CQ COIN & SAHAM ══ */
+/* Coin balance chip */
+.coin-chip{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(232,184,75,.15),rgba(232,184,75,.07));border:1px solid rgba(232,184,75,.35);border-radius:20px;padding:4px 12px;font-size:.78rem;font-weight:700;font-family:'Syne',sans-serif;color:var(--gold);-webkit-user-select:none;user-select:none}
+.coin-icon{font-size:.9rem}
+
+/* Saham card */
+.stock-card{background:var(--s2);border:1.5px solid var(--b2);border-radius:12px;padding:.9rem 1rem;cursor:pointer;transition:all .22s;position:relative;overflow:hidden}
+.stock-card:hover{border-color:var(--ac2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.stock-card.owned{border-color:rgba(30,201,154,.4);background:rgba(30,201,154,.04)}
+.stock-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.5rem}
+.stock-emoji{font-size:1.3rem;width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--s3);border-radius:9px;flex-shrink:0}
+.stock-name{font-weight:800;font-size:.88rem;color:var(--tx);font-family:'Syne',sans-serif}
+.stock-sector{font-size:.65rem;color:var(--tx2);margin-top:1px}
+.stock-price{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:var(--tx);text-align:right}
+.stock-change{font-size:.68rem;font-weight:700;text-align:right;margin-top:1px}
+.stock-change.up{color:var(--ok)}
+.stock-change.down{color:var(--err)}
+.stock-risk-badge{display:inline-flex;align-items:center;gap:3px;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:8px;font-family:'Syne',sans-serif;letter-spacing:.3px}
+.stock-desc{font-size:.7rem;color:var(--tx2);line-height:1.5;margin:.45rem 0}
+.stock-mini-chart{height:36px;margin:.4rem 0}
+.stock-actions{display:flex;gap:.5rem;margin-top:.6rem}
+.stock-buy-btn{flex:1;padding:.5rem;border:none;border-radius:8px;background:var(--ac);color:#fff;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:4px}
+.stock-buy-btn:hover{background:var(--ac2)}
+.stock-sell-btn{flex:1;padding:.5rem;border:1px solid rgba(232,84,106,.4);border-radius:8px;background:rgba(232,84,106,.08);color:var(--err);font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px}
+.stock-sell-btn:hover{background:rgba(232,84,106,.16)}
+.stock-sell-btn:disabled,.stock-buy-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* Bunga terpisah card */
+.interest-card{background:linear-gradient(135deg,rgba(30,201,154,.08),rgba(30,201,154,.03));border:1.5px solid rgba(30,201,154,.25);border-radius:12px;padding:.9rem 1rem;margin-bottom:.8rem}
+.interest-amount{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--ok);line-height:1.1}
+.interest-sub{font-size:.72rem;color:var(--tx2);margin-top:3px}
+.interest-withdraw-btn{margin-top:.7rem;width:100%;padding:.6rem;border:none;border-radius:9px;background:rgba(30,201,154,.15);border:1px solid rgba(30,201,154,.3);color:var(--ok);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s}
+.interest-withdraw-btn:hover{background:rgba(30,201,154,.25)}
+.interest-withdraw-btn:disabled{opacity:.4;cursor:not-allowed}
+.interest-locked{font-size:.7rem;color:var(--gold);background:rgba(232,184,75,.08);border:1px solid rgba(232,184,75,.2);border-radius:6px;padding:4px 8px;margin-top:.5rem;display:flex;align-items:center;gap:5px}
+
+/* Berita/news ticker */
+.news-ticker{background:rgba(232,184,75,.06);border:1px solid rgba(232,184,75,.2);border-radius:8px;padding:.6rem .9rem;margin-bottom:.7rem;display:flex;gap:.6rem;align-items:flex-start}
+.news-sentiment-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
+.news-ticker-title{font-size:.78rem;font-weight:700;color:var(--tx);line-height:1.3}
+.news-ticker-body{font-size:.68rem;color:var(--tx2);margin-top:2px;line-height:1.4}
+.news-affects{font-size:.6rem;padding:1px 6px;border-radius:5px;margin-top:4px;display:inline-block;font-weight:700;font-family:'Syne',sans-serif}
+
+/* Portfolio summary */
+.portfolio-row{display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--b1)}
+.portfolio-row:last-child{border-bottom:none}
+.portfolio-stock-name{font-size:.82rem;font-weight:700;color:var(--tx)}
+.portfolio-qty{font-size:.72rem;color:var(--tx2)}
+.portfolio-val{font-size:.82rem;font-weight:700;font-family:'Syne',sans-serif}
+.portfolio-pnl{font-size:.68rem;font-weight:700}
+
 /* ══ ANALYTICS ══ */
 .analytics-member-card{background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem 1rem;margin-bottom:.6rem;transition:border-color .2s}
 .analytics-member-card:hover{border-color:var(--b2)}
@@ -1540,9 +1592,13 @@ canvas{-webkit-user-select:none;user-select:none}
       <div class="panel-h">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><rect x="1" y="3" width="22" height="18" rx="2"/><path d="M1 9h22"/><path d="M7 15h.01M11 15h.01"/></svg>
         <h3>Cbank</h3>
+        <div class="coin-chip" id="memberCoinChip" style="margin-left:auto">
+          <span class="coin-icon">🪙</span><span id="memberCoinBal">0</span> CQ
+        </div>
       </div>
+      <!-- Saldo utama -->
       <div class="bank-balance-card">
-        <div class="bank-bal-label">Saldo Aktif</div>
+        <div class="bank-bal-label">Saldo Utama</div>
         <div class="bank-bal-amount" id="memberBankBalance">Rp 0</div>
         <div class="bank-bal-sub" id="memberBankSub">Belum ada deposit aktif</div>
         <div class="bank-growth" id="memberBankGrowth" style="display:none">
@@ -1550,23 +1606,45 @@ canvas{-webkit-user-select:none;user-select:none}
           <span id="memberBankGrowthTxt"></span>
         </div>
       </div>
-      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem">
-        <button class="btn-p" onclick="openBankDeposit()" style="flex:1;font-size:.84rem;padding:.6rem .9rem;min-width:120px">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Ajukan Deposit
-        </button>
-        <button class="btn-p" onclick="openBankWithdraw()" style="flex:1;font-size:.84rem;padding:.6rem .9rem;min-width:120px" id="memberWithdrawBtn">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5,12 12,5 19,12"/></svg>
-          Tarik Tunai
+      <!-- Hasil Bunga (terpisah) -->
+      <div class="interest-card" id="memberInterestCard" style="display:none">
+        <div class="bank-bal-label" style="color:var(--ok);font-size:.65rem">💰 Hasil Bunga (Terpisah)</div>
+        <div class="interest-amount" id="memberInterestBal">Rp 0</div>
+        <div class="interest-sub" id="memberInterestSub">Bunga tumbuh per menit secara acak</div>
+        <div class="interest-locked" id="memberInterestLocked" style="display:none">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span id="memberInterestLockTxt">Belum bisa ditarik</span>
+        </div>
+        <button class="interest-withdraw-btn" id="memberInterestWithdrawBtn" onclick="withdrawInterest()" disabled>
+          Tarik Hasil Bunga ke Saldo Utama
         </button>
       </div>
+      <!-- Aksi -->
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem">
+        <button class="btn-p" onclick="openBankDeposit()" style="flex:1;font-size:.82rem;padding:.55rem .8rem;min-width:110px">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Deposit
+        </button>
+        <button class="btn-p" onclick="openBankWithdraw()" style="flex:1;font-size:.82rem;padding:.55rem .8rem;min-width:110px" id="memberWithdrawBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5,12 12,5 19,12"/></svg>
+          Tarik Saldo
+        </button>
+        <button onclick="openBuyCoin()" style="flex:1;min-width:110px;padding:.55rem .8rem;border-radius:8px;border:1px solid rgba(232,184,75,.4);background:rgba(232,184,75,.08);color:var(--gold);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px">
+          🪙 Beli Coin
+        </button>
+      </div>
+      <!-- Pasar Saham shortcut -->
+      <button onclick="showPg('stocks')" style="width:100%;margin-bottom:.7rem;background:linear-gradient(135deg,rgba(108,78,242,.1),rgba(30,201,154,.05));border:1px solid rgba(108,78,242,.25);color:var(--ac2);border-radius:9px;padding:.6rem;font-size:.8rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+        📈 Pasar Saham CQ
+      </button>
       <div class="bank-history-hd">Riwayat Transaksi</div>
       <div class="bank-history-list" id="memberBankHistory">
         <div class="bank-empty">Belum ada transaksi</div>
       </div>
       <button onclick="showPg('analytics')" style="width:100%;margin-top:.8rem;background:rgba(108,78,242,.07);border:1px dashed rgba(108,78,242,.3);color:var(--ac2);border-radius:8px;padding:.55rem;font-size:.8rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
-        Lihat Analisis Cbank Global
+        Analisis Cbank Global
       </button>
     </div>
   </div>
@@ -1766,6 +1844,24 @@ canvas{-webkit-user-select:none;user-select:none}
       <button onclick="showPg('analytics')" style="width:100%;margin-top:.6rem;background:rgba(108,78,242,.07);border:1px dashed rgba(108,78,242,.3);color:var(--ac2);border-radius:8px;padding:.5rem;font-size:.78rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:3px"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
         Buka Analisis Global
+      </button>
+    </div>
+
+    <!-- LEADER GIVEAWAY / TOPUP PANEL -->
+    <div class="panel">
+      <div class="panel-h">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8"><polyline points="20,12 20,22 4,22 4,12"/><rect x="2" y="7" width="20" height="5"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+        <h3>Giveaway / Topup Saldo</h3>
+      </div>
+      <p style="font-size:.78rem;color:var(--tx2);margin-bottom:.9rem">Isi saldo Cbank member secara langsung. Gunakan untuk giveaway, reward, atau kompensasi.</p>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.6rem">
+        <select id="leaderTopupSelect" style="flex:2;min-width:150px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none">
+          <option value="">— Pilih member —</option>
+        </select>
+        <input type="number" id="leaderTopupAmount" placeholder="Jumlah (Rp)" min="1000" style="flex:2;min-width:120px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none;-webkit-user-select:text;user-select:text"/>
+      </div>
+      <button class="btn-p" onclick="leaderTopupMember()" style="width:100%;font-size:.84rem;padding:.6rem">
+        🎁 Kirim Saldo
       </button>
     </div>
 
@@ -2356,16 +2452,21 @@ function showPg(id) {
   if (id === 'auth') { setTimeout(checkReturningUser, 50); }
   if (id === 'analytics') { setTimeout(loadAnalytics, 100); }
   if (id !== 'analytics') stopChartAnimation();
+  if (id === 'stocks') {
+    setTimeout(() => {
+      loadStockPrices().then(renderStockList);
+      refreshMarketNews();
+      loadUserCoin().then(c => {
+        const el = document.getElementById('stockPageCoin');
+        if (el) el.textContent = c;
+      });
+    }, 80);
+  }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const pg = document.getElementById('page-' + id);
   if (pg) pg.classList.add('active');
   if (id !== 'chat') window.scrollTo({top:0});
-  if (id === 'ciuntik') {
-    loadCiunTik();
-  }
-  // update sidebar ciuntik link visibility
-  const sbCT = document.getElementById('sb-ciuntik-always');
-  // no-op, always visible
+  if (id === 'ciuntik') { loadCiunTik(); }
 }
 
 /* ══ AUTH TABS ══ */
@@ -2610,6 +2711,458 @@ function refreshApp() {
   if (btn) btn.classList.add('spinning');
   setTimeout(() => location.reload(), 350);
 }
+
+
+// ══════════════════════════════════════════════════
+// SISTEM SAHAM + CQ COIN + BUNGA TERPISAH
+// ══════════════════════════════════════════════════
+
+let _stockPrices = {}; // { CQG: 1200, CQT: 3500, ... }
+let _stockTrends = {}; // momentum tiap saham
+let _stockTimer  = null;
+let _currentBuyStock = null;
+let _currentNews = [];
+
+// ── Init harga awal dari preset ──
+function initStockPrices() {
+  STOCKS_PRESET.forEach(s => {
+    if (!_stockPrices[s.id]) _stockPrices[s.id] = s.basePrice;
+    if (!_stockTrends[s.id]) _stockTrends[s.id] = 0;
+  });
+}
+
+// ── Pergerakan harga tiap menit ──
+function tickStockPrices() {
+  STOCKS_PRESET.forEach(s => {
+    const trend  = _stockTrends[s.id] || 0;
+    const noise  = (Math.random() - 0.48) * s.volatility; // slight bias sesuai tren saham
+    const change = s.trend + noise + trend * 0.1;
+    _stockPrices[s.id] = Math.max(100, _stockPrices[s.id] * (1 + change));
+    // Tren momentum — random walk
+    _stockTrends[s.id] = trend * 0.7 + (Math.random()-0.5)*0.02;
+  });
+  // Simpan ke Firebase (supaya semua user lihat harga sama)
+  fbSet('stocks/prices', _stockPrices).catch(()=>{});
+  fbSet('stocks/lastTick', Date.now()).catch(()=>{});
+  if (document.getElementById('page-stocks')?.classList.contains('active')) renderStockList();
+}
+
+// ── Load harga dari Firebase ──
+async function loadStockPrices() {
+  try {
+    const snap = await fbGet('stocks/prices');
+    if (snap.val()) _stockPrices = snap.val();
+    else { initStockPrices(); tickStockPrices(); }
+  } catch(e) { initStockPrices(); }
+}
+
+// ── Start stock ticker ──
+function startStockTicker() {
+  if (_stockTimer) clearInterval(_stockTimer);
+  loadStockPrices().then(() => {
+    if (document.getElementById('page-stocks')?.classList.contains('active')) renderStockList();
+  });
+  _stockTimer = setInterval(() => {
+    if (D.role === 'leader') tickStockPrices(); // leader tick (1 user per session)
+    else loadStockPrices();
+    if (document.getElementById('page-stocks')?.classList.contains('active')) renderStockList();
+    // Update interest every tick
+    tickInterest();
+  }, 60000);
+}
+
+// ── Render stock page ──
+function renderStockList() {
+  const el = document.getElementById('stockList');
+  const ul = document.getElementById('stockLastUpdate');
+  if (!el) return;
+  if (ul) ul.textContent = 'Update: ' + new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}) + ' WIB';
+
+  const userKey = (D.email||D.user||'').replace(/[.#$/[\]]/g,'_');
+
+  el.innerHTML = STOCKS_PRESET.map(s => {
+    const price  = _stockPrices[s.id] || s.basePrice;
+    const prev   = price * (1 - s.trend - (Math.random()-0.5)*s.volatility*0.5);
+    const chgPct = ((price-prev)/prev*100);
+    const chgDir = chgPct >= 0 ? 'up' : 'down';
+    const pricePerCoin = Math.ceil(price/100); // harga dalam CQ Coin per 10 saham (1 lot)
+    return `<div class="stock-card" id="stockCard_${s.id}">
+      <div class="stock-card-top">
+        <div style="display:flex;gap:8px;align-items:flex-start">
+          <div class="stock-emoji">${s.emoji}</div>
+          <div>
+            <div class="stock-name">${s.name}</div>
+            <div class="stock-sector">${s.id} · ${s.sector}</div>
+            <div style="margin-top:4px"><span class="stock-risk-badge" style="background:${s.riskColor}22;color:${s.riskColor};border:1px solid ${s.riskColor}44">⚠ ${s.risk}</span></div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div class="stock-price">${pricePerCoin} CQ<span style="font-size:.55rem;color:var(--tx2);font-weight:400">/lot</span></div>
+          <div class="stock-change ${chgDir}">${chgDir==='up'?'▲':'▼'} ${Math.abs(chgPct).toFixed(2)}%</div>
+        </div>
+      </div>
+      <div class="stock-desc">${s.desc}</div>
+      <canvas class="stock-mini-chart" id="miniChart_${s.id}" height="36"></canvas>
+      <div class="stock-actions">
+        <button class="stock-buy-btn" onclick="openBuyStock('${s.id}')">📈 Beli</button>
+        <button class="stock-sell-btn" id="sellBtn_${s.id}" onclick="openSellStock('${s.id}')" disabled>💰 Jual</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Load portfolio to update sell buttons + render mini charts
+  loadUserPortfolio().then(portfolio => {
+    STOCKS_PRESET.forEach(s => {
+      drawMiniChart(s.id);
+      const owned = portfolio[s.id];
+      if (owned && owned.qty > 0) {
+        const btn = document.getElementById('sellBtn_'+s.id);
+        if (btn) { btn.disabled = false; btn.textContent = `💰 Jual (${owned.qty} lot)`; }
+        const card = document.getElementById('stockCard_'+s.id);
+        if (card) card.classList.add('owned');
+      }
+    });
+    renderPortfolio(portfolio);
+    // Update coin display
+    loadUserCoin().then(coin => {
+      const el1 = document.getElementById('stockPageCoin');
+      if (el1) el1.textContent = coin;
+    });
+  });
+}
+
+function drawMiniChart(stockId) {
+  const canvas = document.getElementById('miniChart_'+stockId);
+  if (!canvas) return;
+  const W = canvas.offsetWidth || 280;
+  canvas.width = W; canvas.height = 36;
+  const ctx = canvas.getContext('2d');
+  const s = STOCKS_PRESET.find(x=>x.id===stockId);
+  if (!s) return;
+  const base = _stockPrices[stockId] || s.basePrice;
+  const pts = 20;
+  const points = Array.from({length:pts}, (_,i) => {
+    const noise = (Math.random()-0.48)*s.volatility*base;
+    const trend = s.trend*base*i;
+    return base + trend + noise;
+  });
+  points[pts-1] = base;
+  const min = Math.min(...points), max = Math.max(...points);
+  const range = max-min||1;
+  const lastUp = points[pts-1] >= points[pts-2];
+  const col = lastUp ? '#1ec99a' : '#e8546a';
+  const grad = ctx.createLinearGradient(0,0,0,36);
+  grad.addColorStop(0, lastUp?'rgba(30,201,154,.2)':'rgba(232,84,106,.2)');
+  grad.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.beginPath();
+  points.forEach((v,i)=>{ const x=i/(pts-1)*W, y=36-(v-min)/range*28+4; i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
+  ctx.lineTo(W,36); ctx.lineTo(0,36); ctx.closePath();
+  ctx.fillStyle=grad; ctx.fill();
+  ctx.beginPath();
+  points.forEach((v,i)=>{ const x=i/(pts-1)*W, y=36-(v-min)/range*28+4; i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
+  ctx.strokeStyle=col; ctx.lineWidth=1.5; ctx.stroke();
+}
+
+// ── Portfolio ──
+async function loadUserPortfolio() {
+  const key = (D.email||D.user||'').replace(/[.#$/[\]]/g,'_');
+  try {
+    const snap = await fbGet('portfolio/'+key);
+    return snap.val() || {};
+  } catch(e) { return {}; }
+}
+
+async function savePortfolio(portfolio) {
+  const key = (D.email||D.user||'').replace(/[.#$/[\]]/g,'_');
+  await fbSet('portfolio/'+key, portfolio);
+}
+
+function renderPortfolio(portfolio) {
+  const panel = document.getElementById('stockPortfolioPanel');
+  const list  = document.getElementById('portfolioList');
+  const totalEl = document.getElementById('portfolioTotalVal');
+  if (!panel||!list) return;
+  const owned = Object.entries(portfolio).filter(([id,v])=>v&&v.qty>0);
+  if (!owned.length) { panel.style.display='none'; return; }
+  panel.style.display='block';
+  let totalVal=0;
+  list.innerHTML = owned.map(([id,p]) => {
+    const s = STOCKS_PRESET.find(x=>x.id===id);
+    if (!s) return '';
+    const curPrice = _stockPrices[id]||s.basePrice;
+    const curVal = (p.qty||0)*10*curPrice/100;
+    const buyVal = (p.avgBuy||curPrice)*p.qty*10/100;
+    totalVal += curVal;
+    const pnl = curVal - buyVal;
+    const pnlPct = buyVal>0?(pnl/buyVal*100):0;
+    return `<div class="portfolio-row">
+      <div><div class="portfolio-stock-name">${s.emoji} ${s.name}</div><div class="portfolio-qty">${p.qty} lot · beli avg ${p.avgBuy ? Math.ceil(p.avgBuy/100):'—'} CQ/lot</div></div>
+      <div style="text-align:right"><div class="portfolio-val">${Math.ceil(curVal/100)} CQ</div><div class="portfolio-pnl" style="color:${pnl>=0?'var(--ok)':'var(--err)'}">${pnl>=0?'+':''}${pnlPct.toFixed(1)}%</div></div>
+    </div>`;
+  }).join('');
+  if (totalEl) totalEl.textContent = Math.ceil(totalVal/100)+' CQ';
+}
+
+// ── CQ Coin ──
+async function loadUserCoin() {
+  const key = (D.email||D.user||'').replace(/[.#$/[\]]/g,'_');
+  try {
+    const snap = await fbGet('coins/'+key);
+    return snap.val() || 0;
+  } catch(e) { return 0; }
+}
+
+async function saveUserCoin(amount) {
+  const key = (D.email||D.user||'').replace(/[.#$/[\]]/g,'_');
+  await fbSet('coins/'+key, amount);
+}
+
+function openBuyCoin() {
+  document.getElementById('buyCoinBg').classList.add('show');
+  document.getElementById('buyCoinModal').classList.add('open');
+  document.getElementById('coinBuyAmount').value='';
+  document.getElementById('coinBuyPreview').style.display='none';
+}
+function closeBuyCoin() {
+  document.getElementById('buyCoinBg').classList.remove('show');
+  document.getElementById('buyCoinModal').classList.remove('open');
+}
+function previewCoinBuy() {
+  const qty = parseInt(document.getElementById('coinBuyAmount').value)||0;
+  const prev = document.getElementById('coinBuyPreview');
+  if (qty < COIN_CONFIG.MIN_BUY) { prev.style.display='none'; return; }
+  const cost = qty * COIN_CONFIG.PRICE_RP;
+  document.getElementById('cpQty').textContent = qty+' CQ';
+  document.getElementById('cpCost').textContent = fmtRp(cost);
+  prev.style.display='block';
+}
+async function confirmBuyCoin() {
+  const qty = parseInt(document.getElementById('coinBuyAmount').value)||0;
+  if (qty < COIN_CONFIG.MIN_BUY) { toast('Minimum beli '+COIN_CONFIG.MIN_BUY+' coin','warn'); return; }
+  const cost = qty * COIN_CONFIG.PRICE_RP;
+  // Check saldo
+  if (!_cachedBankAcc || (_cachedBankAcc.balance||0) < cost) { toast('Saldo tidak cukup (butuh '+fmtRp(cost)+')','error'); return; }
+  const key = (D.email||D.user||'').replace(/[.#$/[\]]/g,'_');
+  try {
+    const curCoin = await loadUserCoin();
+    await saveUserCoin(curCoin + qty);
+    // Kurangi saldo
+    const newBal = (_cachedBankAcc.balance||0) - cost;
+    const tx = {type:'coin_buy',amount:cost,note:`Beli ${qty} CQ Coin`,ts:Date.now(),status:'approved'};
+    const txs = (_cachedBankAcc.transactions||[]); txs.push(tx);
+    await fbSet('bank/'+key, {..._cachedBankAcc, balance:newBal, transactions:txs});
+    _cachedBankAcc = {..._cachedBankAcc, balance:newBal, transactions:txs};
+    toast(`${qty} CQ Coin berhasil dibeli!`,'success');
+    closeBuyCoin();
+    loadMemberBank();
+    // Update coin display
+    const coinEls = ['memberCoinChip','stockPageCoin'];
+    coinEls.forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=curCoin+qty;});
+    document.getElementById('memberCoinBal') && (document.getElementById('memberCoinBal').textContent=curCoin+qty);
+  } catch(e) { toast('Gagal beli coin','error'); }
+}
+
+// ── Beli Saham ──
+function openBuyStock(stockId) {
+  const s = STOCKS_PRESET.find(x=>x.id===stockId);
+  if (!s) return;
+  _currentBuyStock = s;
+  document.getElementById('buyStockTitle').textContent = `📈 Beli ${s.name}`;
+  const price = _stockPrices[s.id]||s.basePrice;
+  const coinPerLot = Math.ceil(price/100);
+  document.getElementById('buyStockInfo').innerHTML = `
+    <div style="font-weight:700;color:var(--tx);margin-bottom:4px">${s.emoji} ${s.name} (${s.id})</div>
+    <div style="margin-bottom:3px">Harga: <strong style="color:var(--gold)">${coinPerLot} CQ/lot</strong> · Risiko: <strong style="color:${s.riskColor}">${s.risk}</strong></div>
+    <div style="font-size:.7rem">${s.desc}</div>`;
+  document.getElementById('stockBuyQty').value='';
+  document.getElementById('stockBuyPreview').style.display='none';
+  document.getElementById('buyStockBg').classList.add('show');
+  document.getElementById('buyStockModal').classList.add('open');
+}
+function closeBuyStock() {
+  document.getElementById('buyStockBg').classList.remove('show');
+  document.getElementById('buyStockModal').classList.remove('open');
+}
+function previewStockBuy() {
+  const qty = parseInt(document.getElementById('stockBuyQty').value)||0;
+  const prev = document.getElementById('stockBuyPreview');
+  if (!qty||!_currentBuyStock) { prev.style.display='none'; return; }
+  const price = _stockPrices[_currentBuyStock.id]||_currentBuyStock.basePrice;
+  const coinPerLot = Math.ceil(price/100);
+  const total = qty*coinPerLot;
+  document.getElementById('sbpLot').textContent = qty+' lot × 10 saham';
+  document.getElementById('sbpPrice').textContent = coinPerLot+' CQ/lot';
+  document.getElementById('sbpTotal').textContent = total+' CQ';
+  prev.style.display='block';
+}
+async function confirmBuyStock() {
+  const qty = parseInt(document.getElementById('stockBuyQty').value)||0;
+  if (!qty||!_currentBuyStock) return;
+  const s = _currentBuyStock;
+  const price = _stockPrices[s.id]||s.basePrice;
+  const coinPerLot = Math.ceil(price/100);
+  const total = qty*coinPerLot;
+  const curCoin = await loadUserCoin();
+  if (curCoin < total) { toast('CQ Coin tidak cukup (butuh '+total+' CQ)','error'); return; }
+  try {
+    await saveUserCoin(curCoin - total);
+    const portfolio = await loadUserPortfolio();
+    const existing = portfolio[s.id]||{qty:0, avgBuy:0};
+    const newQty = existing.qty + qty;
+    const newAvg = (existing.avgBuy*existing.qty + price*qty) / newQty;
+    portfolio[s.id] = {qty:newQty, avgBuy:newAvg, lastBuy:Date.now()};
+    await savePortfolio(portfolio);
+    toast(`${qty} lot ${s.name} berhasil dibeli!`,'success');
+    closeBuyStock();
+    renderStockList();
+    // Aktifkan bunga jika belum aktif
+    activateInterest();
+  } catch(e) { toast('Gagal beli saham','error'); console.error(e); }
+}
+
+// ── Jual Saham ──
+async function openSellStock(stockId) {
+  const portfolio = await loadUserPortfolio();
+  const owned = portfolio[stockId];
+  if (!owned||owned.qty<=0) { toast('Kamu tidak punya saham ini','warn'); return; }
+  const s = STOCKS_PRESET.find(x=>x.id===stockId);
+  const price = _stockPrices[s.id]||s.basePrice;
+  const coinPerLot = Math.ceil(price/100);
+  const total = owned.qty * coinPerLot;
+  if (!confirm(`Jual semua ${owned.qty} lot ${s.name}?
+Kamu akan dapat ${total} CQ Coin.`)) return;
+  try {
+    const curCoin = await loadUserCoin();
+    await saveUserCoin(curCoin + total);
+    portfolio[stockId] = {qty:0, avgBuy:0};
+    await savePortfolio(portfolio);
+    toast(`${owned.qty} lot ${s.name} dijual! +${total} CQ`,'success');
+    renderStockList();
+  } catch(e) { toast('Gagal jual saham','error'); }
+}
+
+// ── Berita pasar ──
+let _activeNews = null;
+function refreshMarketNews() {
+  const shown = [];
+  // Ambil 3 berita acak, campur dari berbagai sektor
+  const shuffled = [...MARKET_NEWS].sort(()=>Math.random()-.5);
+  _currentNews = shuffled.slice(0,3);
+  renderMarketNews();
+}
+function renderMarketNews() {
+  const el = document.getElementById('stockNewsContainer');
+  if (!el) return;
+  if (!_currentNews.length) { el.innerHTML='<div class="bank-empty">Tidak ada berita</div>'; return; }
+  el.innerHTML = _currentNews.map(n => {
+    const s = STOCKS_PRESET.find(x=>x.id===n.affects);
+    const sentColor = n.sentiment>0?'#1ec99a':'#e8546a';
+    const sentIcon = n.sentiment>0?'📈':'📉';
+    const affectsLabel = n.affects==='ALL'?'🌐 Semua Saham':`${s?s.emoji:''} ${n.affects}`;
+    return `<div class="news-ticker">
+      <div class="news-sentiment-icon">${sentIcon}</div>
+      <div>
+        <div class="news-ticker-title">${n.title}</div>
+        <div class="news-ticker-body">${n.body}</div>
+        <span class="news-affects" style="background:${sentColor}18;color:${sentColor};border:1px solid ${sentColor}33">${affectsLabel}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Bunga terpisah — tumbuh per menit, rate acak ──
+async function activateInterest() {
+  const key = (D.email||D.user||'').replace(/[.#$/[\]]/g,'_');
+  try {
+    const snap = await fbGet('bank/'+key);
+    const acc = snap.val();
+    if (!acc) return;
+    if (!acc.interestActivatedAt) {
+      await fbSet('bank/'+key+'/interestActivatedAt', Date.now());
+      await fbSet('bank/'+key+'/interestBalance', 0);
+    }
+    _cachedBankAcc = {...(_cachedBankAcc||{}), ...acc, interestActivatedAt: acc.interestActivatedAt||Date.now()};
+  } catch(e){}
+}
+
+function tickInterest() {
+  if (!_cachedBankAcc||!_cachedBankAcc.interestActivatedAt) return;
+  const principal = _cachedBankAcc.principal||0;
+  if (!principal) return;
+  // Rate acak per menit: 0.01% - 0.05%
+  const rate = BANK_CONFIG.INTEREST_RATE_MIN + Math.random()*(BANK_CONFIG.INTEREST_RATE_MAX-BANK_CONFIG.INTEREST_RATE_MIN);
+  const earned = principal * rate;
+  const newInterest = (_cachedBankAcc.interestBalance||0) + earned;
+  _cachedBankAcc.interestBalance = newInterest;
+  // Save to Firebase (debounced)
+  const key = (D.email||D.user||'').replace(/[.#$/[\]]/g,'_');
+  fbSet('bank/'+key+'/interestBalance', newInterest).catch(()=>{});
+  // Update UI
+  updateInterestUI();
+}
+
+function updateInterestUI() {
+  const acc = _cachedBankAcc;
+  if (!acc||!acc.interestActivatedAt) return;
+  const interestBal = acc.interestBalance||0;
+  const card = document.getElementById('memberInterestCard');
+  const balEl = document.getElementById('memberInterestBal');
+  const subEl = document.getElementById('memberInterestSub');
+  const lockEl = document.getElementById('memberInterestLocked');
+  const lockTxt = document.getElementById('memberInterestLockTxt');
+  const wdBtn  = document.getElementById('memberInterestWithdrawBtn');
+  if (!card) return;
+  if (interestBal <= 0) { card.style.display='none'; return; }
+  card.style.display='block';
+  if (balEl) balEl.textContent = fmtRp(interestBal);
+  // Cek 7 hari kerja (7×24h sebagai approx)
+  const activatedAt = acc.interestActivatedAt||Date.now();
+  const daysPassed = (Date.now()-activatedAt)/(1000*60*60*24);
+  const workDaysPassed = Math.floor(daysPassed*(5/7)); // approx hari kerja
+  const canWithdraw = workDaysPassed >= 7;
+  if (lockEl) lockEl.style.display = canWithdraw?'none':'flex';
+  if (lockTxt) lockTxt.textContent = `Bisa ditarik setelah ${Math.max(0,7-workDaysPassed)} hari kerja lagi`;
+  if (wdBtn) wdBtn.disabled = !canWithdraw;
+  if (subEl) subEl.textContent = canWithdraw ? 'Bunga siap ditarik ke saldo utama' : `Tumbuh per menit · ${workDaysPassed}/7 hari kerja`;
+}
+
+async function withdrawInterest() {
+  if (!_cachedBankAcc) return;
+  const interest = _cachedBankAcc.interestBalance||0;
+  if (interest < 100) { toast('Bunga belum cukup untuk ditarik','warn'); return; }
+  if (!confirm(`Tarik ${fmtRp(interest)} bunga ke saldo utama?`)) return;
+  const key = (D.email||D.user||'').replace(/[.#$/[\]]/g,'_');
+  const newBal = (_cachedBankAcc.balance||0) + interest;
+  const tx = {type:'interest_withdraw',amount:interest,note:'Tarik hasil bunga',ts:Date.now(),status:'approved'};
+  const txs = (_cachedBankAcc.transactions||[]); txs.push(tx);
+  try {
+    await fbSet('bank/'+key, {..._cachedBankAcc, balance:newBal, interestBalance:0, transactions:txs});
+    _cachedBankAcc = {..._cachedBankAcc, balance:newBal, interestBalance:0, transactions:txs};
+    toast(`+${fmtRp(interest)} berhasil ditarik ke saldo!`,'success');
+    loadMemberBank();
+  } catch(e) { toast('Gagal tarik bunga','error'); }
+}
+
+// ── Leader isi saldo member (giveaway) ──
+function leaderTopupMember() {
+  const sel = document.getElementById('leaderTopupSelect');
+  const amtInp = document.getElementById('leaderTopupAmount');
+  const memberKey = sel?.value;
+  const amount = parseFloat(amtInp?.value)||0;
+  if (!memberKey) { toast('Pilih member dulu','warn'); return; }
+  if (amount < 1000) { toast('Minimal topup Rp 1.000','warn'); return; }
+  fbGet('bank/'+memberKey).then(async snap => {
+    const acc = snap.val()||{balance:0,memberName:memberKey,memberEmail:memberKey,transactions:[],status:'active',principal:0,lastTick:Date.now()};
+    const tx = {type:'topup',amount,note:'Topup/Giveaway dari Leader',ts:Date.now(),status:'approved'};
+    const txs = acc.transactions||[]; txs.push(tx);
+    await fbSet('bank/'+memberKey, {...acc, balance:(acc.balance||0)+amount, transactions:txs});
+    toast(`Saldo ${memberKey} berhasil ditambah ${fmtRp(amount)}!`,'success');
+    if (amtInp) amtInp.value='';
+    loadLeaderBank();
+  }).catch(()=>toast('Gagal topup','error'));
+}
+
+// showPg hook for stocks page
 
 // Restore sesi setelah reload (dipanggil di bootApp)
 async function restoreSession() {
@@ -2868,6 +3421,7 @@ function renderAdminPanel() {
 /* ══ LEADER PANEL ══ */
 function renderLeaderPanel() {
   setTimeout(populateKtpMemberSelect, 300);
+  setTimeout(populateLeaderTopupSelect, 300);
   // Load guest form toggle state
   const gfTgl = document.getElementById('leaderGuestFormTgl');
   if (gfTgl) gfTgl.checked = !!D.guestFormEnabled;
@@ -2885,6 +3439,16 @@ function renderLeaderPanel() {
   renderBlockBuilder('rules','leader');
 }
 
+function populateLeaderTopupSelect() {
+  const sel = document.getElementById('leaderTopupSelect');
+  if (!sel) return;
+  const active = D.members.filter(m => m.status === 'active' || m.status === 'guest');
+  sel.innerHTML = '<option value="">— Pilih member —</option>' +
+    active.map(m => {
+      const key = (m.email || m.name).replace(/[.#$\/\[\]]/g, '_');
+      return `<option value="${key}">${m.name}${m.gamertag?' (@'+m.gamertag+')':''}</option>`;
+    }).join('');
+}
 /* ══ Q BUILDER ══ */
 function renderQB() {
   document.getElementById('qBuilder').innerHTML = D.questions.map((q,i) => `
@@ -3810,6 +4374,105 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
       <div class="panel-h"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><h3>Data per Member</h3></div>
       <div id="analyticsMemberList"><div class="bank-empty">Memuat data...</div></div>
     </div>
+  </div>
+</div>
+
+
+<!-- STOCK MARKET PAGE -->
+<div class="page" id="page-stocks">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Cbank</div><h2>Pasar Saham <span class="r-tag member">CQ Market</span></h2></div>
+      <button onclick="showPg(getDashPage())" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+
+    <!-- Coin balance + buy -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;background:var(--s2);border:1px solid rgba(232,184,75,.25);border-radius:10px;padding:.75rem 1rem">
+      <div>
+        <div style="font-size:.65rem;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">CQ Coin kamu</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--gold)">🪙 <span id="stockPageCoin">0</span> CQ</div>
+        <div style="font-size:.65rem;color:var(--tx2);margin-top:2px">1 CQ = Rp 5.000</div>
+      </div>
+      <button onclick="openBuyCoin()" style="padding:.55rem 1.1rem;border:1.5px solid rgba(232,184,75,.5);background:rgba(232,184,75,.1);color:var(--gold);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s">
+        🛒 Beli Coin
+      </button>
+    </div>
+
+    <!-- Berita pasar (clue) -->
+    <div class="panel">
+      <div class="panel-h">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6Z"/></svg>
+        <h3>Berita Pasar</h3>
+        <button onclick="refreshMarketNews()" style="margin-left:auto;background:none;border:none;color:var(--tx2);cursor:pointer;font-size:.72rem;padding:2px 6px;border-radius:4px;transition:color .2s" title="Refresh berita">🔄 Refresh</button>
+      </div>
+      <div id="stockNewsContainer">
+        <div class="bank-empty">Memuat berita...</div>
+      </div>
+    </div>
+
+    <!-- Portfolio singkat -->
+    <div class="panel" id="stockPortfolioPanel" style="display:none">
+      <div class="panel-h">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        <h3>Portofolio Kamu</h3>
+        <div style="margin-left:auto;font-size:.72rem;color:var(--tx2)">Total nilai: <span id="portfolioTotalVal" style="color:var(--ok);font-weight:700">Rp 0</span></div>
+      </div>
+      <div id="portfolioList"></div>
+    </div>
+
+    <!-- Daftar saham -->
+    <div class="panel">
+      <div class="panel-h">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+        <h3>Saham Tersedia</h3>
+        <div style="margin-left:auto;font-size:.65rem;color:var(--tx2)" id="stockLastUpdate">Update: —</div>
+      </div>
+      <div id="stockList"><div class="bank-empty">Memuat saham...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- BUY COIN MODAL -->
+<div class="bank-modal-bg" id="buyCoinBg" onclick="closeBuyCoin()"></div>
+<div class="bank-modal" id="buyCoinModal">
+  <div class="bank-modal-hd">
+    <span>🪙 Beli CQ Coin</span>
+    <button onclick="closeBuyCoin()" class="pp-cls"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div style="padding:.2rem 0 .5rem">
+    <p style="font-size:.8rem;color:var(--tx2);margin-bottom:1rem">CQ Coin dipakai untuk membeli saham dan mengaktifkan pertumbuhan bunga. 1 CQ = Rp 5.000.</p>
+    <div class="field">
+      <label>Jumlah CQ Coin yang dibeli</label>
+      <input type="number" id="coinBuyAmount" placeholder="Min. 10 coin" min="10" oninput="previewCoinBuy()" style="-webkit-user-select:text;user-select:text"/>
+    </div>
+    <div id="coinBuyPreview" style="display:none;background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:.7rem;font-size:.8rem;margin-bottom:.8rem">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:var(--tx2)">Jumlah coin</span><span id="cpQty" style="font-weight:700;color:var(--gold)">—</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--tx2)">Biaya dari saldo</span><span id="cpCost" style="font-weight:700;color:var(--err)">—</span></div>
+    </div>
+    <button class="full-btn" onclick="confirmBuyCoin()">🪙 Beli Sekarang</button>
+    <p style="font-size:.68rem;color:var(--tx2);text-align:center;margin-top:.5rem">Dibeli dari saldo Cbank utama kamu</p>
+  </div>
+</div>
+
+<!-- BUY STOCK MODAL -->
+<div class="bank-modal-bg" id="buyStockBg" onclick="closeBuyStock()"></div>
+<div class="bank-modal" id="buyStockModal">
+  <div class="bank-modal-hd">
+    <span id="buyStockTitle">Beli Saham</span>
+    <button onclick="closeBuyStock()" class="pp-cls"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div style="padding:.2rem 0 .5rem">
+    <div id="buyStockInfo" style="background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:.7rem;margin-bottom:.8rem;font-size:.78rem;color:var(--tx2)"></div>
+    <div class="field">
+      <label>Jumlah lot (1 lot = 10 saham)</label>
+      <input type="number" id="stockBuyQty" placeholder="Jumlah lot" min="1" oninput="previewStockBuy()" style="-webkit-user-select:text;user-select:text"/>
+    </div>
+    <div id="stockBuyPreview" style="display:none;background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:.7rem;font-size:.8rem;margin-bottom:.8rem">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:var(--tx2)">Lot × Saham</span><span id="sbpLot" style="font-weight:700">—</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:var(--tx2)">Harga per saham</span><span id="sbpPrice" style="font-weight:700">—</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--tx2)">Total CQ Coin</span><span id="sbpTotal" style="font-weight:700;color:var(--gold)">— CQ</span></div>
+    </div>
+    <button class="full-btn" onclick="confirmBuyStock()">📈 Beli Saham</button>
   </div>
 </div>
 
@@ -4837,13 +5500,59 @@ function dmKeyDown(e) {
 
 // ══ CBANK SYSTEM ══
 const BANK_CONFIG = {
-  INTEREST_RATE: 0.02,        // 2% per bulan
-  DEPOSIT_ADMIN_FEE: 2000,    // Rp 2.000
-  WITHDRAW_ADMIN_FEE: 3000,   // Rp 3.000
-  MIN_DEPOSIT: 50000,         // Rp 50.000
-  MIN_WITHDRAW: 10000,        // Rp 10.000
-  GROWTH_INTERVAL_MS: 60000,  // tick setiap 1 menit (real-time growth sim)
+  INTEREST_RATE_MIN: 0.0001,  // min bunga per menit (acak 0.01%-0.05%)
+  INTEREST_RATE_MAX: 0.0005,
+  DEPOSIT_ADMIN_FEE: 2000,
+  WITHDRAW_ADMIN_FEE: 3000,
+  MIN_DEPOSIT: 50000,
+  MIN_WITHDRAW: 10000,
+  INTEREST_WITHDRAW_MIN_DAYS: 7, // min 7 hari kerja sebelum tarik bunga
 };
+
+// CQ Coin config
+const COIN_CONFIG = {
+  PRICE_RP: 5000,   // 1 CQ Coin = Rp 5.000
+  MIN_BUY: 10,      // min beli 10 coin
+};
+
+// 5 saham preset dengan karakter berbeda
+const STOCKS_PRESET = [
+  { id:'CQG', name:'CQ Gaming',    emoji:'🎮', sector:'Gaming',   basePrice:1200, volatility:0.06, trend:0.0008,  risk:'Tinggi',  riskColor:'#e8546a', desc:'Saham gaming paling volatile. Bisa naik tajam, bisa jatuh dalam.' },
+  { id:'CQT', name:'CQ Tech',      emoji:'💻', sector:'Teknologi',basePrice:3500, volatility:0.03, trend:0.0003,  risk:'Sedang',  riskColor:'#e8b84b', desc:'Saham teknologi stabil, pertumbuhan konsisten tapi lambat.' },
+  { id:'CQE', name:'CQ Esport',    emoji:'🏆', sector:'Esport',   basePrice:800,  volatility:0.09, trend:-0.0002, risk:'Sangat Tinggi', riskColor:'#ff6b35', desc:'Saham esport sangat spekulatif. Naik jauh saat turnamen, anjlok saat off-season.' },
+  { id:'CQS', name:'CQ Stable',    emoji:'🏦', sector:'Keuangan', basePrice:5000, volatility:0.01, trend:0.0001,  risk:'Rendah',  riskColor:'#1ec99a', desc:'Saham paling aman. Pertumbuhan kecil tapi tidak anjlok tiba-tiba.' },
+  { id:'CQM', name:'CQ Meta',      emoji:'🌐', sector:'Metaverse',basePrice:2200, volatility:0.07, trend:0.0005,  risk:'Tinggi',  riskColor:'#e8546a', desc:'Saham metaverse. Sedang tren naik, tapi bisa koreksi kapan saja.' },
+];
+
+// Berita acak untuk clue tebakan — akan diambil acak saat tampil
+const MARKET_NEWS = [
+  // Gaming sector
+  { affects:'CQG', sentiment:1,  title:'Tim Cuanie menang turnamen regional!', body:'Kemenangan besar meningkatkan eksposur brand gaming lokal.' },
+  { affects:'CQG', sentiment:-1, title:'Server game populer down 6 jam', body:'Downtime panjang bikin pemain frustrasi, sentimen negatif.' },
+  { affects:'CQG', sentiment:1,  title:'Game baru rilis — 100k download di hari pertama', body:'Momentum peluncuran dorong saham gaming.' },
+  { affects:'CQG', sentiment:-1, title:'Akun banned massal di platform gaming', body:'Kontroversi ban wave bikin kepercayaan pemain turun.' },
+  // Tech sector
+  { affects:'CQT', sentiment:1,  title:'Update besar platform CQ diluncurkan', body:'Fitur baru disambut positif oleh komunitas.' },
+  { affects:'CQT', sentiment:-1, title:'Bug kritikal ditemukan di sistem utama', body:'Tim engineering bekerja keras, user khawatir.' },
+  { affects:'CQT', sentiment:1,  title:'Partnership dengan developer indie terkemuka', body:'Kolaborasi strategis perkuat ekosistem teknologi.' },
+  // Esport
+  { affects:'CQE', sentiment:1,  title:'Jadwal turnamen internasional diumumkan', body:'Season baru esport segera dimulai, antusias tinggi.' },
+  { affects:'CQE', sentiment:-1, title:'Sponsor utama mundur dari liga esport', body:'Kehilangan sponsor besar bikin pendanaan terancam.' },
+  { affects:'CQE', sentiment:1,  title:'Slot LAN finals untuk tim Asia Tenggara dibuka', body:'Kesempatan besar bagi tim lokal, hype meningkat.' },
+  { affects:'CQE', sentiment:-1, title:'Off-season dimulai, kompetisi melambat', body:'Tanpa turnamen aktif, minat penonton menurun.' },
+  // Stable
+  { affects:'CQS', sentiment:1,  title:'Dana komunitas tumbuh stabil kuartal ini', body:'Fundamental kuat, investor jangka panjang tenang.' },
+  { affects:'CQS', sentiment:-1, title:'Inflasi virtual naik, daya beli coin tertekan', body:'Kondisi makro menekan semua aset, tapi saham stabil relatif aman.' },
+  // Meta
+  { affects:'CQM', sentiment:1,  title:'Metaverse gaming raih 500k pengguna aktif', body:'Milestone besar, kepercayaan investor naik.' },
+  { affects:'CQM', sentiment:-1, title:'Regulasi konten virtual diperketat', body:'Kebijakan baru bikin pengembang metaverse was-was.' },
+  { affects:'CQM', sentiment:1,  title:'Kolaborasi metaverse x esport resmi diumumkan', body:'Dua sektor panas bergabung, potensi besar.' },
+  // Global/semua saham
+  { affects:'ALL', sentiment:-1, title:'Pasar CQ sedang koreksi minor', body:'Aksi ambil untung investor besar tekan semua saham hari ini.' },
+  { affects:'ALL', sentiment:1,  title:'Komunitas CQ tembus 1000 anggota!', body:'Milestone besar bikin semua saham bergairah.' },
+  { affects:'ALL', sentiment:-1, title:'Rumor restrukturisasi internal CQ beredar', body:'Ketidakpastian manajemen bikin pasar gelisah.' },
+  { affects:'ALL', sentiment:1,  title:'Season baru Cbank dimulai — bunga meningkat', body:'Investor optimis dengan kebijakan moneter baru.' },
+];
 
 function fmtRp(n) {
   if (n == null) return 'Rp 0';
@@ -4852,8 +5561,8 @@ function fmtRp(n) {
 
 // Load & show bank data for current member
 async function loadMemberBank() {
-  if (!D.user || !D.role) return; // guests with Google login can use bank
-  const key = (D.email || D.user).replace(/[.#$/[\]]/g, '_');
+  if (!D.user || !D.role) return;
+  const key = (D.email || D.user).replace(/[.#$\/\[\]]/g, '_');
   let acc = null;
   try {
     const snap = await fbGet('bank/' + key);
@@ -4861,17 +5570,30 @@ async function loadMemberBank() {
   } catch(e) {
     acc = JSON.parse(localStorage.getItem('c_bank_' + key) || 'null');
   }
+  if (acc) _cachedBankAcc = acc;
   renderMemberBank(acc);
+  // Activate interest if bank is active and not yet activated
+  if (acc && acc.status === 'active' && !acc.interestActivatedAt) {
+    activateInterest();
+  }
 }
 
 function renderMemberBank(acc) {
-  const balEl = document.getElementById('memberBankBalance');
-  const subEl = document.getElementById('memberBankSub');
+  const balEl  = document.getElementById('memberBankBalance');
+  const subEl  = document.getElementById('memberBankSub');
   const growEl = document.getElementById('memberBankGrowth');
-  const growTxt = document.getElementById('memberBankGrowthTxt');
-  const wdBtn = document.getElementById('memberWithdrawBtn');
+  const growTxt= document.getElementById('memberBankGrowthTxt');
+  const wdBtn  = document.getElementById('memberWithdrawBtn');
   const histEl = document.getElementById('memberBankHistory');
   if (!balEl) return;
+
+  _cachedBankAcc = acc || null;
+
+  // Load coin count
+  loadUserCoin().then(coin => {
+    const cb = document.getElementById('memberCoinBal');
+    if (cb) cb.textContent = coin;
+  });
 
   if (!acc || !acc.balance) {
     balEl.textContent = 'Rp 0';
@@ -4879,29 +5601,32 @@ function renderMemberBank(acc) {
     if (growEl) growEl.style.display = 'none';
     if (wdBtn) wdBtn.disabled = true;
     if (histEl) histEl.innerHTML = '<div class="bank-empty">Belum ada transaksi</div>';
+    const ic = document.getElementById('memberInterestCard');
+    if (ic) ic.style.display = 'none';
     return;
   }
 
-  // Compute real-time balance with growth
-  const now = Date.now();
-  const principal = acc.principal || 0;
-  const lastTick = acc.lastTick || acc.depositedAt || now;
-  const monthsElapsed = (now - lastTick) / (1000 * 60 * 60 * 24 * 30);
-  const growthSinceLastTick = principal * BANK_CONFIG.INTEREST_RATE * monthsElapsed;
-  const liveBalance = (acc.balance || 0) + growthSinceLastTick;
+  // Saldo utama (tidak termasuk bunga)
+  balEl.textContent = fmtRp(acc.balance || 0);
+  if (subEl) subEl.textContent = acc.status === 'active'
+    ? 'Saldo utama · bunga dipisah ↑'
+    : (acc.status === 'pending' ? 'Menunggu konfirmasi Leader' : 'Tidak aktif');
 
-  balEl.textContent = fmtRp(liveBalance);
-  if (subEl) subEl.textContent = acc.status === 'active' ? 'Tumbuh +2% per bulan' : (acc.status === 'pending' ? 'Menunggu konfirmasi Leader' : 'Tidak aktif');
+  // Bunga tumbuh per menit — tampilkan rate acak terkini
   if (growEl) {
-    if (acc.status === 'active') {
+    if (acc.status === 'active' && acc.principal) {
       growEl.style.display = 'flex';
-      const monthlyGrowth = principal * BANK_CONFIG.INTEREST_RATE;
-      if (growTxt) growTxt.textContent = '+' + fmtRp(monthlyGrowth) + '/bulan';
+      const rateNow = BANK_CONFIG.INTEREST_RATE_MIN + Math.random() * (BANK_CONFIG.INTEREST_RATE_MAX - BANK_CONFIG.INTEREST_RATE_MIN);
+      const perMin = acc.principal * rateNow;
+      if (growTxt) growTxt.textContent = '~+' + fmtRp(perMin) + '/mnt (acak)';
     } else {
       growEl.style.display = 'none';
     }
   }
   if (wdBtn) wdBtn.disabled = acc.status !== 'active';
+
+  // Update interest card
+  updateInterestUI();
 
   // Render history
   if (histEl) {
@@ -4909,22 +5634,29 @@ function renderMemberBank(acc) {
     if (!txs.length) {
       histEl.innerHTML = '<div class="bank-empty">Belum ada transaksi</div>';
     } else {
-      histEl.innerHTML = txs.slice().reverse().map(tx => {
-        const d = new Date(tx.ts);
-        const timeStr = d.toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'});
-        const isIn = tx.type === 'deposit' || tx.type === 'interest';
-        const icon = tx.type === 'deposit' ? '💰' : tx.type === 'interest' ? '📈' : '💸';
-        const iconClass = tx.type === 'deposit' ? 'dep' : tx.type === 'interest' ? 'grow' : 'wd';
-        const label = tx.type === 'deposit' ? 'Deposit' : tx.type === 'interest' ? 'Bunga' : 'Penarikan';
-        const statusHtml = tx.status ? `<span class="bank-tx-status ${tx.status}">${tx.status==='pending'?'Menunggu':tx.status==='active'?'Aktif':'Selesai'}</span>` : '';
+      const typeMap = {
+        deposit: {icon:'💰', cls:'dep', label:'Deposit', in:true},
+        interest:{icon:'📈', cls:'grow',label:'Bunga', in:true},
+        interest_withdraw:{icon:'✨',cls:'grow',label:'Tarik Bunga',in:true},
+        withdraw:{icon:'💸', cls:'wd',  label:'Penarikan', in:false},
+        coin_buy:{icon:'🪙', cls:'wd',  label:'Beli CQ Coin', in:false},
+        topup:   {icon:'🎁', cls:'dep', label:'Giveaway/Topup', in:true},
+        gacha:   {icon:'🎰', cls:'grow',label:'Tebak Pasar', in:null},
+      };
+      histEl.innerHTML = txs.slice().reverse().slice(0,20).map(tx => {
+        const d = new Date(tx.ts||0);
+        const timeStr = d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+        const meta = typeMap[tx.type] || {icon:'🔄',cls:'dep',label:tx.type||'Transaksi',in:true};
+        const isIn = tx.win === true ? true : tx.win === false ? false : meta.in;
+        const statusHtml = tx.status ? `<span class="bank-tx-status ${tx.status}">${tx.status==='pending'?'Menunggu':tx.status==='approved'?'Selesai':'Aktif'}</span>` : '';
         return `<div class="bank-tx-item">
-          <div class="bank-tx-icon ${iconClass}">${icon}</div>
+          <div class="bank-tx-icon ${meta.cls}">${meta.icon}</div>
           <div class="bank-tx-body">
-            <div class="bank-tx-title">${label}</div>
-            <div class="bank-tx-sub">${timeStr} ${tx.note ? '· '+tx.note : ''}</div>
+            <div class="bank-tx-title">${meta.label}</div>
+            <div class="bank-tx-sub">${timeStr}${tx.note?' · '+tx.note:''}</div>
             ${statusHtml}
           </div>
-          <div class="bank-tx-amount ${isIn?'in':'out'}">${isIn?'+':'-'}${fmtRp(tx.amount)}</div>
+          <div class="bank-tx-amount ${isIn===null?(tx.win?'in':'out'):isIn?'in':'out'}">${isIn===null?(tx.win?'+':'-'):isIn?'+':'-'}${fmtRp(tx.amount)}</div>
         </div>`;
       }).join('');
     }
@@ -4938,7 +5670,7 @@ let _cachedBankAcc = null;
 function startBankTicker() {
   if (_bankTicker) clearInterval(_bankTicker);
   if (!D.role) return;
-  // Update UI setiap 1 detik (hanya hitung ulang bunga, tanpa hit Firebase)
+  // Update UI setiap 1 detik
   _bankTicker = setInterval(() => {
     const onMember = document.getElementById('page-member')?.classList.contains('active');
     const onGuest  = document.getElementById('page-guest')?.classList.contains('active');
@@ -4950,32 +5682,29 @@ function startBankTicker() {
     if (D.role === 'guest') loadGuestBank();
     else if (D.role === 'member') loadMemberBank();
   }, 5 * 60 * 1000);
+  // Start stock ticker
+  startStockTicker();
 }
 
-// Hitung & tampilkan live balance dari data cache (tanpa Firebase)
+// Hitung & tampilkan live balance (saldo utama tidak berubah, bunga di tempat terpisah)
 function tickBankDisplay() {
   if (!_cachedBankAcc) return;
   const acc = _cachedBankAcc;
-  const now = Date.now();
-  const principal = acc.principal || 0;
-  const lastTick = acc.lastTick || acc.depositedAt || now;
-  const secElapsed = (now - lastTick) / 1000;
-  const secPerMonth = 30 * 24 * 60 * 60;
-  const liveBalance = (acc.balance || 0) + principal * BANK_CONFIG.INTEREST_RATE * (secElapsed / secPerMonth);
 
-  // Member page
+  // Saldo utama — tidak berubah real-time (statis sampai sync)
   const mBal = document.getElementById('memberBankBalance');
-  if (mBal) mBal.textContent = fmtRp(liveBalance);
-  const mGrowTxt = document.getElementById('memberBankGrowthTxt');
-  if (mGrowTxt && acc.status === 'active') {
-    const perSec = principal * BANK_CONFIG.INTEREST_RATE / secPerMonth;
-    mGrowTxt.textContent = '+' + fmtRp(principal * BANK_CONFIG.INTEREST_RATE) + '/bln · +' + fmtRp(perSec).replace('Rp ','Rp ') + '/dtk';
-  }
+  if (mBal) mBal.textContent = fmtRp(acc.balance || 0);
+
+  // Bunga terakumulasi — update setiap tick
+  const interestBal = acc.interestBalance || 0;
+  const iBal = document.getElementById('memberInterestBal');
+  if (iBal && interestBal > 0) iBal.textContent = fmtRp(interestBal);
+
   // Guest page
   const gBal = document.getElementById('guestBankBalance');
-  if (gBal) gBal.textContent = fmtRp(liveBalance);
+  if (gBal) gBal.textContent = fmtRp(acc.balance || 0);
   const gStat = document.getElementById('guestBankBalStat');
-  if (gStat) gStat.textContent = fmtRp(liveBalance);
+  if (gStat) gStat.textContent = fmtRp(acc.balance || 0);
 }
 
 function openBankDeposit() {
@@ -5013,7 +5742,7 @@ function calcDepositPreview() {
   if (amt < BANK_CONFIG.MIN_DEPOSIT) { prev.style.display = 'none'; return; }
   const adminFee = BANK_CONFIG.DEPOSIT_ADMIN_FEE;
   const net = amt - adminFee;
-  const monthlyGrowth = net * BANK_CONFIG.INTEREST_RATE;
+  const monthlyGrowth = net * 0.0003;
   prev.style.display = 'block';
   document.getElementById('dpAmt').textContent = fmtRp(amt);
   document.getElementById('dpAdmin').textContent = '- ' + fmtRp(adminFee);
@@ -5044,7 +5773,7 @@ function submitBankDeposit() {
   if (amt < BANK_CONFIG.MIN_DEPOSIT) { toast('Minimum deposit Rp 50.000','warn'); return; }
   const adminFee = BANK_CONFIG.DEPOSIT_ADMIN_FEE;
   const net = amt - adminFee;
-  const growth = net * BANK_CONFIG.INTEREST_RATE;
+  const growth = net * 0.0003;
   const now = new Date();
   const dateStr = now.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   const timeStr = now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
@@ -5280,7 +6009,7 @@ function renderGuestBankUI(acc) {
   const principal = acc.principal || 0;
   const lastTick = acc.lastTick || acc.depositedAt || now;
   const monthsElapsed = (now - lastTick) / (1000*60*60*24*30);
-  const liveBalance = (acc.balance||0) + principal * BANK_CONFIG.INTEREST_RATE * monthsElapsed;
+  const liveBalance = (acc.balance||0) + principal * 0.0003 * monthsElapsed;
   balEl.textContent = fmtRp(liveBalance);
   const statEl = document.getElementById('guestBankBalStat');
   if (statEl) statEl.textContent = fmtRp(liveBalance);
@@ -5288,7 +6017,7 @@ function renderGuestBankUI(acc) {
   if (growEl) {
     if (acc.status==='active') {
       growEl.style.display='flex';
-      if (growTxt) growTxt.textContent = '+'+fmtRp(principal*BANK_CONFIG.INTEREST_RATE)+'/bulan';
+      if (growTxt) growTxt.textContent = '+'+fmtRp(principal*0.0003)+'/bulan';
     } else growEl.style.display='none';
   }
   if (wdBtn) wdBtn.disabled = acc.status !== 'active';
@@ -5667,7 +6396,7 @@ function renderAnalytics(data, filter='') {
     const bal = acc.balance || 0;
     const principal = acc.principal || 0;
     const pct = Math.round((bal / maxBal) * 100);
-    const perMin = principal * BANK_CONFIG.INTEREST_RATE / (30*24*60);
+    const perMin = principal * 0.0003 / (30*24*60);
     return `<div class="analytics-member-card">
       <div class="analytics-mc-top">
         <div class="analytics-mc-av">${init}</div>
@@ -5844,13 +6573,13 @@ function drawAnalyticsChart(members) {
     const now = Date.now();
     const liveBase = members.reduce((s,[,v]) => {
       const elapsed = (now - (v.lastTick||now)) / 1000;
-      return s + (v.balance||0) + (v.principal||0)*BANK_CONFIG.INTEREST_RATE*(elapsed/secPerMonth);
+      return s + (v.balance||0) + (v.principal||0)*0.0003*(elapsed/secPerMonth);
     }, 0);
 
     // Build points array (rolling 60-second window, growing from left)
     const points = Array.from({length:pts+1}, (_, i) => {
       const frac = i/pts;
-      const growth = totalPrincipal * BANK_CONFIG.INTEREST_RATE * (frac/30/24/60);
+      const growth = totalPrincipal * 0.0003 * (frac/30/24/60);
       const n = _chartNoiseOffsets[i];
       const noiseAmp = _gachaFlipping ? n.amp*5 : n.amp;
       return liveBase + growth + noiseAmp * Math.sin(t*n.freq + n.phase);
@@ -5863,7 +6592,7 @@ function drawAnalyticsChart(members) {
       lastTickerUpdate = ts;
       const tickerEl = document.getElementById('growthTicker');
       if (tickerEl && totalPrincipal > 0) {
-        const perMin = totalPrincipal * BANK_CONFIG.INTEREST_RATE / (30*24*60);
+        const perMin = totalPrincipal * 0.0003 / (30*24*60);
         const dir = points[pts] > points[pts-3] ? '▲' : '▼';
         const col = points[pts] > points[pts-3] ? '#1ec99a' : '#e8546a';
         tickerEl.innerHTML = `<span style="color:${col}">${dir} Dana aktif tumbuh +${fmtRp(perMin)}/mnt dari ${fmtRp(totalPrincipal)} modal</span>`;
