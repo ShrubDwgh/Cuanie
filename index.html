@@ -2200,8 +2200,25 @@ function setupRealtimeListeners() {
       // Count unread mentions while away
       if (newMsgs.length > oldLen) {
         newMsgs.slice(oldLen).forEach(m => {
-          if (m.mentions && (m.mentions.includes(D.user) || m.mentions.includes('everyone')) && m.name !== D.user) {
-            CHAT.unread++;
+          if (m.name !== D.user) {
+            // Play sound for all new messages
+            playNotifSound();
+            // Browser notification for mentions
+            if (m.mentions && (m.mentions.includes(D.user) || m.mentions.includes('everyone'))) {
+              CHAT.unread++;
+              if (Notification.permission === 'granted') {
+                new Notification('💬 ' + m.name + ' menyebut kamu', {
+                  body: (m.text||'').slice(0,80),
+                  icon: '/favicon.ico'
+                });
+              }
+            } else if (Notification.permission === 'granted') {
+              new Notification('💬 ' + m.name, {
+                body: (m.text||'').slice(0,80),
+                icon: '/favicon.ico',
+                silent: true
+              });
+            }
           }
         });
         updateChatBadge();
@@ -2266,6 +2283,8 @@ function applyCiunTikMode() {
   const closedBanner = document.getElementById('ctClosedBanner');
   const canUpload = D.ciuntikOpen && D.role && D.role !== 'guest';
   if (createBtn) createBtn.style.display = canUpload ? 'flex' : 'none';
+  const liveBtn = document.getElementById('ctLiveBtn');
+  if (liveBtn) liveBtn.style.display = canUpload ? 'flex' : 'none';
   if (panel) panel.style.display = 'none'; // always reset
   if (closedBanner) closedBanner.style.display = D.ciuntikOpen ? 'none' : 'flex';
   // Sync toggle states in admin/leader panels
@@ -2718,18 +2737,24 @@ function loginAs(role) {
     document.getElementById('mId').textContent = String(D.members.filter(m=>m.status==='active').indexOf(mem)+1).padStart(2,'0');
     document.getElementById('mGametag').textContent = mem.gamertag || '—';
     updateNav(); showPg('member'); showChatSidebarLink(); showProfileBtn(); checkChatNotifs(); toast('Selamat datang, '+mem.name,'success'); loadMemberBank(); startBankTicker();
+    setTimeout(maybeAskNotifPermission, 2000);
+    setupLiveListener();
 
   } else if (role === 'admin') {
     if (document.getElementById('adminUser').value.trim()!=='admin'||document.getElementById('adminPass').value!=='admin123')
       { toast('Kredensial salah','error'); return; }
     D.user='Admin'; D.role='admin';
     renderAdminPanel(); updateNav(); showPg('admin'); showChatSidebarLink(); showProfileBtn(); checkChatNotifs(); toast('Masuk sebagai Admin','success');
+    setTimeout(maybeAskNotifPermission, 2000);
+    setupLiveListener();
 
   } else if (role === 'leader') {
     if (document.getElementById('leaderPass').value!=='leader@cuanie')
       { toast('Password leader salah','error'); return; }
     D.user='Leader'; D.role='leader';
     renderLeaderPanel(); updateNav(); showPg('leader'); showChatSidebarLink(); showProfileBtn(); checkChatNotifs(); toast('Masuk sebagai Leader','success'); setTimeout(loadLeaderBank, 500);
+    setTimeout(maybeAskNotifPermission, 2000);
+    setupLiveListener();
   }
 }
 
@@ -3559,12 +3584,25 @@ function renderLeaderPanel() {
 function populateLeaderTopupSelect() {
   const sel = document.getElementById('leaderTopupSelect');
   if (!sel) return;
-  const active = D.members.filter(m => m.status === 'active' || m.status === 'guest');
-  sel.innerHTML = '<option value="">— Pilih member —</option>' +
-    active.map(m => {
+  // Include ALL users: active members, guests, and pending
+  const all = D.members.filter(m => m.status !== 'kicked');
+  // Also include registered guests from Firebase guests path (async top-up, handled below)
+  sel.innerHTML = '<option value="">— Pilih pengguna —</option>' +
+    all.map(m => {
       const key = (m.email || m.name).replace(/[.#$\/\[\]]/g, '_');
-      return `<option value="${key}">${m.name}${m.gamertag?' (@'+m.gamertag+')':''}</option>`;
+      const roleLabel = m.status === 'guest' ? '(Tamu)' : m.status === 'pending' ? '(Pending)' : '';
+      return `<option value="${key}">${m.name}${m.gamertag?' (@'+m.gamertag+')':''} ${roleLabel}</option>`;
     }).join('');
+  // Load guests registered via guest-form
+  fbGet('guests').then(snap => {
+    if (!snap.val()) return;
+    const guests = Object.entries(snap.val()).map(([k,v])=>({...v,_key:k}));
+    const extra = guests.map(g => {
+      const key = g._key;
+      return `<option value="${key}">👤 ${g.name||g._key} (Tamu Langsung)</option>`;
+    }).join('');
+    sel.innerHTML += extra;
+  }).catch(()=>{});
 }
 /* ══ Q BUILDER ══ */
 function renderQB() {
@@ -4271,10 +4309,16 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
           <div class="ct-page-sub">Momen tim Cuanie</div>
         </div>
       </div>
-      <button class="ct-create-btn" id="ctCreateToggle" onclick="ctToggleCreate()" style="display:none">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Post
-      </button>
+      <div style="display:flex;gap:7px;align-items:center">
+        <button class="ct-create-btn" id="ctLiveBtn" onclick="requestLive()" style="display:none;background:linear-gradient(135deg,#e94560,#e8152a);gap:5px;padding:.45rem .85rem">
+          <span style="width:7px;height:7px;background:#fff;border-radius:50%;display:inline-block;animation:pulse 1.2s infinite"></span>
+          LIVE
+        </button>
+        <button class="ct-create-btn" id="ctCreateToggle" onclick="ctToggleCreate()" style="display:none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Post
+        </button>
+      </div>
     </div>
 
     <!-- Search bar -->
@@ -4759,7 +4803,13 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
   <div class="dash" style="max-width:540px">
     <div class="dash-top">
       <div><div class="sec-tag">// Formulir Tamu</div><h2>Formulir Tamu <span class="r-tag member">Guest</span></h2></div>
-      <button class="logout-btn" onclick="skipGuestForm()">Lewati</button>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="logout-btn" onclick="cancelGuestForm()" style="display:flex;align-items:center;gap:5px">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15,18 9,12 15,6"/></svg>
+          Kembali
+        </button>
+        <button class="logout-btn" onclick="skipGuestForm()">Lewati</button>
+      </div>
     </div>
     <div class="panel">
       <div class="panel-h"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><h3 id="guestFormTitle">Pertanyaan Tamu</h3></div>
@@ -5304,6 +5354,64 @@ function ctToggleVideo(btn) {
   if (vid.paused) { vid.play(); btn.style.display='none'; }
   else { vid.pause(); btn.style.display='flex'; }
   vid.onclick = () => { vid.pause(); btn.style.display='flex'; };
+}
+
+// ══ AUDIO PLAYER ══
+let _ctPlayingId = null;
+
+function ctToggleAudio(id) {
+  const audio = document.getElementById('ctAudio_'+id);
+  const btn   = document.getElementById('ctAudioBtn_'+id);
+  const wave  = document.getElementById('ctMusicWave_'+id);
+  const bar   = document.getElementById('ctMusicBar_'+id);
+  if (!audio) return;
+
+  // Make sure src is set — sometimes the DOM-embedded src gets stripped
+  if (!audio.src || audio.src === window.location.href) {
+    const post = _ctAllPosts.find(p => (p.id||p._key) == id);
+    if (post && post.music && post.music.data) {
+      audio.src = post.music.data;
+      audio.load();
+    }
+  }
+
+  // Stop any other playing audio
+  if (_ctPlayingId && _ctPlayingId !== id) {
+    const other = document.getElementById('ctAudio_'+_ctPlayingId);
+    if (other && !other.paused) { other.pause(); ctSetAudioStopped(_ctPlayingId); }
+  }
+
+  if (audio.paused) {
+    audio.play().then(() => {
+      _ctPlayingId = id;
+      if (btn) btn.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="var(--ac2)"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+      if (wave) wave.style.display = 'inline-flex';
+      if (bar)  bar.style.borderColor = 'rgba(108,78,242,.5)';
+    }).catch(e => {
+      console.warn('Audio play failed:', e);
+      toast('Tap lagi untuk putar musik', 'warn');
+    });
+  } else {
+    audio.pause();
+    _ctPlayingId = null;
+    ctSetAudioStopped(id);
+  }
+}
+
+function ctSetAudioStopped(id) {
+  const btn  = document.getElementById('ctAudioBtn_'+id);
+  const wave = document.getElementById('ctMusicWave_'+id);
+  const bar  = document.getElementById('ctMusicBar_'+id);
+  if (btn)  btn.innerHTML  = '<svg width="10" height="10" viewBox="0 0 24 24" fill="var(--ac2)"><polygon points="5,3 19,12 5,21"/></svg>';
+  if (wave) wave.style.display = 'none';
+  if (bar)  bar.style.borderColor = 'rgba(108,78,242,.2)';
+}
+
+function ctAutoplayFirstAudio() {
+  const first = _ctAllPosts.find(p => p.music && p.music.data);
+  if (!first) return;
+  const id = first.id || first._key;
+  if (id) ctToggleAudio(id);
 }
 
 // CiunTik per-session upload state (NOT shared across renders)
@@ -6980,6 +7088,168 @@ function submitGuestForm() {
   }
   D.guestAnswers = answers;
   skipGuestForm();
+}
+
+function cancelGuestForm() {
+  // Kembali ke halaman auth/pilih role, batalkan proses masuk
+  D.user = null; D.email = null; D.role = null;
+  showPg('auth');
+  // Reset role selection to default
+  const roleChoice = document.getElementById('roleChoiceArea');
+  if (roleChoice) roleChoice.style.display = 'block';
+  const memberSec = document.getElementById('authMemberSection');
+  if (memberSec) memberSec.style.display = 'none';
+  toast('Pendaftaran dibatalkan', 'warn');
+}
+
+// ══ LIVE REQUEST ══
+async function requestLive() {
+  if (!D.ciuntikOpen) { toast('Upload dinonaktifkan oleh Leader', 'warn'); return; }
+  // Request camera + mic permissions
+  const modal = document.getElementById('livePermModal');
+  if (modal) { modal.style.display = 'flex'; return; }
+  _doRequestLive();
+}
+
+async function _doRequestLive() {
+  document.getElementById('livePermModal')?.remove();
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    // Got permission — show live modal
+    stream.getTracks().forEach(t => t.stop()); // stop preview tracks
+    _showLiveModal();
+  } catch(e) {
+    if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+      toast('Izin kamera/mikrofon ditolak. Aktifkan di pengaturan browser.', 'error');
+    } else {
+      toast('Perangkat kamera/mikrofon tidak tersedia', 'error');
+    }
+  }
+}
+
+function _showLiveModal() {
+  // Remove any existing
+  document.getElementById('liveSessionModal')?.remove();
+  const m = document.createElement('div');
+  m.id = 'liveSessionModal';
+  m.style.cssText = 'position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:1rem';
+  m.innerHTML = `
+    <div style="background:var(--s1);border:1px solid var(--b2);border-radius:16px;padding:1.5rem;max-width:340px;width:100%;text-align:center">
+      <div style="width:56px;height:56px;background:linear-gradient(135deg,#e94560,#e8152a);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .8rem">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polygon points="23,7 16,12 23,17 23,7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      </div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;margin-bottom:.4rem">Mulai Live</div>
+      <p style="font-size:.82rem;color:var(--tx2);margin-bottom:1.1rem">Fitur Live memerlukan server streaming. Untuk sekarang, Live akan mengirim notifikasi ke semua member bahwa kamu sedang live, dan membuka sesi live di halaman CiunTik.</p>
+      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:.7rem;margin-bottom:1rem;font-size:.78rem;color:var(--tx2)">
+        <strong style="color:var(--tx)">Catatan:</strong> Fitur live streaming penuh (WebRTC) memerlukan server backend terpisah. Saat ini akan mengirim pengumuman live ke semua member.
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="document.getElementById('liveSessionModal').remove()" style="flex:1;padding:.6rem;background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.83rem;cursor:pointer">Batal</button>
+        <button onclick="_startLiveAnnounce()" style="flex:1;padding:.6rem;background:linear-gradient(135deg,#e94560,#e8152a);border:none;border-radius:9px;color:#fff;font-family:'Syne',sans-serif;font-size:.83rem;font-weight:700;cursor:pointer">
+          <span style="width:6px;height:6px;background:#fff;border-radius:50%;display:inline-block;margin-right:4px;animation:pulse 1s infinite"></span>
+          Mulai Live
+        </button>
+      </div>
+    </div>`;
+  document.body.appendChild(m);
+}
+
+function _startLiveAnnounce() {
+  document.getElementById('liveSessionModal')?.remove();
+  const liveData = { user: D.user, role: D.role, ts: Date.now(), active: true };
+  fbSet('liveSession/' + (D.email||D.user||'').replace(/[.#$\/\[\]]/g,'_'), liveData).catch(()=>{});
+  toast('🔴 Live dimulai! Member lain akan mendapat notifikasi.', 'success');
+  // Show live indicator banner on CiunTik
+  _showLiveBanner(D.user);
+}
+
+function _showLiveBanner(userName) {
+  const existing = document.getElementById('ctLiveBanner');
+  if (existing) existing.remove();
+  const banner = document.createElement('div');
+  banner.id = 'ctLiveBanner';
+  banner.style.cssText = 'background:linear-gradient(135deg,#e94560,#7c3aed);color:#fff;padding:.6rem 1rem;border-radius:10px;margin-bottom:.8rem;display:flex;align-items:center;gap:8px;font-size:.82rem;font-family:Syne,sans-serif;font-weight:700';
+  banner.innerHTML = `<span style="width:8px;height:8px;background:#fff;border-radius:50%;flex-shrink:0;animation:pulse 1s infinite"></span>
+    ${userName} sedang LIVE
+    <button onclick="document.getElementById('ctLiveBanner')?.remove();fbSet('liveSession/'+(D.email||D.user||'').replace(/[.#\$\\/\\[\\]]/g,'_')+'/active',false).catch(()=>{})" style="margin-left:auto;background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:6px;padding:2px 8px;cursor:pointer;font-size:.72rem">Stop Live</button>`;
+  const feed = document.getElementById('ctFeed');
+  if (feed) feed.parentElement.insertBefore(banner, feed);
+}
+
+// Watch for others going live
+function setupLiveListener() {
+  fbOn('liveSession', val => {
+    if (!val) return;
+    Object.entries(val).forEach(([k, session]) => {
+      if (!session.active) return;
+      const isSelf = k === (D.email||D.user||'').replace(/[.#$\/\[\]]/g,'_');
+      if (!isSelf && session.user) {
+        // Show notification
+        _showLiveBanner(session.user);
+        playNotifSound();
+        if (Notification.permission === 'granted') {
+          new Notification('🔴 ' + session.user + ' sedang LIVE di CiunTik!', {
+            body: 'Ketuk untuk menonton',
+            icon: '/favicon.ico'
+          });
+        }
+      }
+    });
+  });
+}
+
+// ══ NOTIFICATION PERMISSION ══
+let _notifSoundCtx = null;
+
+function requestNotifPermission() {
+  if (!('Notification' in window)) { toast('Browser tidak mendukung notifikasi', 'warn'); return; }
+  if (Notification.permission === 'granted') { toast('Notifikasi sudah aktif', 'success'); return; }
+  if (Notification.permission === 'denied') { toast('Notifikasi diblokir. Aktifkan di pengaturan browser.', 'error'); return; }
+  Notification.requestPermission().then(result => {
+    if (result === 'granted') {
+      toast('Notifikasi diaktifkan!', 'success');
+      // Save preference
+      localStorage.setItem('c_notif', '1');
+      // Test notification
+      setTimeout(() => new Notification('Cuanie', { body: 'Notifikasi berhasil diaktifkan!' }), 500);
+    } else {
+      toast('Notifikasi tidak diizinkan', 'warn');
+    }
+  });
+}
+
+function playNotifSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.setValueAtTime(660, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.4);
+  } catch(e) {}
+}
+
+// Ask for notification permission on first login (once)
+function maybeAskNotifPermission() {
+  if (localStorage.getItem('c_notif_asked')) return;
+  if (!('Notification' in window)) return;
+  if (Notification.permission !== 'default') return;
+  localStorage.setItem('c_notif_asked', '1');
+  // Show subtle banner
+  const banner = document.createElement('div');
+  banner.id = 'notifBanner';
+  banner.style.cssText = 'position:fixed;bottom:70px;left:50%;transform:translateX(-50%);z-index:600;background:var(--s1);border:1px solid var(--b2);border-radius:12px;padding:.7rem 1rem;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.4);font-size:.8rem;max-width:320px;width:90%';
+  banner.innerHTML = `
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <span style="flex:1;color:var(--tx)">Aktifkan notifikasi untuk chat & live?</span>
+    <button onclick="requestNotifPermission();document.getElementById('notifBanner')?.remove()" style="background:var(--ac2);border:none;color:#fff;border-radius:7px;padding:4px 10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:700">Izinkan</button>
+    <button onclick="document.getElementById('notifBanner')?.remove()" style="background:none;border:none;color:var(--tx2);cursor:pointer;font-size:.85rem;padding:2px 4px">✕</button>`;
+  document.body.appendChild(banner);
+  setTimeout(() => banner.remove(), 12000);
 }
 
 function skipGuestForm() {
