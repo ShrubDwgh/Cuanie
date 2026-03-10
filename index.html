@@ -723,7 +723,7 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 
 
 /* ══ PUBLIC MEMBER GRID — KTP DISPLAY ══ */
-.pub-member-tabs{display:flex;gap:4px;margin-bottom:1rem;background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:3px}
+.pub-member-tabs{display:flex;gap:4px;margin-bottom:1rem;background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:3px;overflow:hidden}
 .pub-tab{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:.5rem;border:none;border-radius:7px;background:none;color:var(--tx2);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;transition:all .2s;-webkit-user-select:none;user-select:none}
 .pub-tab.active{background:var(--s3);color:var(--tx);font-weight:700}
 .ktp-pub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:1.5rem}
@@ -856,6 +856,23 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 .chat-bubble-audio audio{height:32px;min-width:160px;max-width:220px}
 .chat-bubble-audio audio::-webkit-media-controls-enclosure{border-radius:8px}
 .rec-timer{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;color:var(--err);min-width:28px}
+
+
+/* ══ CUSTOM AUDIO PLAYER (WhatsApp style) ══ */
+.ca-player{display:flex;align-items:center;gap:9px;background:var(--s2);border:1px solid var(--b1);border-radius:14px;padding:8px 12px;min-width:200px;max-width:280px;user-select:none;-webkit-user-select:none}
+.ca-play-btn{width:34px;height:34px;border-radius:50%;background:var(--ac2);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s}
+.ca-play-btn:hover{opacity:.85}
+.ca-body{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
+.ca-waveform{display:flex;align-items:center;gap:2px;height:22px;cursor:pointer}
+.ca-bar{width:3px;border-radius:2px;background:var(--b2);transition:background .1s;flex-shrink:0}
+.ca-bar.played{background:var(--ac2)}
+.ca-meta{display:flex;align-items:center;justify-content:space-between;font-size:.65rem;color:var(--tx2);font-family:'DM Sans',sans-serif}
+.ca-duration{font-variant-numeric:tabular-nums}
+.ca-type-tag{font-size:.6rem;background:rgba(108,78,242,.12);color:var(--ac2);padding:1px 5px;border-radius:4px;font-weight:600}
+
+/* Audio preview strip in chat input */
+.chat-audio-preview{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:6px 10px;margin-bottom:6px}
+.chat-audio-preview .ca-player{background:transparent;border:none;padding:0;min-width:0}
 
 /* ══ CIUNTIK TEXT POST ══ */
 .ct-tpl-thumb{width:54px;height:78px;border-radius:7px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:2px solid transparent;transition:border-color .15s,transform .15s;font-size:.5rem;font-weight:800;text-align:center;padding:4px;line-height:1.2;-webkit-user-select:none;user-select:none}
@@ -1953,9 +1970,9 @@ canvas{-webkit-user-select:none;user-select:none}
     <div class="panel">
       <div class="panel-h">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8"><polyline points="20,12 20,22 4,22 4,12"/><rect x="2" y="7" width="20" height="5"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-        <h3>Giveaway / Topup Saldo</h3>
+        <h3>Airdrop / Topup Saldo</h3>
       </div>
-      <p style="font-size:.78rem;color:var(--tx2);margin-bottom:.9rem">Isi saldo Cbank member secara langsung. Gunakan untuk giveaway, reward, atau kompensasi.</p>
+      <p style="font-size:.78rem;color:var(--tx2);margin-bottom:.9rem">Isi saldo Cbank member secara langsung. Kirim saldo Cbank ke semua pengguna. Gunakan untuk airdrop, reward, atau kompensasi.</p>
       <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.6rem">
         <select id="leaderTopupSelect" style="flex:2;min-width:150px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none">
           <option value="">— Pilih member —</option>
@@ -2032,9 +2049,8 @@ canvas{-webkit-user-select:none;user-select:none}
     <div class="chat-input-area">
       <div class="img-preview-strip" id="imgPreviewStrip"></div>
       <!-- Audio preview strip -->
-      <div id="audioPreviewStrip" style="display:none" class="chat-audio-preview">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        <audio id="audioPendingPlayer" controls style="flex:1;height:32px;min-width:0"></audio>
+      <div id="audioPreviewStrip" style="display:none;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:6px 10px;margin-bottom:6px">
+        <div id="audioPendingPlayerWrap" style="flex:1"></div>
         <button onclick="clearPendingAudio()" style="background:none;border:none;color:var(--tx2);cursor:pointer;font-size:.9rem;padding:2px 4px;flex-shrink:0">✕</button>
       </div>
       <div class="mention-suggestions" id="mentionSuggestions"></div>
@@ -2852,6 +2868,7 @@ function loginAs(role) {
     updateNav(); showPg('member'); showChatSidebarLink(); showProfileBtn(); checkChatNotifs(); toast('Selamat datang, '+mem.name,'success'); loadMemberBank(); startBankTicker();
     setTimeout(maybeAskNotifPermission, 2000);
     setupLiveListener();
+    startDraftScheduler();
 
   } else if (role === 'admin') {
     if (document.getElementById('adminUser').value.trim()!=='admin'||document.getElementById('adminPass').value!=='admin123')
@@ -3408,7 +3425,7 @@ function leaderTopupMember() {
   if (amount < 1000) { toast('Minimal topup Rp 1.000','warn'); return; }
   fbGet('bank/'+memberKey).then(async snap => {
     const acc = snap.val()||{balance:0,memberName:memberKey,memberEmail:memberKey,transactions:[],status:'active',principal:0,lastTick:Date.now()};
-    const tx = {type:'topup',amount,note:'Topup/Giveaway dari Leader',ts:Date.now(),status:'approved'};
+    const tx = {type:'topup',amount,note:'Airdrop dari Leader',ts:Date.now(),status:'approved'};
     const txs = acc.transactions||[]; txs.push(tx);
     await fbSet('bank/'+memberKey, {...acc, balance:(acc.balance||0)+amount, transactions:txs});
     toast(`Saldo ${memberKey} berhasil ditambah ${fmtRp(amount)}!`,'success');
@@ -3911,7 +3928,8 @@ function buildMsgHTML(m, idx, isMentionMe) {
     });
   }
   if (m.audio) {
-    bodyHTML += `<div class="chat-bubble-audio"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg><audio controls src="${m.audio}" preload="none" style="height:32px;min-width:160px;max-width:220px"></audio></div>`;
+    const _aid = 'ca_' + m.id;
+    bodyHTML += buildCustomAudioPlayer(m.audio, _aid, 'Suara');
   }
   if (m.botImgs && m.botImgs.length) {
     m.botImgs.forEach(src => {
@@ -4178,13 +4196,7 @@ function startAudioRecord(e) {
         if (_audioChunks.length === 0) return;
         const blob = new Blob(_audioChunks, { type: _mediaRecorder.mimeType });
         const reader = new FileReader();
-        reader.onload = ev => {
-          _pendingAudioB64 = ev.target.result;
-          const audioEl = document.getElementById('audioPendingPlayer');
-          const strip = document.getElementById('audioPreviewStrip');
-          if (audioEl) audioEl.src = _pendingAudioB64;
-          if (strip) strip.style.display = 'flex';
-        };
+        reader.onload = ev => { _showPendingAudio(ev.target.result); };
         reader.readAsDataURL(blob);
         _stopRecTimer();
         if (btn) btn.classList.remove('recording');
@@ -4233,12 +4245,148 @@ function _stopRecTimer() {
   _recSeconds = 0;
 }
 
+// ══ CUSTOM AUDIO PLAYER ══
+const CA_BARS = 28; // number of waveform bars
+let _caPlayers = {}; // { id: { audio, playing, animFrame } }
+
+function buildCustomAudioPlayer(src, id, label) {
+  // Store src globally to avoid quoting issues in onclick
+  window._caAudioSrcs = window._caAudioSrcs || {};
+  window._caAudioSrcs[id] = src;
+  let bars = '';
+  for (let i = 0; i < CA_BARS; i++) {
+    const h = 8 + Math.round(Math.abs(Math.sin(i * 0.7 + 1.2)) * 14);
+    bars += '<div class="ca-bar" id="' + id + '_bar' + i + '" style="height:' + h + 'px"></div>';
+  }
+  return '<div class="ca-player" id="' + id + '_player">'
+    + '<button class="ca-play-btn" id="' + id + '_playbtn" onclick="caToggleById(\'' + id + '\')">'
+    + '<svg id="' + id + '_playico" width="12" height="12" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>'
+    + '</button>'
+    + '<div class="ca-body">'
+    + '<div class="ca-waveform" id="' + id + '_wave" onclick="caSeekById(event,\'' + id + '\')">' + bars + '</div>'
+    + '<div class="ca-meta">'
+    + '<span class="ca-duration" id="' + id + '_dur">0:00</span>'
+    + '<span class="ca-type-tag">' + (label || 'Audio') + '</span>'
+    + '</div>'
+    + '</div>'
+    + '<audio id="' + id + '_audio" src="' + src + '" preload="metadata" style="display:none"'
+    + ' ontimeupdate="caTimeUpdate(\'' + id + '\')"'
+    + ' onended="caEnded(\'' + id + '\')"'
+    + ' onloadedmetadata="caMeta(\'' + id + '\')"></audio>'
+    + '</div>';
+}
+
+function caToggleById(id) {
+  const src = (window._caAudioSrcs || {})[id] || '';
+  caToggle(id, src);
+}
+
+function caSeekById(e, id) {
+  caSeek(e, id, '');
+}
+
+
+function caToggle(id, src) {
+  const audio = document.getElementById(id+'_audio') || (() => {
+    const a = document.createElement('audio');
+    a.id = id+'_audio'; a.src = src; a.preload = 'metadata'; a.style.display = 'none';
+    a.ontimeupdate = () => caTimeUpdate(id);
+    a.onended = () => caEnded(id);
+    a.onloadedmetadata = () => caMeta(id);
+    document.body.appendChild(a); return a;
+  })();
+  // Stop other players
+  document.querySelectorAll('audio[id$="_audio"]').forEach(a => {
+    if (a.id !== id+'_audio' && !a.paused) {
+      a.pause();
+      const oid = a.id.replace('_audio','');
+      caSetStopped(oid);
+    }
+  });
+  if (audio.paused) {
+    audio.play().then(() => caSetPlaying(id)).catch(()=>{});
+  } else {
+    audio.pause();
+    caSetStopped(id);
+  }
+}
+
+function caSetPlaying(id) {
+  const ico = document.getElementById(id+'_playico');
+  if (ico) ico.innerHTML = '<rect x="6" y="4" width="4" height="16" fill="white"/><rect x="14" y="4" width="4" height="16" fill="white"/>';
+}
+
+function caSetStopped(id) {
+  const ico = document.getElementById(id+'_playico');
+  if (ico) ico.innerHTML = '<polygon points="5,3 19,12 5,21" fill="white"/>';
+}
+
+function caEnded(id) {
+  caSetStopped(id);
+  // Reset progress bars
+  for (let i = 0; i < CA_BARS; i++) {
+    const bar = document.getElementById(id+'_bar'+i);
+    if (bar) bar.classList.remove('played');
+  }
+  const dur = document.getElementById(id+'_dur');
+  const audio = document.getElementById(id+'_audio');
+  if (dur && audio && audio.duration) dur.textContent = caFmtTime(audio.duration);
+}
+
+function caTimeUpdate(id) {
+  const audio = document.getElementById(id+'_audio');
+  const dur = document.getElementById(id+'_dur');
+  if (!audio) return;
+  if (dur) dur.textContent = caFmtTime(audio.currentTime) + (audio.duration ? ' / ' + caFmtTime(audio.duration) : '');
+  // Update waveform progress
+  if (audio.duration) {
+    const prog = audio.currentTime / audio.duration;
+    const filled = Math.round(prog * CA_BARS);
+    for (let i = 0; i < CA_BARS; i++) {
+      const bar = document.getElementById(id+'_bar'+i);
+      if (bar) bar.classList.toggle('played', i < filled);
+    }
+  }
+}
+
+function caMeta(id) {
+  const audio = document.getElementById(id+'_audio');
+  const dur = document.getElementById(id+'_dur');
+  if (audio && audio.duration && dur) dur.textContent = caFmtTime(audio.duration);
+}
+
+function caSeek(e, id, src) {
+  const audio = document.getElementById(id+'_audio');
+  if (!audio || !audio.duration) return;
+  const wave = document.getElementById(id+'_wave');
+  if (!wave) return;
+  const rect = wave.getBoundingClientRect();
+  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  audio.currentTime = pct * audio.duration;
+}
+
+function caFmtTime(sec) {
+  if (!sec || isNaN(sec)) return '0:00';
+  const m = Math.floor(sec/60);
+  const s = Math.floor(sec%60);
+  return m + ':' + String(s).padStart(2,'0');
+}
+
 function clearPendingAudio() {
   _pendingAudioB64 = null;
   const strip = document.getElementById('audioPreviewStrip');
-  const audioEl = document.getElementById('audioPendingPlayer');
+  const wrap = document.getElementById('audioPendingPlayerWrap');
   if (strip) strip.style.display = 'none';
-  if (audioEl) audioEl.src = '';
+  if (wrap) wrap.innerHTML = '';
+}
+
+function _showPendingAudio(b64) {
+  _pendingAudioB64 = b64;
+  const strip = document.getElementById('audioPreviewStrip');
+  const wrap = document.getElementById('audioPendingPlayerWrap');
+  if (!strip || !wrap) return;
+  wrap.innerHTML = buildCustomAudioPlayer(b64, 'ca_pending', 'Rekaman');
+  strip.style.display = 'flex';
 }
 
 function handleAudioUpload(input) {
@@ -4246,13 +4394,7 @@ function handleAudioUpload(input) {
   if (!file) return;
   if (file.size > 5 * 1024 * 1024) { toast('File audio maks 5MB', 'warn'); return; }
   const reader = new FileReader();
-  reader.onload = e => {
-    _pendingAudioB64 = e.target.result;
-    const audioEl = document.getElementById('audioPendingPlayer');
-    const strip = document.getElementById('audioPreviewStrip');
-    if (audioEl) audioEl.src = _pendingAudioB64;
-    if (strip) strip.style.display = 'flex';
-  };
+  reader.onload = e => { _showPendingAudio(e.target.result); };
   reader.readAsDataURL(file);
   input.value = '';
 }
@@ -4694,10 +4836,32 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
         <div id="ctLoadFill" style="height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));animation:ct-load 1.2s ease-in-out infinite;width:60%"></div>
       </div>
       <div id="ctUploadStatus" style="display:none;font-size:.78rem;color:var(--ac2);text-align:center;padding:.3rem 0">Mengupload...</div>
-      <button class="ct-post-btn" id="ctPostBtn" onclick="ctPost()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
-        Bagikan
-      </button>
+
+      <!-- Scheduled post toggle -->
+      <div style="margin:.5rem 0">
+        <label style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--tx2);cursor:pointer">
+          <input type="checkbox" id="ctScheduleToggle" onchange="ctToggleSchedule(this.checked)"
+            style="accent-color:var(--ac2);width:14px;height:14px"/>
+          Jadwalkan post (opsional)
+        </label>
+        <div id="ctSchedulePanel" style="display:none;margin-top:.5rem;background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:.7rem">
+          <div style="font-size:.75rem;color:var(--tx2);margin-bottom:.5rem">Post otomatis tayang pada:</div>
+          <input type="datetime-local" id="ctScheduleTime"
+            style="width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:7px;padding:.5rem .7rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.83rem;outline:none;box-sizing:border-box"/>
+          <div style="font-size:.7rem;color:var(--tx2);margin-top:.4rem;opacity:.7">Simpan sebagai draft — tayang otomatis sesuai jadwal</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px">
+        <button class="ct-post-btn" id="ctPostBtn" onclick="ctPost()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
+          Bagikan
+        </button>
+        <button class="ct-post-btn" id="ctDraftBtn" onclick="ctSaveDraft()" style="background:var(--s2);border:1px solid var(--b2);color:var(--tx2);flex:0 0 auto;width:auto;padding:.72rem 1rem">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg>
+          Draft
+        </button>
+      </div>
       <input type="file" id="ctFileInput" accept="video/*,image/*" style="display:none" onchange="ctHandleFile(this)"/>
     </div>
 
@@ -4730,13 +4894,53 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
       </div>
       <div class="chat-msgs" id="dmMsgs" style="-webkit-user-select:text;user-select:text;overflow-y:auto;flex:1;min-height:0"></div>
       <div class="chat-input-area" id="dmInputArea" style="display:none;flex-shrink:0">
+        <!-- DM audio preview -->
+        <div id="dmAudioPreviewStrip" style="display:none;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:6px 10px;margin-bottom:6px">
+          <div id="dmAudioPendingWrap" style="flex:1"></div>
+          <button onclick="clearDMPendingAudio()" style="background:none;border:none;color:var(--tx2);cursor:pointer;font-size:.9rem;padding:2px 4px;flex-shrink:0">✕</button>
+        </div>
+        <!-- DM image preview -->
+        <div class="img-preview-strip" id="dmImgPreviewStrip"></div>
+        <!-- DM emoji picker -->
+        <div class="emoji-picker" id="dmEmojiPicker">
+          <div class="emoji-search"><input type="text" placeholder="Cari emoji..." oninput="filterDMEmoji(this.value)" id="dmEmojiSearch"/></div>
+          <div class="emoji-grid" id="dmEmojiGrid"></div>
+        </div>
         <div class="chat-input-row">
           <textarea class="chat-input-box" id="dmInput" placeholder="Pesan ke..." rows="1"
             onkeydown="dmKeyDown(event)" oninput="autoResizeInput(this)"></textarea>
-          <button class="chat-input-btn chat-send-btn" onclick="sendDM()" title="Kirim">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
-          </button>
+          <div class="chat-input-actions">
+            <!-- Gambar -->
+            <button class="chat-input-btn chat-img-btn" onclick="triggerDMImgUpload()" title="Gambar">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+            </button>
+            <!-- Upload audio -->
+            <button class="chat-input-btn chat-img-btn" onclick="triggerDMAudioUpload()" title="Upload audio">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            </button>
+            <!-- Emoji -->
+            <button class="chat-input-btn chat-img-btn" onclick="toggleDMEmojiPicker()" title="Emoji" id="dmEmojiBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            </button>
+            <!-- Rekam -->
+            <button class="chat-audio-rec-btn" id="dmAudioRecBtn"
+              title="Tahan untuk rekam"
+              onmousedown="startDMAudioRecord(event)"
+              onmouseup="stopDMAudioRecord(event)"
+              onmouseleave="stopDMAudioRecord(event)"
+              ontouchstart="startDMAudioRecord(event)"
+              ontouchend="stopDMAudioRecord(event)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              <span class="rec-timer" id="dmRecTimer" style="display:none"></span>
+            </button>
+            <!-- Kirim -->
+            <button class="chat-send-btn" onclick="sendDM()" title="Kirim" style="width:36px;height:36px;border-radius:50%;background:var(--ac2);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
+            </button>
+          </div>
         </div>
+        <input type="file" id="dmImgInput" accept="image/*" multiple style="display:none" onchange="handleDMImgUpload(this)"/>
+        <input type="file" id="dmAudioInput" accept="audio/*" style="display:none" onchange="handleDMAudioUpload(this)"/>
       </div>
     </div>
   </div>
@@ -5537,6 +5741,7 @@ function renderCiunTik() {
   });
   // Autoplay first post with music
   setTimeout(ctAutoplayFirstAudio, 300);
+  setTimeout(setupCTAudioObserver, 350);
 }
 
 function ctToggleCreate() {
@@ -5602,7 +5807,10 @@ function buildCTCard(p, i) {
         </button>
       </div>` : '';
   const capHTML = (p.postType !== 'text' && p.caption) ? `<div class="ct-caption">${p.caption.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>` : '';
-  return `<div class="ct-card" id="ct-${p._key||i}">
+  const _hasAudio = p.music && p.music.data;
+  const _aId = p.id || p._key;
+  const _audioAttr = _hasAudio ? ' data-audio-id="'+_aId+'"' : "";
+  return `<div class="ct-card" id="ct-${p._key||i}"${_audioAttr}>
     <div class="ct-card-top">
       <div class="ct-author">
         <div class="ct-av" style="background:${roleGrad}">${init}</div>
@@ -5709,6 +5917,44 @@ function ctAutoplayFirstAudio() {
   if (id) ctToggleAudio(id);
 }
 
+// ══ INTERSECTION OBSERVER — pause audio when card scrolls out ══
+let _ctAudioObserver = null;
+
+function setupCTAudioObserver() {
+  if (_ctAudioObserver) _ctAudioObserver.disconnect();
+  _ctAudioObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const card = entry.target;
+      const audioId = card.dataset.audioId;
+      if (!audioId) return;
+      const audio = document.getElementById('ctAudio_' + audioId);
+      if (!audio) return;
+      if (!entry.isIntersecting) {
+        // Card scrolled out — pause if playing
+        if (!audio.paused) {
+          audio.pause();
+          ctSetAudioStopped(audioId);
+          if (_ctPlayingId === audioId) _ctPlayingId = null;
+        }
+      } else {
+        // Card visible again — resume if it was the playing one
+        if (_ctPlayingId === audioId && audio.paused) {
+          audio.play().catch(()=>{});
+          const btn = document.getElementById('ctAudioBtn_'+audioId);
+          const wave = document.getElementById('ctMusicWave_'+audioId);
+          if (btn) btn.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="var(--ac2)"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+          if (wave) wave.style.display = 'inline-flex';
+        }
+      }
+    });
+  }, { threshold: 0.2 }); // 20% visible = counts as visible
+
+  // Observe all cards with audio
+  document.querySelectorAll('.ct-card[data-audio-id]').forEach(card => {
+    _ctAudioObserver.observe(card);
+  });
+}
+
 // CiunTik per-session upload state (NOT shared across renders)
 const _CT_UPLOAD = { file: null, type: 'image', uploading: false };
 
@@ -5730,6 +5976,8 @@ let _ctMode = 'video'; // 'video' | 'text'
 let _ctSelectedTemplate = CT_TEXT_TEMPLATES[0];
 let _ctMusicFile = null;
 let _ctMusicB64 = null;
+let _ctMusicName = null;
+let _ctSelectedMusicKey = null;
 let _ctActiveHashtagFilter = null;
 let _ctFeedTab = 'fyp'; // 'fyp' | 'following'
 
@@ -6063,6 +6311,207 @@ function ctClearMedia() {
   if (fi) fi.value = '';
 }
 
+// ══ DRAFT & SCHEDULED POST ══
+function ctToggleSchedule(on) {
+  const panel = document.getElementById('ctSchedulePanel');
+  const btn = document.getElementById('ctPostBtn');
+  if (!panel) return;
+  panel.style.display = on ? 'block' : 'none';
+  if (btn) btn.innerHTML = on
+    ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg> Jadwalkan'
+    : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg> Bagikan';
+}
+
+async function ctSaveDraft() {
+  if (!D.user || !D.role || D.role === 'guest') { toast('Login untuk menyimpan draft', 'warn'); return; }
+  const draft = await _buildCTPayload();
+  if (!draft) return;
+  draft.isDraft = true;
+  draft.scheduledAt = null; // plain draft, no schedule
+  const myKey = (D.email || D.user).replace(/[.#$\/\[\]]/g, '_');
+  const draftKey = 'draft_' + Date.now();
+  await fbSet('drafts/' + myKey + '/' + draftKey, draft).catch(() => {
+    // Fallback to localStorage
+    const local = JSON.parse(localStorage.getItem('c_drafts_' + myKey) || '{}');
+    local[draftKey] = draft;
+    localStorage.setItem('c_drafts_' + myKey, JSON.stringify(local));
+  });
+  toast('Draft disimpan!', 'success');
+  ctToggleCreate();
+  _ctResetUpload();
+}
+
+async function loadMyDrafts() {
+  if (!D.user || !D.role) return;
+  const myKey = (D.email || D.user).replace(/[.#$\/\[\]]/g, '_');
+  const grid = document.getElementById('memProfDraftGrid');
+  if (!grid) return;
+  grid.innerHTML = '<div style="color:var(--tx2);font-size:.78rem;padding:.5rem">Memuat draft...</div>';
+  try {
+    let drafts = {};
+    const snap = await fbGet('drafts/' + myKey);
+    if (snap.val()) drafts = snap.val();
+    // Also load local drafts
+    const local = JSON.parse(localStorage.getItem('c_drafts_' + myKey) || '{}');
+    Object.assign(drafts, local);
+    const draftList = Object.entries(drafts).map(([k,v]) => ({...v, _draftKey: k}));
+    if (!draftList.length) {
+      grid.innerHTML = '<div style="color:var(--tx2);font-size:.78rem;padding:1rem;text-align:center">Belum ada draft</div>';
+      return;
+    }
+    grid.innerHTML = draftList.map((d, i) => buildDraftThumb(d, i, myKey)).join('');
+  } catch(e) { grid.innerHTML = '<div style="color:var(--err);font-size:.78rem">Gagal memuat draft</div>'; }
+}
+
+function buildDraftThumb(d, i, myKey) {
+  const sched = d.scheduledAt ? `<div style="font-size:.62rem;color:var(--ac2);margin-top:2px">⏰ ${new Date(d.scheduledAt).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>` : '';
+  let preview = '';
+  if (d.postType === 'text' && d.text) {
+    const tmpl = (window.CT_TEXT_TEMPLATES || []).find(t => t.id === d.textStyle) || {bg:'#2a2a3e',color:'#fff'};
+    preview = `<div style="width:100%;height:100%;background:${tmpl.bg};display:flex;align-items:center;justify-content:center;padding:6px;box-sizing:border-box;font-size:.7rem;color:${tmpl.color};text-align:center;overflow:hidden;word-break:break-word">${(d.text||'').slice(0,40)}</div>`;
+  } else if (d.media) {
+    preview = `<img src="${d.media}" style="width:100%;height:100%;object-fit:cover"/>`;
+  } else {
+    preview = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--tx2)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg></div>`;
+  }
+  return `<div style="aspect-ratio:1;background:var(--s2);border-radius:6px;overflow:hidden;position:relative;cursor:pointer" onclick="openDraftOptions('${(d._draftKey||'').replace(/'/g,'')}','${myKey}')">
+    ${preview}
+    <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 50%);pointer-events:none"></div>
+    <div style="position:absolute;bottom:4px;left:4px;right:4px">
+      <div style="font-size:.62rem;color:rgba(255,255,255,.8);background:rgba(0,0,0,.4);border-radius:4px;padding:2px 5px;display:inline-block">Draft</div>
+      ${sched}
+    </div>
+  </div>`;
+}
+
+function openDraftOptions(draftKey, myKey) {
+  const existing = document.getElementById('draftOptionsModal');
+  if (existing) existing.remove();
+  const m = document.createElement('div');
+  m.id = 'draftOptionsModal';
+  m.style.cssText = 'position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.7);display:flex;align-items:flex-end;justify-content:center';
+  m.innerHTML = `<div style="background:var(--s1);border-radius:16px 16px 0 0;padding:1.2rem;width:100%;max-width:480px">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:.8rem;font-size:.9rem">Opsi Draft</div>
+    <button onclick="publishDraftNow('${draftKey}','${myKey}')" style="width:100%;padding:.65rem;background:var(--ac2);border:none;border-radius:9px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.83rem;cursor:pointer;margin-bottom:.5rem">
+      Publish Sekarang
+    </button>
+    <button onclick="deleteDraft('${draftKey}','${myKey}')" style="width:100%;padding:.65rem;background:rgba(232,69,96,.12);border:1px solid rgba(232,69,96,.3);border-radius:9px;color:var(--err);font-family:'DM Sans',sans-serif;font-size:.83rem;cursor:pointer;margin-bottom:.5rem">
+      Hapus Draft
+    </button>
+    <button onclick="document.getElementById('draftOptionsModal').remove()" style="width:100%;padding:.65rem;background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--tx2);font-family:'DM Sans',sans-serif;font-size:.83rem;cursor:pointer">
+      Batal
+    </button>
+  </div>`;
+  m.onclick = e => { if (e.target === m) m.remove(); };
+  document.body.appendChild(m);
+}
+
+async function publishDraftNow(draftKey, myKey) {
+  document.getElementById('draftOptionsModal')?.remove();
+  try {
+    let draft = null;
+    const snap = await fbGet('drafts/' + myKey + '/' + draftKey).catch(() => null);
+    if (snap && snap.val()) draft = snap.val();
+    else {
+      const local = JSON.parse(localStorage.getItem('c_drafts_' + myKey) || '{}');
+      draft = local[draftKey];
+    }
+    if (!draft) { toast('Draft tidak ditemukan', 'error'); return; }
+    draft.isDraft = false;
+    draft.scheduledAt = null;
+    draft.ts = Date.now();
+    await fbPush('ciuntik', draft);
+    // Remove draft
+    await deleteDraft(draftKey, myKey, true);
+    toast('Post berhasil dipublish!', 'success');
+    loadMyDrafts();
+  } catch(e) { toast('Gagal publish draft', 'error'); }
+}
+
+async function deleteDraft(draftKey, myKey, silent) {
+  document.getElementById('draftOptionsModal')?.remove();
+  try {
+    await fbRemove('drafts/' + myKey + '/' + draftKey).catch(() => {});
+    const local = JSON.parse(localStorage.getItem('c_drafts_' + myKey) || '{}');
+    delete local[draftKey];
+    localStorage.setItem('c_drafts_' + myKey, JSON.stringify(local));
+    if (!silent) { toast('Draft dihapus', 'warn'); loadMyDrafts(); }
+  } catch(e) {}
+}
+
+// Check scheduled drafts every minute — publish if time has passed
+function startDraftScheduler() {
+  setInterval(async () => {
+    if (!D.user || !D.role || D.role === 'guest') return;
+    const myKey = (D.email || D.user).replace(/[.#$\/\[\]]/g, '_');
+    const now = Date.now();
+    try {
+      const snap = await fbGet('drafts/' + myKey);
+      if (!snap.val()) return;
+      for (const [k, v] of Object.entries(snap.val())) {
+        if (v.scheduledAt && v.scheduledAt <= now) {
+          await publishDraftNow(k, myKey);
+        }
+      }
+    } catch(e) {}
+  }, 60000); // Check every minute
+}
+
+// Helper to build CT post payload (shared by ctPost and ctSaveDraft)
+async function _buildCTPayload() {
+  const caption = (document.getElementById('ctCaption')?.value || '').trim();
+  const rawTags = document.getElementById('ctHashtagInput')?.value || '';
+  const hashtags = rawTags.split(',').map(t=>t.trim().replace(/^#/,'')).filter(Boolean);
+  const schedToggle = document.getElementById('ctScheduleToggle');
+  const schedTime = document.getElementById('ctScheduleTime');
+  const scheduledAt = (schedToggle?.checked && schedTime?.value) ? new Date(schedTime.value).getTime() : null;
+  const musicData = _ctMusicB64 || (_ctMusicPresets && _ctSelectedMusicKey ? _ctMusicPresets[_ctSelectedMusicKey] : null);
+  const musicName = _ctMusicName || (_ctSelectedMusicKey ? (_ctMusicPresets?.[_ctSelectedMusicKey]?.name || _ctSelectedMusicKey) : null);
+
+  if (_ctMode === 'text') {
+    const text = document.getElementById('ctTextInput')?.value?.trim();
+    if (!text) { toast('Tulis teks dulu', 'warn'); return null; }
+    return {
+      ts: Date.now(), author: D.user, email: D.email||null, role: D.role,
+      caption, hashtags, scheduledAt,
+      postType: 'text', text, textStyle: _ctSelectedTemplate||'neon',
+      textAlign: document.getElementById('ctTextAlign')?.value||'center',
+      fontSize: document.getElementById('ctFontSize')?.value||'medium',
+      music: musicData ? { name: musicName, data: musicData } : null,
+      likes: 0, views: 0, comments: [], likedBy: []
+    };
+  } else {
+    if (!_CT_UPLOAD.file && !_CT_UPLOAD.croppedB64) { toast('Pilih foto/video dulu', 'warn'); return null; }
+    // Read media
+    let mediaB64 = _CT_UPLOAD.croppedB64;
+    if (!mediaB64) {
+      mediaB64 = await new Promise(res => {
+        const r = new FileReader();
+        r.onload = e2 => res(e2.target.result);
+        r.readAsDataURL(_CT_UPLOAD.file);
+      });
+      if (_CT_UPLOAD.type === 'image') mediaB64 = await compressBase64(mediaB64, 0.78, 1080);
+    }
+    return {
+      ts: Date.now(), author: D.user, email: D.email||null, role: D.role,
+      caption, hashtags, scheduledAt,
+      postType: _CT_UPLOAD.type, media: mediaB64, type: _CT_UPLOAD.type,
+      music: musicData ? { name: musicName, data: musicData } : null,
+      likes: 0, views: 0, comments: [], likedBy: []
+    };
+  }
+}
+
+function _ctResetUpload() {
+  _CT_UPLOAD = { type: null, file: null, croppedB64: null, uploading: false };
+  document.getElementById('ctCaption') && (document.getElementById('ctCaption').value = '');
+  document.getElementById('ctHashtagInput') && (document.getElementById('ctHashtagInput').value = '');
+  document.getElementById('ctScheduleToggle') && (document.getElementById('ctScheduleToggle').checked = false);
+  ctToggleSchedule(false);
+  ctClearMedia();
+  ctClearMusic();
+}
+
 async function ctPost() {
   if (_CT_UPLOAD.uploading) return;
   // BUG FIX: double-check ciuntikOpen even if somehow panel was visible
@@ -6256,8 +6705,8 @@ function openMemberProfile(emailOrKey, displayName) {
     <div class="follower-stat-item"><span class="follower-stat-num" id="profTotalLikes">—</span><span class="follower-stat-lbl">Suka</span></div>
   </div>`;
   if (!isSelf && D.role) {
-    // Follow button — semua role bisa follow (termasuk tamu)
-    actHTML += `<div style="display:flex;gap:7px;margin-top:.3rem;justify-content:center">
+    // Follow + PM buttons below stats, centered
+    actHTML += `<div style="display:flex;gap:7px;margin-top:.55rem;justify-content:center;flex-wrap:wrap">
       <button id="profFollowBtn" class="follow-btn follow" onclick="toggleFollow('${(tEmail||name).replace(/'/g,'')}','${name.replace(/'/g,'')}')">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ikuti
       </button>`;
@@ -6271,6 +6720,13 @@ function openMemberProfile(emailOrKey, displayName) {
   actEl.innerHTML = actHTML;
   loadFollowStats(targetKey);
   if (!isSelf && D.role) loadFollowState(targetKey, name, tEmail||name);
+
+  // Show Draft tab only for own profile or leader
+  const draftTab = document.getElementById('profTabDraft');
+  if (draftTab) {
+    const canSeeDraft = isSelf || D.role === 'leader';
+    draftTab.style.display = canSeeDraft ? 'flex' : 'none';
+  }
 
   // CiunTik posts (own) — also compute total likes
   const posts = CIUNTIK.posts.filter(p => p.email === key || p.author === displayName);
@@ -6328,13 +6784,19 @@ function buildProfThumb(p, i) {
 function switchProfTab(tab) {
   const postsGrid = document.getElementById('memProfPostsGrid');
   const likedGrid = document.getElementById('memProfLikedGrid');
+  const draftGrid = document.getElementById('memProfDraftGrid');
   const postBtn   = document.getElementById('profTabPosts');
   const likedBtn  = document.getElementById('profTabLiked');
+  const draftBtn  = document.getElementById('profTabDraft');
   if (!postsGrid || !likedGrid) return;
   postsGrid.style.display = tab === 'posts' ? 'grid' : 'none';
   likedGrid.style.display  = tab === 'liked' ? 'grid' : 'none';
+  if (draftGrid) draftGrid.style.display = tab === 'draft' ? 'grid' : 'none';
   if (postBtn)  postBtn.classList.toggle('active',  tab === 'posts');
   if (likedBtn) likedBtn.classList.toggle('active', tab === 'liked');
+  if (draftBtn) draftBtn.classList.toggle('active', tab === 'draft');
+  // Load drafts when draft tab opened
+  if (tab === 'draft') loadMyDrafts();
 }
 function closeMemberProfile() {
   document.getElementById('memProfBg').classList.remove('show');
@@ -6558,47 +7020,215 @@ function renderDMChat() {
     const avInner = (prof && prof.avatar) ? '<img src="'+prof.avatar+'" style="width:100%;height:100%;object-fit:cover"/>' : initials;
     const roleClass = m.role || 'member';
     const safeT = (m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+    // Build body
+    let body = '';
+    if (safeT) body += '<div class="dm-bubble ' + (isMine?'mine':'theirs') + '">' + safeT + '</div>';
+    if (m.images && m.images.length) {
+      body += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;max-width:220px">'
+        + m.images.map(src => '<img src="'+src+'" style="max-width:100px;border-radius:8px;cursor:pointer" onclick="showFullImg(this.src)"/>').join('')
+        + '</div>';
+    }
+    if (m.audio) {
+      const aid = 'ca_dm_' + m.ts + '_' + i;
+      body += buildCustomAudioPlayer(m.audio, aid, 'Suara');
+    }
     if (isMine) {
-      return `<div class="dm-msg-wrap mine">
-        <div class="dm-bubble mine">${safeT}</div>
-        <div class="dm-time">${timeStr}</div>
-      </div>`;
+      return '<div class="dm-msg-wrap mine">' + body + '<div class="dm-time">' + timeStr + '</div></div>';
     } else {
-      return `<div class="dm-msg-wrap theirs">
-        <div class="msg-av ${roleClass}" style="width:30px;height:30px;font-size:.65rem;margin-top:auto">${avInner}</div>
-        <div>
-          <div class="dm-bubble theirs">${safeT}</div>
-          <div class="dm-time">${timeStr}</div>
-        </div>
-      </div>`;
+      return '<div class="dm-msg-wrap theirs">'
+        + '<div class="msg-av ' + roleClass + '" style="width:30px;height:30px;font-size:.65rem;margin-top:auto">' + avInner + '</div>'
+        + '<div>' + body + '<div class="dm-time">' + timeStr + '</div></div>'
+        + '</div>';
     }
   }).join('');
   container.innerHTML = html;
   container.scrollTop = container.scrollHeight;
 }
 
+// ══ DM EXTRA STATE ══
+let _dmPendingImgs = [];
+let _dmPendingAudioB64 = null;
+let _dmMediaRecorder = null;
+let _dmAudioChunks = [];
+let _dmRecHoldTimeout = null;
+let _dmRecSeconds = 0;
+let _dmRecTimerInterval = null;
+
+function triggerDMImgUpload() { document.getElementById('dmImgInput')?.click(); }
+function triggerDMAudioUpload() { document.getElementById('dmAudioInput')?.click(); }
+
+function handleDMImgUpload(input) {
+  const files = Array.from(input.files);
+  if (!files.length) return;
+  let idx = 0;
+  function next() {
+    if (idx >= files.length) { input.value = ''; return; }
+    const file = files[idx++];
+    const reader = new FileReader();
+    reader.onload = e => {
+      openCropModal(e.target.result, async cropped => {
+        const compressed = await compressBase64(cropped, 0.72, 800);
+        _dmPendingImgs.push(compressed);
+        renderDMImgPreview();
+        next();
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+  next();
+}
+
+function renderDMImgPreview() {
+  const strip = document.getElementById('dmImgPreviewStrip');
+  if (!strip) return;
+  if (!_dmPendingImgs.length) { strip.innerHTML = ''; return; }
+  strip.innerHTML = _dmPendingImgs.map((src, i) =>
+    `<div class="img-preview-item"><img src="${src}"/><button class="rm-img" onclick="_dmPendingImgs.splice(${i},1);renderDMImgPreview()">✕</button></div>`
+  ).join('');
+}
+
+function handleDMAudioUpload(input) {
+  const file = input.files[0]; if (!file) return;
+  if (file.size > 5*1024*1024) { toast('Maks 5MB','warn'); return; }
+  const reader = new FileReader();
+  reader.onload = e => _showDMPendingAudio(e.target.result);
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+function _showDMPendingAudio(b64) {
+  _dmPendingAudioB64 = b64;
+  const strip = document.getElementById('dmAudioPreviewStrip');
+  const wrap = document.getElementById('dmAudioPendingWrap');
+  if (!strip || !wrap) return;
+  wrap.innerHTML = buildCustomAudioPlayer(b64, 'ca_dm_pending', 'Rekaman');
+  strip.style.display = 'flex';
+}
+
+function clearDMPendingAudio() {
+  _dmPendingAudioB64 = null;
+  const strip = document.getElementById('dmAudioPreviewStrip');
+  const wrap = document.getElementById('dmAudioPendingWrap');
+  if (strip) strip.style.display = 'none';
+  if (wrap) wrap.innerHTML = '';
+}
+
+function startDMAudioRecord(e) {
+  e.preventDefault();
+  _dmRecHoldTimeout = setTimeout(async () => {
+    const btn = document.getElementById('dmAudioRecBtn');
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      _dmAudioChunks = [];
+      _dmMediaRecorder = new MediaRecorder(stream, { mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg' });
+      _dmMediaRecorder.ondataavailable = ev => { if (ev.data.size > 0) _dmAudioChunks.push(ev.data); };
+      _dmMediaRecorder.onstop = () => {
+        stream.getTracks().forEach(t => t.stop());
+        if (!_dmAudioChunks.length) return;
+        const blob = new Blob(_dmAudioChunks, { type: _dmMediaRecorder.mimeType });
+        const reader = new FileReader();
+        reader.onload = ev2 => _showDMPendingAudio(ev2.target.result);
+        reader.readAsDataURL(blob);
+        _stopDMRecTimer(); if (btn) btn.classList.remove('recording');
+      };
+      _dmMediaRecorder.start();
+      if (btn) btn.classList.add('recording');
+      _startDMRecTimer();
+    } catch(err) { toast('Izin mikrofon diperlukan','warn'); }
+  }, 300);
+}
+
+function stopDMAudioRecord(e) {
+  clearTimeout(_dmRecHoldTimeout);
+  if (_dmMediaRecorder && _dmMediaRecorder.state === 'recording') {
+    if (_dmRecSeconds < 1) {
+      _dmMediaRecorder.stream?.getTracks().forEach(t => t.stop());
+      _dmMediaRecorder = null; _stopDMRecTimer();
+      document.getElementById('dmAudioRecBtn')?.classList.remove('recording');
+      toast('Tahan lebih lama untuk rekam','warn'); return;
+    }
+    _dmMediaRecorder.stop();
+  }
+}
+
+function _startDMRecTimer() {
+  _dmRecSeconds = 0;
+  const el = document.getElementById('dmRecTimer');
+  if (el) { el.style.display = 'inline'; el.textContent = '0s'; }
+  _dmRecTimerInterval = setInterval(() => {
+    _dmRecSeconds++;
+    if (el) el.textContent = _dmRecSeconds + 's';
+    if (_dmRecSeconds >= 120) stopDMAudioRecord({preventDefault:()=>{}});
+  }, 1000);
+}
+
+function _stopDMRecTimer() {
+  clearInterval(_dmRecTimerInterval);
+  const el = document.getElementById('dmRecTimer');
+  if (el) el.style.display = 'none';
+  _dmRecSeconds = 0;
+}
+
+function toggleDMEmojiPicker() {
+  const p = document.getElementById('dmEmojiPicker');
+  if (!p) return;
+  const show = p.classList.toggle('show');
+  if (show) {
+    if (typeof initEmojiPicker === 'function') initEmojiPicker();
+    const grid = document.getElementById('dmEmojiGrid');
+    const masterGrid = document.getElementById('emojiGrid');
+    if (grid && masterGrid) grid.innerHTML = masterGrid.innerHTML;
+  }
+}
+
+function filterDMEmoji(q) {
+  // Reuse main emoji filter for DM grid
+  const grid = document.getElementById('dmEmojiGrid');
+  if (!grid) return;
+  const allEmojis = window._EMOJI_LIST || [];
+  const filtered = q ? allEmojis.filter(e => e.n.includes(q.toLowerCase())) : allEmojis;
+  grid.innerHTML = filtered.slice(0,120).map(e =>
+    `<span class="emoji-item" onclick="insertDMEmoji('${e.e}')">${e.e}</span>`
+  ).join('');
+}
+
+function insertDMEmoji(em) {
+  const inp = document.getElementById('dmInput');
+  if (!inp) return;
+  const pos = inp.selectionStart;
+  inp.value = inp.value.slice(0, pos) + em + inp.value.slice(pos);
+  inp.focus(); inp.setSelectionRange(pos+em.length, pos+em.length);
+  autoResizeInput(inp);
+  document.getElementById('dmEmojiPicker')?.classList.remove('show');
+}
+
 function sendDM() {
   const inp = document.getElementById('dmInput');
   const text = inp ? inp.value.trim() : '';
-  if (!text || !DM_STATE.roomKey) return;
+  if (!text && !_dmPendingImgs.length && !_dmPendingAudioB64) return;
+  if (!DM_STATE.roomKey) return;
   if (!D.user || D.role === 'guest') { toast('Login dulu','warn'); return; }
-  const msg = { ts: Date.now(), name: D.user, email: D.email||null, role: D.role, text };
-  inp.value = ''; autoResizeInput(inp);
+  const msg = {
+    ts: Date.now(), name: D.user, email: D.email||null, role: D.role,
+    text: text||null,
+    images: _dmPendingImgs.length ? [..._dmPendingImgs] : null,
+    audio: _dmPendingAudioB64 || null
+  };
+  if (inp) { inp.value = ''; autoResizeInput(inp); }
+  _dmPendingImgs = []; renderDMImgPreview();
+  clearDMPendingAudio();
   // Optimistic render
   DM_STATE.msgs.push(msg);
   renderDMChat();
   // Push to Firebase
   try {
     FB.push(FB.ref(FB.db, 'dm/' + DM_STATE.roomKey), msg).catch(() => {
-      // Fallback: localStorage
       const saved = JSON.parse(localStorage.getItem('c_dm_' + DM_STATE.roomKey) || '[]');
-      saved.push(msg);
-      localStorage.setItem('c_dm_' + DM_STATE.roomKey, JSON.stringify(saved.slice(-200)));
+      saved.push(msg); localStorage.setItem('c_dm_' + DM_STATE.roomKey, JSON.stringify(saved.slice(-200)));
     });
   } catch(e) {
     const saved = JSON.parse(localStorage.getItem('c_dm_' + DM_STATE.roomKey) || '[]');
-    saved.push(msg);
-    localStorage.setItem('c_dm_' + DM_STATE.roomKey, JSON.stringify(saved.slice(-200)));
+    saved.push(msg); localStorage.setItem('c_dm_' + DM_STATE.roomKey, JSON.stringify(saved.slice(-200)));
   }
 }
 
@@ -6748,7 +7378,7 @@ function renderMemberBank(acc) {
         interest_withdraw:{icon:'✨',cls:'grow',label:'Tarik Bunga',in:true},
         withdraw:{icon:'💸', cls:'wd',  label:'Penarikan', in:false},
         coin_buy:{icon:'🪙', cls:'wd',  label:'Beli CQ Coin', in:false},
-        topup:   {icon:'🎁', cls:'dep', label:'Giveaway/Topup', in:true},
+        topup:   {icon:'🎁', cls:'dep', label:'Airdrop/Topup', in:true},
         gacha:   {icon:'🎰', cls:'grow',label:'Tebak Pasar', in:null},
       };
       histEl.innerHTML = txs.slice().reverse().slice(0,20).map(tx => {
@@ -8782,9 +9412,14 @@ const _origBootApp = window.bootApp;
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
           Disukai
         </button>
+        <button class="pub-tab" id="profTabDraft" onclick="switchProfTab('draft')" style="display:none">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/></svg>
+          Draft
+        </button>
       </div>
       <div class="mem-prof-posts-grid" id="memProfPostsGrid"></div>
       <div class="mem-prof-posts-grid" id="memProfLikedGrid" style="display:none"></div>
+      <div class="mem-prof-posts-grid" id="memProfDraftGrid" style="display:none"></div>
     </div>
   </div>
 </div>
