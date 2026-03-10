@@ -4323,7 +4323,8 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
               <div id="ctMusicName" style="font-size:.65rem;color:var(--tx2);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Belum ada musik dipilih</div>
             </div>
             <button onclick="document.getElementById('ctMusicInput').click()" style="padding:4px 10px;border:1px solid rgba(108,78,242,.4);background:rgba(108,78,242,.08);color:var(--ac2);border-radius:7px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">
-              📂 Upload
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Upload
             </button>
             <button id="ctMusicClearBtn" onclick="ctClearMusic()" style="display:none;padding:4px 8px;border:none;background:none;color:var(--tx2);cursor:pointer;font-size:.8rem">✕</button>
           </div>
@@ -5125,13 +5126,14 @@ function renderCiunTik() {
     ? CIUNTIK.posts.filter(p => (p.hashtags||[]).includes(_ctActiveHashtagFilter))
     : CIUNTIK.posts;
   feed.innerHTML = toShow.map((p, i) => buildCTCard(p, i)).join('');
-  // Attach music to audio elements
+  // Wave hidden by default (only show when playing)
   toShow.forEach(p => {
-    if (p.music?.data) {
-      const audio = document.getElementById('ctAudio_'+p.id);
-      if (audio) audio.src = p.music.data;
-    }
+    const id = p.id || p._key;
+    const wave = document.getElementById('ctMusicWave_'+id);
+    if (wave) wave.style.display = 'none';
   });
+  // Autoplay first post with music
+  ctAutoplayFirstAudio();
 }
 
 function ctToggleCreate() {
@@ -5185,8 +5187,17 @@ function buildCTCard(p, i) {
   const hashHTML = p.hashtags && p.hashtags.length
     ? `<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:.4rem">${p.hashtags.map(h=>`<span class="ct-htag" onclick="ctFilterByHashtag('${h}')">#${h}</span>`).join('')}</div>` : '';
   // Music player
+  const _audioId = p.id||p._key;
   const musicHTML = p.music && p.music.name
-    ? `<div style="display:flex;align-items:center;gap:7px;background:rgba(108,78,242,.08);border:1px solid rgba(108,78,242,.2);border-radius:8px;padding:5px 10px;margin-top:.5rem"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span style="font-size:.7rem;color:var(--tx2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.music.name}</span><audio id="ctAudio_${p.id||p._key}" src="${p.music.data||''}" preload="none" style="display:none"></audio><button onclick="ctToggleAudio('${p.id||p._key}')" style="background:none;border:none;color:var(--ac2);cursor:pointer;font-size:.8rem;padding:0">▶</button></div>` : '';
+    ? `<div id="ctMusicBar_${_audioId}" style="display:flex;align-items:center;gap:7px;background:rgba(108,78,242,.08);border:1px solid rgba(108,78,242,.2);border-radius:8px;padding:5px 10px;margin-top:.5rem;cursor:pointer" onclick="ctToggleAudio('${_audioId}')">
+        <svg id="ctMusicIcon_${_audioId}" class="ct-music-spin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <div class="ct-music-wave" id="ctMusicWave_${_audioId}" style="display:inline-flex"><span></span><span></span><span></span></div>
+        <span style="font-size:.7rem;color:var(--tx2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.music.name}</span>
+        <audio id="ctAudio_${_audioId}" src="${p.music.data||''}" preload="auto" loop style="display:none"></audio>
+        <button id="ctAudioBtn_${_audioId}" style="display:flex;align-items:center;justify-content:center;width:26px;height:26px;background:rgba(108,78,242,.15);border:none;border-radius:50%;color:var(--ac2);cursor:pointer;flex-shrink:0;transition:background .15s">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="var(--ac2)"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+      </div>` : '';
   const capHTML = (p.postType !== 'text' && p.caption) ? `<div class="ct-caption">${p.caption.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>` : '';
   return `<div class="ct-card" id="ct-${p._key||i}">
     <div class="ct-card-top">
@@ -5303,6 +5314,12 @@ function ctUpdateTextPreview() {
   display.style.textShadow = t.shadow;
   display.style.fontWeight = '700';
   display.style.lineHeight = '1.4';
+  display.style.width = '100%';
+  display.style.maxWidth = '100%';
+  display.style.overflowWrap = 'break-word';
+  display.style.wordBreak = 'break-word';
+  display.style.hyphens = 'auto';
+  display.style.whiteSpace = 'pre-wrap';
   display.textContent = caption || 'Teks muncul di sini...';
 }
 
@@ -5322,7 +5339,7 @@ function ctHandleMusic(input) {
   _ctMusicFile = file;
   const nameEl = document.getElementById('ctMusicName');
   const clearBtn = document.getElementById('ctMusicClearBtn');
-  if (nameEl) nameEl.innerHTML = `🎵 ${file.name} <span class="ct-music-wave"><span></span><span></span><span></span></span>`;
+  if (nameEl) nameEl.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" style="vertical-align:middle;margin-right:3px"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>${file.name} <span class="ct-music-wave"><span></span><span></span><span></span></span>`;
   if (clearBtn) clearBtn.style.display = 'inline-block';
   // Read as base64
   const reader = new FileReader();
@@ -5382,7 +5399,7 @@ function ctRenderMusicPresets() {
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
       <span class="ct-preset-name">${p.name}</span>
       <span class="ct-preset-by">by ${p.uploadedBy}</span>
-      <span class="ct-preset-play" onclick="event.stopPropagation();ctPreviewPreset('${p._key}')">▶</span>
+      <span class="ct-preset-play" onclick="event.stopPropagation();ctPreviewPreset('${p._key}')"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg></span>
     </div>
   `).join('');
 }
@@ -5394,7 +5411,7 @@ function ctSelectMusicPreset(key) {
   _ctMusicFile = { name: preset.name }; // fake file object just for name
   const nameEl = document.getElementById('ctMusicName');
   const clearBtn = document.getElementById('ctMusicClearBtn');
-  if (nameEl) nameEl.innerHTML = `🎵 ${preset.name} <span class="ct-music-wave"><span></span><span></span><span></span></span>`;
+  if (nameEl) nameEl.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2" style="vertical-align:middle;margin-right:3px"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>${preset.name} <span class="ct-music-wave"><span></span><span></span><span></span></span>`;
   if (clearBtn) clearBtn.style.display = 'inline-block';
   // Highlight selected
   document.querySelectorAll('.ct-preset-item').forEach(el => el.classList.remove('selected'));
@@ -5658,10 +5675,19 @@ async function ctPost() {
 // Listen for new CiunTik posts in real-time
 function setupCiunTikListener() {
   fbOn('ciuntik', val => {
+    // BUG FIX: jangan re-render saat user sendiri sedang upload (mencegah post prematur)
+    // Post yang belum lengkap (tidak ada id/ts yang match) akan masuk tapi kita filter
     if (!val) { CIUNTIK.posts = []; }
     else {
-      CIUNTIK.posts = Object.entries(val).map(([k,v]) => ({...v, _key: k})).sort((a,b) => b.ts - a.ts);
+      const posts = Object.entries(val)
+        .map(([k,v]) => ({...v, _key: k}))
+        // Filter: jangan tampilkan post yang belum punya ts (incomplete write)
+        .filter(p => p.ts && p.author)
+        .sort((a,b) => b.ts - a.ts);
+      CIUNTIK.posts = posts;
     }
+    // Jangan refresh feed kalau user sendiri masih upload
+    if (_CT_UPLOAD.uploading) return;
     if (document.getElementById('page-ciuntik')?.classList.contains('active')) {
       renderCiunTik();
     }
