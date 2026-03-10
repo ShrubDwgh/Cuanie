@@ -844,6 +844,19 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 .follower-stat-num{font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;color:var(--tx)}
 .follower-stat-lbl{color:var(--tx2);font-size:.65rem}
 
+
+/* ══ CHAT AUDIO ══ */
+.chat-audio-rec-btn{width:36px;height:36px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);color:var(--tx2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;flex-shrink:0}
+.chat-audio-rec-btn:hover{background:var(--b1)}
+.chat-audio-rec-btn.recording{background:var(--err);border-color:var(--err);color:#fff;animation:pulse 1s infinite}
+.chat-audio-preview{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:6px 10px;margin-bottom:6px}
+.chat-audio-preview audio{flex:1;height:32px;min-width:0}
+.chat-audio-preview audio::-webkit-media-controls-panel{background:var(--s2)}
+.chat-bubble-audio{display:flex;align-items:center;gap:8px;padding:4px 2px}
+.chat-bubble-audio audio{height:32px;min-width:160px;max-width:220px}
+.chat-bubble-audio audio::-webkit-media-controls-enclosure{border-radius:8px}
+.rec-timer{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;color:var(--err);min-width:28px}
+
 /* ══ CIUNTIK TEXT POST ══ */
 .ct-tpl-thumb{width:54px;height:78px;border-radius:7px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:2px solid transparent;transition:border-color .15s,transform .15s;font-size:.5rem;font-weight:800;text-align:center;padding:4px;line-height:1.2;-webkit-user-select:none;user-select:none}
 .ct-tpl-thumb.selected{border-color:var(--ac2);transform:scale(1.06)}
@@ -1261,6 +1274,10 @@ canvas{-webkit-user-select:none;user-select:none}
 <!-- NAV -->
 <nav>
   <div class="nav-left">
+    <!-- Back button in navbar — shows when there's history -->
+    <button id="globalBackFab" onclick="goBack()" style="display:none;width:32px;height:32px;border-radius:8px;background:var(--s2);border:1px solid var(--b2);color:var(--tx2);cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s" title="Kembali">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15,18 9,12 15,6"/></svg>
+    </button>
     <div class="nav-logo" onclick="showPg(getDashPage())"><div class="logo-dot" id="logoDot"></div>Cuanie</div>
     <button class="nav-online-btn" id="onlineIndicator" onclick="refreshApp()" title="Klik untuk refresh">
       <div class="nav-online-dot" id="onlineDot"></div>
@@ -2014,6 +2031,12 @@ canvas{-webkit-user-select:none;user-select:none}
     <!-- Input area -->
     <div class="chat-input-area">
       <div class="img-preview-strip" id="imgPreviewStrip"></div>
+      <!-- Audio preview strip -->
+      <div id="audioPreviewStrip" style="display:none" class="chat-audio-preview">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <audio id="audioPendingPlayer" controls style="flex:1;height:32px;min-width:0"></audio>
+        <button onclick="clearPendingAudio()" style="background:none;border:none;color:var(--tx2);cursor:pointer;font-size:.9rem;padding:2px 4px;flex-shrink:0">✕</button>
+      </div>
       <div class="mention-suggestions" id="mentionSuggestions"></div>
       <!-- Emoji Picker (above input row) -->
       <div class="emoji-picker" id="emojiPicker">
@@ -2026,22 +2049,42 @@ canvas{-webkit-user-select:none;user-select:none}
           onkeydown="chatKeyDown(event)" oninput="chatInputChange(this)"></textarea>
         <!-- Actions row below textarea -->
         <div class="chat-input-actions">
+          <!-- Gambar -->
           <button class="chat-input-btn chat-img-btn" onclick="triggerImgUpload()" title="Gambar">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
           </button>
-          <button class="chat-input-btn chat-img-btn" onclick="toggleStickerPanel()" title="Stiker" id="stickerBtn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-          </button>
+          <!-- Emoji -->
           <button class="chat-input-btn chat-img-btn" onclick="toggleEmojiPicker()" title="Emoji" id="emojiBtn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
           </button>
-          <button class="chat-input-btn chat-send-btn" onclick="sendChatMsg()" title="Kirim">
+          <!-- Upload audio — sebelah kiri stiker -->
+          <button class="chat-input-btn chat-img-btn" onclick="triggerAudioUpload()" title="Upload audio">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </button>
+          <!-- Stiker -->
+          <button class="chat-input-btn chat-img-btn" onclick="toggleStickerPanel()" title="Stiker" id="stickerBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </button>
+          <!-- Rekam suara — sebelah kiri tombol kirim -->
+          <button class="chat-audio-rec-btn" id="chatAudioRecBtn"
+            title="Tahan untuk rekam suara"
+            onmousedown="startAudioRecord(event)"
+            onmouseup="stopAudioRecord(event)"
+            onmouseleave="stopAudioRecord(event)"
+            ontouchstart="startAudioRecord(event)"
+            ontouchend="stopAudioRecord(event)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            <span class="rec-timer" id="recTimer" style="display:none"></span>
+          </button>
+          <!-- Kirim -->
+          <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMsg()" title="Kirim" style="width:36px;height:36px;border-radius:50%;background:var(--ac2);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
           </button>
         </div>
       </div>
 
       <input type="file" id="imgUploadInput" accept="image/*" multiple style="display:none" onchange="handleImgUpload(this)"/>
+      <input type="file" id="audioUploadInput" accept="audio/*" style="display:none" onchange="handleAudioUpload(this)"/>
     </div>
   </div>
   </div><!-- /chat-page-wrap -->
@@ -3867,6 +3910,9 @@ function buildMsgHTML(m, idx, isMentionMe) {
       bodyHTML += '<img src="'+src+'" class="msg-img-attach" onclick="openImgZoom(\''+src+'\')" loading="lazy"/>';
     });
   }
+  if (m.audio) {
+    bodyHTML += `<div class="chat-bubble-audio"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg><audio controls src="${m.audio}" preload="none" style="height:32px;min-width:160px;max-width:220px"></audio></div>`;
+  }
   if (m.botImgs && m.botImgs.length) {
     m.botImgs.forEach(src => {
       bodyHTML += '<img src="'+src+'" class="chat-bubble bot-img" onclick="openImgZoom(\''+src+'\')" loading="lazy" onerror="this.style.display=\'none\'"/>';
@@ -3980,12 +4026,12 @@ function sendChatMsg() {
   const inp = document.getElementById('chatInput');
   const text = inp ? inp.value.trim() : '';
 
-  if (!text && CHAT.pendingImgs.length === 0) return;
+  if (!text && CHAT.pendingImgs.length === 0 && !_pendingAudioB64) return;
   if (!D.user || !D.role || D.role === 'guest') { toast('Login untuk chat','warn'); return; }
 
   // Check bot command — .keyword
   const botMatch = text.match(/^\.(.+)$/);
-  if (botMatch && !CHAT.pendingImgs.length) {
+  if (botMatch && !CHAT.pendingImgs.length && !_pendingAudioB64) {
     const query = botMatch[1].trim();
     handleBotCommand(query);
     if (inp) inp.value = '';
@@ -4016,10 +4062,14 @@ function sendChatMsg() {
     role: D.role,
     text: text || null,
     images: CHAT.pendingImgs.length ? [...CHAT.pendingImgs] : null,
+    audio: _pendingAudioB64 || null,
     mentions: mentions.length ? mentions : null,
     replyTo: _replyTo || null,
     bot: false
   };
+
+  // Clear audio pending
+  clearPendingAudio();
 
   // Clear input immediately for responsiveness
   if (inp) { inp.value = ''; autoResizeInput(inp); inp.placeholder = 'Ketik pesan...'; }
@@ -4099,6 +4149,112 @@ async function handleBotCommand(query) {
 /* Image upload */
 function triggerImgUpload() {
   document.getElementById('imgUploadInput').click();
+}
+
+function triggerAudioUpload() {
+  document.getElementById('audioUploadInput').click();
+}
+
+// ══ AUDIO RECORDING ══
+let _mediaRecorder = null;
+let _audioChunks = [];
+let _pendingAudioB64 = null;
+let _recTimerInterval = null;
+let _recSeconds = 0;
+let _recHoldTimeout = null;
+
+function startAudioRecord(e) {
+  e.preventDefault();
+  // Only start after holding 300ms (to avoid accidental taps)
+  _recHoldTimeout = setTimeout(async () => {
+    const btn = document.getElementById('chatAudioRecBtn');
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      _audioChunks = [];
+      _mediaRecorder = new MediaRecorder(stream, { mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg' });
+      _mediaRecorder.ondataavailable = e => { if (e.data.size > 0) _audioChunks.push(e.data); };
+      _mediaRecorder.onstop = () => {
+        stream.getTracks().forEach(t => t.stop());
+        if (_audioChunks.length === 0) return;
+        const blob = new Blob(_audioChunks, { type: _mediaRecorder.mimeType });
+        const reader = new FileReader();
+        reader.onload = ev => {
+          _pendingAudioB64 = ev.target.result;
+          const audioEl = document.getElementById('audioPendingPlayer');
+          const strip = document.getElementById('audioPreviewStrip');
+          if (audioEl) audioEl.src = _pendingAudioB64;
+          if (strip) strip.style.display = 'flex';
+        };
+        reader.readAsDataURL(blob);
+        _stopRecTimer();
+        if (btn) btn.classList.remove('recording');
+      };
+      _mediaRecorder.start();
+      btn.classList.add('recording');
+      _startRecTimer();
+    } catch(err) {
+      toast('Izin mikrofon diperlukan', 'warn');
+      requestNotifPermission && navigator.mediaDevices.getUserMedia({audio:true}).catch(()=>{});
+    }
+  }, 300);
+}
+
+function stopAudioRecord(e) {
+  clearTimeout(_recHoldTimeout);
+  if (_mediaRecorder && _mediaRecorder.state === 'recording') {
+    if (_recSeconds < 1) {
+      // Too short — cancel
+      _mediaRecorder.stream?.getTracks().forEach(t => t.stop());
+      _mediaRecorder = null;
+      _stopRecTimer();
+      document.getElementById('chatAudioRecBtn')?.classList.remove('recording');
+      toast('Tahan lebih lama untuk merekam', 'warn');
+      return;
+    }
+    _mediaRecorder.stop();
+  }
+}
+
+function _startRecTimer() {
+  _recSeconds = 0;
+  const el = document.getElementById('recTimer');
+  if (el) { el.style.display = 'inline'; el.textContent = '0s'; }
+  _recTimerInterval = setInterval(() => {
+    _recSeconds++;
+    if (el) el.textContent = _recSeconds + 's';
+    if (_recSeconds >= 120) stopAudioRecord({preventDefault:()=>{}});
+  }, 1000);
+}
+
+function _stopRecTimer() {
+  clearInterval(_recTimerInterval);
+  const el = document.getElementById('recTimer');
+  if (el) el.style.display = 'none';
+  _recSeconds = 0;
+}
+
+function clearPendingAudio() {
+  _pendingAudioB64 = null;
+  const strip = document.getElementById('audioPreviewStrip');
+  const audioEl = document.getElementById('audioPendingPlayer');
+  if (strip) strip.style.display = 'none';
+  if (audioEl) audioEl.src = '';
+}
+
+function handleAudioUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { toast('File audio maks 5MB', 'warn'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    _pendingAudioB64 = e.target.result;
+    const audioEl = document.getElementById('audioPendingPlayer');
+    const strip = document.getElementById('audioPreviewStrip');
+    if (audioEl) audioEl.src = _pendingAudioB64;
+    if (strip) strip.style.display = 'flex';
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
 }
 
 function handleImgUpload(input) {
@@ -6097,6 +6253,7 @@ function openMemberProfile(emailOrKey, displayName) {
   let actHTML = `<div class="follower-stats">
     <div class="follower-stat-item"><span class="follower-stat-num" id="profFollowers">—</span><span class="follower-stat-lbl">Pengikut</span></div>
     <div class="follower-stat-item"><span class="follower-stat-num" id="profFollowing">—</span><span class="follower-stat-lbl">Mengikuti</span></div>
+    <div class="follower-stat-item"><span class="follower-stat-num" id="profTotalLikes">—</span><span class="follower-stat-lbl">Suka</span></div>
   </div>`;
   if (!isSelf && D.role) {
     // Follow button — semua role bisa follow (termasuk tamu)
@@ -6115,8 +6272,12 @@ function openMemberProfile(emailOrKey, displayName) {
   loadFollowStats(targetKey);
   if (!isSelf && D.role) loadFollowState(targetKey, name, tEmail||name);
 
-  // CiunTik posts (own)
+  // CiunTik posts (own) — also compute total likes
   const posts = CIUNTIK.posts.filter(p => p.email === key || p.author === displayName);
+  // Total likes from all their posts
+  const totalLikes = posts.reduce((sum, p) => sum + (p.likes||0), 0);
+  const likesEl = document.getElementById('profTotalLikes');
+  if (likesEl) likesEl.textContent = totalLikes >= 1000 ? (totalLikes/1000).toFixed(1)+'K' : totalLikes;
   const grid = document.getElementById('memProfPostsGrid');
   if (posts.length) {
     grid.innerHTML = posts.slice(0,9).map((p,i) => buildProfThumb(p, i)).join('');
@@ -7472,29 +7633,35 @@ async function loadFollowState(targetKey, targetName, targetEmail) {
 // ══ FYP ALGORITHM with follow weighting ══
 function ctSortFYP(posts) {
   if (!posts.length) return posts;
-  const myKey = (D.email || D.user || '').replace(/[.#$\/\[\]]/g, '_');
-  // Get cached following list
   const followingKeys = window._myFollowingKeys || [];
   const now = Date.now();
+  const HOUR = 3600000;
+
   return [...posts].sort((a, b) => {
+    const ageA = (now - (a.ts||0)) / HOUR; // hours old
+    const ageB = (now - (b.ts||0)) / HOUR;
+
+    // ── Time bucket: group posts by freshness ──
+    // < 2h = bucket 0 (newest), 2-6h = bucket 1, 6-24h = bucket 2, >24h = bucket 3
+    const bucketA = ageA < 2 ? 0 : ageA < 6 ? 1 : ageA < 24 ? 2 : 3;
+    const bucketB = ageB < 2 ? 0 : ageB < 6 ? 1 : ageB < 24 ? 2 : 3;
+
+    // Different bucket = newer bucket wins, no mixing old and new
+    if (bucketA !== bucketB) return bucketA - bucketB;
+
+    // Same bucket — rank by engagement + follow bonus
     let scoreA = 0, scoreB = 0;
-    // Recency (up to 50 pts for last 24h)
-    const ageA = (now - (a.ts||0)) / 3600000; // hours
-    const ageB = (now - (b.ts||0)) / 3600000;
-    scoreA += Math.max(0, 50 - ageA * 2);
-    scoreB += Math.max(0, 50 - ageB * 2);
-    // Engagement (likes + views)
-    scoreA += (a.likes||0) * 3 + (a.views||0) * 0.5;
-    scoreB += (b.likes||0) * 3 + (b.views||0) * 0.5;
-    // Follow bonus (+40 pts)
+    scoreA += (a.likes||0) * 3 + (a.views||0) * 0.3 + ((a.comments||[]).length) * 2;
+    scoreB += (b.likes||0) * 3 + (b.views||0) * 0.3 + ((b.comments||[]).length) * 2;
+
     const aKey = (a.email || a.author || '').replace(/[.#$\/\[\]]/g,'_');
     const bKey = (b.email || b.author || '').replace(/[.#$\/\[\]]/g,'_');
-    if (followingKeys.includes(aKey)) scoreA += 40;
-    if (followingKeys.includes(bKey)) scoreB += 40;
-    // Comments
-    scoreA += ((a.comments||[]).length) * 2;
-    scoreB += ((b.comments||[]).length) * 2;
-    return scoreB - scoreA;
+    if (followingKeys.includes(aKey)) scoreA += 25;
+    if (followingKeys.includes(bKey)) scoreB += 25;
+
+    // Tiebreak by timestamp (newest first)
+    if (scoreA !== scoreB) return scoreB - scoreA;
+    return (b.ts||0) - (a.ts||0);
   });
 }
 
@@ -8621,11 +8788,6 @@ const _origBootApp = window.bootApp;
     </div>
   </div>
 </div>
-<!-- Global Back FAB -->
-<button id="globalBackFab" onclick="goBack()" style="display:none;position:fixed;bottom:72px;left:16px;z-index:500;width:40px;height:40px;border-radius:50%;background:var(--s1);border:1px solid var(--b2);color:var(--tx2);cursor:pointer;align-items:center;justify-content:center;box-shadow:0 3px 14px rgba(0,0,0,.35);transition:all .2s" title="Kembali">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
-</button>
-
 <!-- Swipe back indicator -->
 <div id="swipeBackIndicator" style="display:none;position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:600;background:var(--s1);border:1px solid var(--b2);border-left:none;border-radius:0 10px 10px 0;padding:10px 10px 10px 6px;color:var(--tx2);box-shadow:3px 0 16px rgba(0,0,0,.25);transition:opacity .15s;pointer-events:none">
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
