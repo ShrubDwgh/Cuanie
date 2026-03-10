@@ -2468,7 +2468,21 @@ function getDashPage() {
   return 'home';
 }
 
+// ══ NAVIGATION HISTORY ══
+const _navHistory = [];
+let _navCurrent = null;
+
 function showPg(id) {
+  // Push current page to history stack (max 10 deep, skip duplicates)
+  if (_navCurrent && _navCurrent !== id) {
+    if (_navHistory[_navHistory.length-1] !== _navCurrent) {
+      _navHistory.push(_navCurrent);
+      if (_navHistory.length > 10) _navHistory.shift();
+    }
+  }
+  _navCurrent = id;
+  _updateBackBtn(id);
+
   if (id === 'auth') { setTimeout(checkReturningUser, 50); }
   if (id === 'analytics') { setTimeout(loadAnalytics, 100); }
   if (id !== 'analytics') stopChartAnimation();
@@ -2487,6 +2501,33 @@ function showPg(id) {
   if (pg) pg.classList.add('active');
   if (id !== 'chat') window.scrollTo({top:0});
   if (id === 'ciuntik') { loadCiunTik(); }
+}
+
+function goBack() {
+  if (_navHistory.length > 0) {
+    const prev = _navHistory.pop();
+    _navCurrent = prev;
+    _updateBackBtn(prev);
+    // Re-run showPg logic but without pushing to history
+    if (prev === 'auth') { setTimeout(checkReturningUser, 50); }
+    if (prev === 'analytics') { setTimeout(loadAnalytics, 100); }
+    if (prev !== 'analytics') stopChartAnimation();
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const pg = document.getElementById('page-' + prev);
+    if (pg) pg.classList.add('active');
+    if (prev !== 'chat') window.scrollTo({top:0});
+    if (prev === 'ciuntik') { loadCiunTik(); }
+  } else {
+    showPg(getDashPage());
+  }
+}
+
+function _updateBackBtn(currentId) {
+  const dashPages = ['dashboard','dash-leader','dash-admin','dash-guest'];
+  const canGoBack = _navHistory.length > 0 && !dashPages.includes(currentId);
+  // Update floating back button visibility
+  const fab = document.getElementById('globalBackFab');
+  if (fab) fab.style.display = canGoBack ? 'flex' : 'none';
 }
 
 /* ══ AUTH TABS ══ */
@@ -5126,14 +5167,31 @@ function renderCiunTik() {
     ? CIUNTIK.posts.filter(p => (p.hashtags||[]).includes(_ctActiveHashtagFilter))
     : CIUNTIK.posts;
   feed.innerHTML = toShow.map((p, i) => buildCTCard(p, i)).join('');
-  // Wave hidden by default (only show when playing)
+  // Increment view for all posts shown (once per session per post)
+  if (!window._ctViewedKeys) window._ctViewedKeys = new Set();
+  toShow.forEach(p => {
+    const key = p._key;
+    if (key && !window._ctViewedKeys.has(key) && !String(key).startsWith('local_')) {
+      window._ctViewedKeys.add(key);
+      fbUpdate('ciuntik/' + key, { views: (p.views||0) + 1 }).catch(()=>{});
+    }
+  });
+  // Wave hidden by default. Attach audio src properly after DOM insert.
   toShow.forEach(p => {
     const id = p.id || p._key;
     const wave = document.getElementById('ctMusicWave_'+id);
     if (wave) wave.style.display = 'none';
+    // Audio src fix: set programmatically to ensure it loads
+    if (p.music && p.music.data) {
+      const audio = document.getElementById('ctAudio_'+id);
+      if (audio && !audio.src) {
+        audio.src = p.music.data;
+        audio.load();
+      }
+    }
   });
   // Autoplay first post with music
-  ctAutoplayFirstAudio();
+  setTimeout(ctAutoplayFirstAudio, 300);
 }
 
 function ctToggleCreate() {
@@ -5215,6 +5273,10 @@ function buildCTCard(p, i) {
     </div>
     ${mediaHTML}
     <div class="ct-actions">
+      <span class="ct-act" style="cursor:default;gap:4px;pointer-events:none">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span id="ctViews_${p._key||i}">${p.views||0}</span>
+      </span>
       <button class="ct-act${myLike?' liked':''}" onclick="ctLike('${p._key||i}',${i})">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="${myLike?'var(--err)':'none'}" stroke="${myLike?'var(--err)':'currentColor'}" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         <span>${likes}</span>
@@ -5618,7 +5680,7 @@ async function ctPost() {
     id: Date.now(),
     ts: Date.now(), author: D.user, email: D.email||null, role: D.role,
     caption: caption||null, media: mediaData, type: _CT_UPLOAD.type,
-    likes: 0, likedBy: [],
+    likes: 0, likedBy: [], views: 0,
     // Text post fields
     postType: _ctMode === 'text' ? 'text' : 'media',
     text: _ctMode === 'text' ? (caption||'') : null,
@@ -5746,24 +5808,65 @@ function openMemberProfile(emailOrKey, displayName) {
   actEl.innerHTML = `<button class="mem-prof-pm-btn" onclick="closeMemberProfile();openPM('${name.replace(/'/g,'')}','${(tEmail||'').replace(/'/g,'')}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Pesan Pribadi</button>`;
   } else { actEl.innerHTML = ''; }
 
-  // CiunTik posts
+  // CiunTik posts (own)
   const posts = CIUNTIK.posts.filter(p => p.email === key || p.author === displayName);
   const grid = document.getElementById('memProfPostsGrid');
   if (posts.length) {
-    grid.innerHTML = posts.slice(0,9).map((p,i) => {
-      if (p.type === 'video' && p.media) {
-        return `<div class="mem-prof-post-thumb" onclick="openCTPostModal('${p._key||i}')"><video src="${p.media}" muted preload="metadata" style="pointer-events:none" controlsList="nodownload" disablePictureInPicture></video><div class="vid-badge">▶</div></div>`;
-      } else if (p.media) {
-        return `<div class="mem-prof-post-thumb" onclick="openCTPostModal('${p._key||i}')"><img src="${p.media}" loading="lazy"/></div>`;
-      }
-      return `<div class="mem-prof-post-thumb" onclick="openCTPostModal('${p._key||i}')" style="display:flex;align-items:center;justify-content:center;padding:.5rem;font-size:.72rem;color:var(--tx2)">${(p.caption||'').slice(0,40)}</div>`;
-    }).join('');
+    grid.innerHTML = posts.slice(0,9).map((p,i) => buildProfThumb(p, i)).join('');
   } else {
     grid.innerHTML = '<div class="mem-prof-empty-posts">Belum ada postingan</div>';
   }
 
+  // Reset tabs
+  const likedGrid = document.getElementById('memProfLikedGrid');
+  if (likedGrid) likedGrid.innerHTML = '<div style="color:var(--tx2);font-size:.8rem;text-align:center;padding:1rem">Memuat...</div>';
+  switchProfTab('posts');
+
+  // Load liked posts (async)
+  const isSelfForLike = key === D.email || key === D.user;
+  if (isSelfForLike || true) { // show liked for any user (they're public)
+    const uKey = key.replace(/[.#$\/\[\]]/g,'_');
+    fbGet('likedPosts/' + uKey).then(snap => {
+      const likedKeys = snap.val() ? (Array.isArray(snap.val()) ? snap.val() : Object.values(snap.val())) : [];
+      const likedPosts = likedKeys.map(k => CIUNTIK.posts.find(p => p._key === k)).filter(Boolean);
+      if (likedGrid) {
+        if (likedPosts.length) {
+          likedGrid.innerHTML = likedPosts.slice(0,9).map((p,i) => buildProfThumb(p, i)).join('');
+        } else {
+          likedGrid.innerHTML = '<div class="mem-prof-empty-posts">Belum ada yang disukai</div>';
+        }
+      }
+    }).catch(() => {
+      if (likedGrid) likedGrid.innerHTML = '<div class="mem-prof-empty-posts">—</div>';
+    });
+  }
+
   document.getElementById('memProfBg').classList.add('show');
   document.getElementById('memProfPanel').classList.add('open');
+}
+
+function buildProfThumb(p, i) {
+  if (p.postType === 'text' && p.textStyle) {
+    const t = p.textStyle;
+    return `<div class="mem-prof-post-thumb" onclick="openCTPostModal('${p._key||i}')" style="background:${t.bg};display:flex;align-items:center;justify-content:center;padding:.4rem"><span style="color:${t.color};font-size:.6rem;font-weight:700;text-align:center;overflow:hidden;max-height:100%">${(p.text||p.caption||'').slice(0,30)}</span></div>`;
+  } else if (p.type === 'video' && p.media) {
+    return `<div class="mem-prof-post-thumb" onclick="openCTPostModal('${p._key||i}')"><video src="${p.media}" muted preload="metadata" style="pointer-events:none" controlsList="nodownload" disablePictureInPicture></video><div class="vid-badge"><svg width="8" height="8" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg></div></div>`;
+  } else if (p.media) {
+    return `<div class="mem-prof-post-thumb" onclick="openCTPostModal('${p._key||i}')"><img src="${p.media}" loading="lazy"/></div>`;
+  }
+  return `<div class="mem-prof-post-thumb" onclick="openCTPostModal('${p._key||i}')" style="display:flex;align-items:center;justify-content:center;padding:.5rem;font-size:.72rem;color:var(--tx2)">${(p.caption||'').slice(0,40)}</div>`;
+}
+
+function switchProfTab(tab) {
+  const postsGrid = document.getElementById('memProfPostsGrid');
+  const likedGrid = document.getElementById('memProfLikedGrid');
+  const postBtn   = document.getElementById('profTabPosts');
+  const likedBtn  = document.getElementById('profTabLiked');
+  if (!postsGrid || !likedGrid) return;
+  postsGrid.style.display = tab === 'posts' ? 'grid' : 'none';
+  likedGrid.style.display  = tab === 'liked' ? 'grid' : 'none';
+  if (postBtn)  postBtn.classList.toggle('active',  tab === 'posts');
+  if (likedBtn) likedBtn.classList.toggle('active', tab === 'liked');
 }
 function closeMemberProfile() {
   document.getElementById('memProfBg').classList.remove('show');
@@ -5810,6 +5913,21 @@ async function ctLike(key, i) {
   if (key && !String(key).startsWith('local_')) {
     try {
       await fbUpdate('ciuntik/' + key, { likes: newLikes, likedBy: newLikedBy });
+      // Save liked post to user's likedPosts list
+      const uKey = (D.email||D.user||'').replace(/[.#$\/\[\]]/g,'_');
+      if (uKey) {
+        const likedSnap = await fbGet('likedPosts/' + uKey).catch(()=>null);
+        let likedKeys = likedSnap && likedSnap.val() ? likedSnap.val() : [];
+        if (!Array.isArray(likedKeys)) likedKeys = Object.values(likedKeys);
+        if (!liked) {
+          // liked — add key
+          if (!likedKeys.includes(key)) likedKeys.unshift(key);
+        } else {
+          // unliked — remove key
+          likedKeys = likedKeys.filter(k => k !== key);
+        }
+        fbSet('likedPosts/' + uKey, likedKeys.slice(0,100)).catch(()=>{});
+      }
     } catch(e) {
       console.warn('Like sync failed', e);
     }
@@ -7798,10 +7916,75 @@ const _origBootApp = window.bootApp;
     <div class="mem-prof-info" id="memProfInfo"></div>
     <div class="mem-prof-actions" id="memProfActions"></div>
     <div class="mem-prof-posts">
-      <div class="mem-prof-posts-hd">Postingan CiunTik</div>
+      <!-- Tabs: Posts vs Liked -->
+      <div class="pub-member-tabs" style="margin-bottom:.7rem">
+        <button class="pub-tab active" id="profTabPosts" onclick="switchProfTab('posts')">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+          Postingan
+        </button>
+        <button class="pub-tab" id="profTabLiked" onclick="switchProfTab('liked')">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Disukai
+        </button>
+      </div>
       <div class="mem-prof-posts-grid" id="memProfPostsGrid"></div>
+      <div class="mem-prof-posts-grid" id="memProfLikedGrid" style="display:none"></div>
     </div>
   </div>
 </div>
+<!-- Global Back FAB -->
+<button id="globalBackFab" onclick="goBack()" style="display:none;position:fixed;bottom:72px;left:16px;z-index:500;width:40px;height:40px;border-radius:50%;background:var(--s1);border:1px solid var(--b2);color:var(--tx2);cursor:pointer;align-items:center;justify-content:center;box-shadow:0 3px 14px rgba(0,0,0,.35);transition:all .2s" title="Kembali">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
+</button>
+
+<!-- Swipe back indicator -->
+<div id="swipeBackIndicator" style="display:none;position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:600;background:var(--s1);border:1px solid var(--b2);border-left:none;border-radius:0 10px 10px 0;padding:10px 10px 10px 6px;color:var(--tx2);box-shadow:3px 0 16px rgba(0,0,0,.25);transition:opacity .15s;pointer-events:none">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
+</div>
+
+<script>
+// ══ SWIPE BACK GESTURE ══
+(function() {
+  let _swipeStartX = 0, _swipeStartY = 0, _swipingBack = false;
+  const EDGE_WIDTH = 32; // px from left edge to trigger swipe
+  const MIN_SWIPE = 72;  // minimum horizontal distance
+
+  document.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    _swipeStartX = t.clientX;
+    _swipeStartY = t.clientY;
+    _swipingBack = t.clientX <= EDGE_WIDTH;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', e => {
+    if (!_swipingBack) return;
+    const t = e.touches[0];
+    const dx = t.clientX - _swipeStartX;
+    const dy = Math.abs(t.clientY - _swipeStartY);
+    if (dx > 10 && dy < dx) {
+      // Show indicator while swiping
+      const ind = document.getElementById('swipeBackIndicator');
+      if (ind) {
+        ind.style.display = 'flex';
+        ind.style.opacity = Math.min(1, dx / MIN_SWIPE).toFixed(2);
+      }
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    const ind = document.getElementById('swipeBackIndicator');
+    if (ind) { ind.style.display = 'none'; ind.style.opacity = '0'; }
+    if (!_swipingBack) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - _swipeStartX;
+    const dy = Math.abs(t.clientY - _swipeStartY);
+    // Trigger back if swiped far enough horizontally and not mostly vertical
+    if (dx >= MIN_SWIPE && dy < dx * 0.7) {
+      if (typeof goBack === 'function') goBack();
+    }
+    _swipingBack = false;
+  }, { passive: true });
+})();
+</script>
 </body>
 </html>
