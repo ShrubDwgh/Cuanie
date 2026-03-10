@@ -95,6 +95,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .page{display:none;position:relative;z-index:1}
 .page.active{display:block}
 #page-dm.active,#page-chat.active{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
+#page-dm .chat-page-wrap{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
+#page-dm .chat-wrap{display:flex;flex-direction:column;flex:1;min-height:0}
+#page-dm #dmMsgs{flex:1;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch}
 #page-dm .chat-page-wrap,#page-chat .chat-page-wrap{height:100%;padding-top:0;flex:1;overflow:hidden}
 #page-dm .chat-wrap,#page-chat .chat-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0}
 #page-dm .chat-msgs,#page-chat .chat-msgs{flex:1;overflow-y:auto;min-height:0}
@@ -1942,6 +1945,16 @@ canvas{-webkit-user-select:none;user-select:none}
       </div>
       <div id="memberRestoreLog" style="font-size:.82rem;color:var(--tx2)">Memuat log...</div>
     </div>
+
+    <!-- PENDING TRANSACTIONS -->
+    <div class="panel">
+      <div class="panel-h">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+        <h3>Transaksi Perlu Persetujuan</h3>
+        <button onclick="loadPendingTransactions()" style="margin-left:auto;background:none;border:none;color:var(--tx2);cursor:pointer;font-size:.72rem;padding:2px 6px">🔄</button>
+      </div>
+      <div id="pendingTxList" style="font-size:.82rem;color:var(--tx2)">Memuat...</div>
+    </div>
     <!-- GUEST FORM BUILDER -->
     <div class="panel" id="guestFormBuilderPanel" style="display:none">
       <div class="panel-h"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg><h3>Edit Formulir Tamu</h3></div>
@@ -2022,6 +2035,12 @@ canvas{-webkit-user-select:none;user-select:none}
       </div>
       <div class="form-q"><label>Masa Aktif</label>
         <input type="datetime-local" id="vcExpiry" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.83rem;outline:none;box-sizing:border-box"/>
+      </div>
+      <div class="form-q">
+        <label>Target Penerima <span style="color:var(--tx2);font-weight:400;font-size:.75rem">(opsional — kosong = semua orang)</span></label>
+        <select id="vcTarget" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;box-sizing:border-box">
+          <option value="">— Semua pengguna —</option>
+        </select>
       </div>
       <button class="btn-p" onclick="createVoucher()" style="width:100%;font-size:.84rem;padding:.6rem;margin-bottom:.7rem">
         🎟️ Buat Voucher
@@ -2678,7 +2697,9 @@ function showPg(id) {
   if (id === 'stocks') {
     setTimeout(() => {
       loadStockPrices().then(renderStockList);
-      refreshMarketNews();
+      // Load news separately only on first open or explicit refresh
+      if (!_newsLoaded) { refreshMarketNews(); _newsLoaded = true; }
+      loadActiveVouchers();
       loadUserCoin().then(c => {
         const el = document.getElementById('stockPageCoin');
         if (el) el.textContent = c;
@@ -2979,6 +3000,8 @@ let _stockTrends = {}; // momentum tiap saham
 let _stockTimer  = null;
 let _currentBuyStock = null;
 let _currentNews = [];
+let _newsLoaded = false;
+let _newsTimestamp = null;
 
 // ── Init harga awal dari preset ──
 function initStockPrices() {
@@ -3301,17 +3324,18 @@ Kamu akan dapat ${total} CQ Coin.`)) return;
 // ── Berita pasar ──
 let _activeNews = null;
 function refreshMarketNews() {
-  const shown = [];
-  // Ambil 3 berita acak, campur dari berbagai sektor
   const shuffled = [...MARKET_NEWS].sort(()=>Math.random()-.5);
   _currentNews = shuffled.slice(0,3);
+  _newsTimestamp = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
   renderMarketNews();
+  _newsLoaded = true;
 }
 function renderMarketNews() {
   const el = document.getElementById('stockNewsContainer');
   if (!el) return;
   if (!_currentNews.length) { el.innerHTML='<div class="bank-empty">Tidak ada berita</div>'; return; }
-  el.innerHTML = _currentNews.map(n => {
+  const tsHtml = _newsTimestamp ? `<div style="font-size:.65rem;color:var(--tx2);text-align:right;margin-bottom:.5rem;opacity:.7">🕐 Diperbarui ${_newsTimestamp}</div>` : '';
+  el.innerHTML = tsHtml + _currentNews.map(n => {
     const s = STOCKS_PRESET.find(x=>x.id===n.affects);
     const sentColor = n.sentiment>0?'#1ec99a':'#e8546a';
     const sentIcon = n.sentiment>0?'📈':'📉';
@@ -3457,6 +3481,117 @@ async function withdrawInterest() {
 }
 
 // ── Leader isi saldo member (giveaway) ──
+// ════ POPULATE VOUCHER TARGET SELECT ════
+function populateVoucherTargetSelect() {
+  const sel = document.getElementById('vcTarget');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Semua pengguna —</option>';
+  (D.members||[]).filter(m => m.status !== 'kicked').forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m.email||m.name;
+    opt.textContent = m.name + ' (' + (m.role||'member') + ')';
+    sel.appendChild(opt);
+  });
+}
+
+// ════ TRANSACTION APPROVAL SYSTEM ════
+// All deposits and withdrawals go to pendingTransactions/
+// Leader approves or rejects them
+
+async function submitDepositRequest(userKey, amount, method, memberName) {
+  const txKey = 'tx_' + Date.now();
+  const tx = {
+    type: 'deposit', amount, method, memberName,
+    userKey, requestedAt: Date.now(), status: 'pending',
+    requestedBy: D.user || memberName
+  };
+  await fbSet('pendingTransactions/' + userKey + '/' + txKey, tx);
+  toast('Permintaan deposit dikirim — menunggu persetujuan Leader ⏳', 'info');
+  playNotifSound && playNotifSound();
+}
+
+async function submitWithdrawRequest(userKey, amount, memberName) {
+  const txKey = 'tx_' + Date.now();
+  const tx = {
+    type: 'withdraw', amount, memberName,
+    userKey, requestedAt: Date.now(), status: 'pending',
+    requestedBy: D.user || memberName
+  };
+  await fbSet('pendingTransactions/' + userKey + '/' + txKey, tx);
+  toast('Permintaan penarikan dikirim — menunggu persetujuan Leader ⏳', 'info');
+}
+
+async function loadPendingTransactions() {
+  if (D.role !== 'leader' && D.role !== 'admin') return;
+  const el = document.getElementById('pendingTxList');
+  if (!el) return;
+  try {
+    const snap = await fbGet('pendingTransactions');
+    const all = snap.val();
+    if (!all) { el.innerHTML = '<div style="color:var(--tx2);font-size:.78rem">Tidak ada transaksi pending.</div>'; return; }
+    const entries = [];
+    for (const [uKey, txs] of Object.entries(all)) {
+      for (const [txKey, tx] of Object.entries(txs)) {
+        if (tx.status === 'pending') entries.push({ ...tx, _uKey: uKey, _txKey: txKey });
+      }
+    }
+    if (!entries.length) { el.innerHTML = '<div style="color:var(--tx2);font-size:.78rem">Tidak ada transaksi pending.</div>'; return; }
+    entries.sort((a,b) => (b.requestedAt||0) - (a.requestedAt||0));
+    el.innerHTML = entries.map(tx => {
+      const d = new Date(tx.requestedAt||0);
+      const timeStr = d.toLocaleDateString('id-ID',{day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+      const typeLabel = tx.type === 'deposit' ? '💰 Deposit' : '🏧 Penarikan';
+      const color = tx.type === 'deposit' ? 'var(--ok)' : 'var(--warn)';
+      return '<div style="background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:.6rem .8rem;margin-bottom:.5rem">'
+        + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem">'
+        + '<span style="font-weight:700;font-size:.82rem">' + tx.memberName + '</span>'
+        + '<span style="font-size:.68rem;color:var(--tx2)">' + timeStr + '</span>'
+        + '</div>'
+        + '<div style="font-size:.78rem;color:' + color + ';margin-bottom:.4rem">' + typeLabel + ' — <b>Rp ' + (tx.amount||0).toLocaleString('id-ID') + '</b>' + (tx.method ? ' via ' + tx.method : '') + '</div>'
+        + '<div style="display:flex;gap:6px">'
+        + '<button onclick="approveTx(\'' + tx._uKey + '\',\'' + tx._txKey + '\')" style="flex:1;padding:.45rem;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.35);border-radius:7px;color:var(--ok);font-family:\'DM Sans\',sans-serif;font-size:.78rem;cursor:pointer;font-weight:700">✓ Setujui</button>'
+        + '<button onclick="rejectTx(\'' + tx._uKey + '\',\'' + tx._txKey + '\')" style="flex:1;padding:.45rem;background:rgba(232,69,96,.1);border:1px solid rgba(232,69,96,.3);border-radius:7px;color:var(--err);font-family:\'DM Sans\',sans-serif;font-size:.78rem;cursor:pointer">✗ Tolak</button>'
+        + '</div></div>';
+    }).join('');
+  } catch(e) { el.innerHTML = '<div style="color:var(--err);font-size:.78rem">Gagal memuat.</div>'; }
+}
+
+async function approveTx(uKey, txKey) {
+  try {
+    const snap = await fbGet('pendingTransactions/' + uKey + '/' + txKey);
+    const tx = snap.val();
+    if (!tx) { toast('Transaksi tidak ditemukan','error'); return; }
+    // Apply to bank
+    const bankSnap = await fbGet('bank/' + uKey);
+    let acc = bankSnap.val() || { balance: 0, principal: 0, transactions: [] };
+    if (tx.type === 'deposit') {
+      acc.principal = (acc.principal||0) + tx.amount;
+      acc.balance = (acc.balance||0) + tx.amount;
+      acc.status = 'active';
+      if (!acc.interestActivatedAt) acc.interestActivatedAt = Date.now();
+    } else if (tx.type === 'withdraw') {
+      if ((acc.balance||0) < tx.amount) { toast('Saldo tidak cukup untuk penarikan ini','error'); return; }
+      acc.balance = (acc.balance||0) - tx.amount;
+      acc.principal = Math.max(0, (acc.principal||0) - tx.amount);
+    }
+    if (!acc.transactions) acc.transactions = [];
+    acc.transactions.push({ type: tx.type, amount: tx.amount, ts: Date.now(), status: 'approved', note: 'Disetujui oleh ' + (D.user||'Leader') });
+    await fbSet('bank/' + uKey, acc);
+    await fbSet('pendingTransactions/' + uKey + '/' + txKey + '/status', 'approved');
+    toast((tx.type==='deposit'?'Deposit':'Penarikan') + ' Rp ' + (tx.amount||0).toLocaleString('id-ID') + ' disetujui ✓', 'success');
+    loadPendingTransactions();
+  } catch(e) { toast('Gagal menyetujui: ' + e.message,'error'); }
+}
+
+async function rejectTx(uKey, txKey) {
+  const reason = prompt('Alasan penolakan (opsional):') ?? '';
+  await fbSet('pendingTransactions/' + uKey + '/' + txKey + '/status', 'rejected');
+  await fbSet('pendingTransactions/' + uKey + '/' + txKey + '/rejectedBy', D.user||'Leader');
+  await fbSet('pendingTransactions/' + uKey + '/' + txKey + '/rejectReason', reason);
+  toast('Transaksi ditolak', 'warn');
+  loadPendingTransactions();
+}
+
 function leaderTopupMember() {
   const sel = document.getElementById('leaderTopupSelect');
   const amtInp = document.getElementById('leaderTopupAmount');
@@ -3503,6 +3638,7 @@ async function restoreSession() {
       updateNav(); showProfileBtn(); showChatSidebarLink();
       loadGuestBank(); startBankTicker();
       renderGuestDash(); showPg('guest');
+      localStorage.removeItem('c_session_restore');
       toast('Sesi dipulihkan ✓', 'success');
       return true;
     } else if (s.role === 'member') {
@@ -3522,6 +3658,7 @@ async function restoreSession() {
       D.user = 'Admin'; D.role = 'admin';
       renderAdminPanel(); updateNav(); showPg('admin');
       showChatSidebarLink(); showProfileBtn(); checkChatNotifs();
+      localStorage.removeItem('c_session_restore');
       toast('Sesi dipulihkan ✓', 'success');
       return true;
     } else if (s.role === 'leader') {
@@ -3530,6 +3667,7 @@ async function restoreSession() {
       renderLeaderPanel(); updateNav(); showPg('leader');
       showChatSidebarLink(); showProfileBtn(); checkChatNotifs();
       setTimeout(loadLeaderBank, 500);
+      localStorage.removeItem('c_session_restore');
       toast('Sesi dipulihkan ✓', 'success');
       return true;
     }
@@ -3766,6 +3904,13 @@ function renderLeaderPanel() {
   renderQB();
   renderBlockBuilder('events','leader');
   renderBlockBuilder('rules','leader');
+  // Load async panels
+  setTimeout(() => {
+    loadVoucherList();
+    loadMemberRestoreLog();
+    populateVoucherTargetSelect();
+    loadPendingTransactions();
+  }, 400);
 }
 
 function populateLeaderTopupSelect() {
@@ -4225,41 +4370,45 @@ let _recSeconds = 0;
 let _recHoldTimeout = null;
 
 function startAudioRecord(e) {
-  e.preventDefault();
-  // Only start after holding 300ms (to avoid accidental taps)
-  _recHoldTimeout = setTimeout(async () => {
-    const btn = document.getElementById('chatAudioRecBtn');
+  if (e) e.preventDefault();
+  if (_mediaRecorder && _mediaRecorder.state === 'recording') return; // already recording
+  const btn = document.getElementById('chatAudioRecBtn');
+  (async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       _audioChunks = [];
-      _mediaRecorder = new MediaRecorder(stream, { mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg' });
-      _mediaRecorder.ondataavailable = e => { if (e.data.size > 0) _audioChunks.push(e.data); };
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus'
+        : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm'
+        : MediaRecorder.isTypeSupported('audio/ogg') ? 'audio/ogg' : '';
+      _mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+      _mediaRecorder.ondataavailable = ev => { if (ev.data && ev.data.size > 0) _audioChunks.push(ev.data); };
       _mediaRecorder.onstop = () => {
         stream.getTracks().forEach(t => t.stop());
-        if (_audioChunks.length === 0) return;
-        const blob = new Blob(_audioChunks, { type: _mediaRecorder.mimeType });
+        if (_audioChunks.length === 0) { toast('Rekaman kosong','warn'); return; }
+        const blob = new Blob(_audioChunks, { type: _mediaRecorder.mimeType || 'audio/webm' });
         const reader = new FileReader();
-        reader.onload = ev => { _showPendingAudio(ev.target.result); };
+        reader.onload = ev2 => { _showPendingAudio(ev2.target.result); };
         reader.readAsDataURL(blob);
         _stopRecTimer();
         if (btn) btn.classList.remove('recording');
       };
-      _mediaRecorder.start();
-      btn.classList.add('recording');
+      _mediaRecorder.start(100); // collect data every 100ms
+      if (btn) btn.classList.add('recording');
       _startRecTimer();
     } catch(err) {
-      toast('Izin mikrofon diperlukan', 'warn');
-      requestNotifPermission && navigator.mediaDevices.getUserMedia({audio:true}).catch(()=>{});
+      console.error('Audio record error:', err);
+      toast('Izin mikrofon diperlukan — aktifkan di browser', 'warn');
     }
-  }, 300);
+  })();
 }
 
 function stopAudioRecord(e) {
+  if (e) e.preventDefault();
   clearTimeout(_recHoldTimeout);
   if (_mediaRecorder && _mediaRecorder.state === 'recording') {
     if (_recSeconds < 1) {
       // Too short — cancel
-      _mediaRecorder.stream?.getTracks().forEach(t => t.stop());
+      try { _mediaRecorder.stream?.getTracks().forEach(t => t.stop()); } catch(e2){}
       _mediaRecorder = null;
       _stopRecTimer();
       document.getElementById('chatAudioRecBtn')?.classList.remove('recording');
@@ -5168,13 +5317,13 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
 
     <!-- Berita pasar (clue) -->
     <div class="panel">
-      <div class="panel-h">
+      <div class="panel-h" style="flex-wrap:wrap;gap:.4rem">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6Z"/></svg>
         <h3>Berita Pasar</h3>
-        <button onclick="refreshMarketNews()" style="margin-left:auto;background:none;border:none;color:var(--tx2);cursor:pointer;font-size:.72rem;padding:2px 6px;border-radius:4px;transition:color .2s" title="Refresh berita">🔄 Refresh</button>
+        <button onclick="refreshMarketNews()" style="margin-left:auto;background:rgba(232,184,75,.12);border:1px solid rgba(232,184,75,.3);color:var(--gold);cursor:pointer;font-size:.72rem;padding:3px 10px;border-radius:6px;font-weight:600">🔄 Refresh</button>
       </div>
       <div id="stockNewsContainer">
-        <div class="bank-empty">Memuat berita...</div>
+        <div style="text-align:center;padding:1rem;color:var(--tx2);font-size:.8rem">Tekan Refresh untuk memuat berita terkini</div>
       </div>
     </div>
 
@@ -5932,6 +6081,8 @@ let _ctPlayingId = null;
 let _ctLastPausedByScroll = null; // track which card was paused due to scroll
 
 function ctToggleAudio(id) {
+  // If user manually taps, clear any scroll-pause tracking for this card
+  if (_ctLastPausedByScroll === id) _ctLastPausedByScroll = null;
   const audio = document.getElementById('ctAudio_'+id);
   const btn   = document.getElementById('ctAudioBtn_'+id);
   const wave  = document.getElementById('ctMusicWave_'+id);
@@ -5990,54 +6141,52 @@ function ctAutoplayFirstAudio() {
 let _ctAudioObserver = null;
 
 function setupCTAudioObserver() {
-  if (_ctAudioObserver) _ctAudioObserver.disconnect();
+  if (_ctAudioObserver) { _ctAudioObserver.disconnect(); _ctAudioObserver = null; }
+  
   _ctAudioObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       const card = entry.target;
       const audioId = card.dataset.audioId;
       if (!audioId) return;
+      
       if (!entry.isIntersecting) {
-        // Card scrolled out — pause if THIS card is playing
-        if (_ctPlayingId === audioId) {
-          const audio = document.getElementById('ctAudio_' + audioId);
-          if (audio && !audio.paused) {
-            window._ctSavedTime = window._ctSavedTime || {};
-            window._ctSavedTime[audioId] = audio.currentTime;
-            audio.pause();
-            ctSetAudioStopped(audioId);
-            _ctPlayingId = null;
-            _ctLastPausedByScroll = audioId; // remember this was paused by scroll
-          }
+        // Card left viewport — if THIS card's audio is playing, pause it
+        const audio = document.getElementById('ctAudio_' + audioId);
+        if (audio && !audio.paused) {
+          window._ctSavedTime = window._ctSavedTime || {};
+          window._ctSavedTime[audioId] = audio.currentTime;
+          audio.pause();
+          ctSetAudioStopped(audioId);
+          if (_ctPlayingId === audioId) _ctPlayingId = null;
+          _ctLastPausedByScroll = audioId;
         }
       } else {
-        // Card scrolled back in — resume if it was paused by scroll
+        // Card entered viewport — resume only if it was paused by scrolling out
         if (_ctLastPausedByScroll === audioId) {
           _ctLastPausedByScroll = null;
-          const audio = document.getElementById('ctAudio_' + audioId);
-          const doPlay = (a) => {
-            const t = (window._ctSavedTime || {})[audioId] || 0;
-            if (t > 0) try { a.currentTime = t; } catch(e){}
-            a.play().then(() => {
+          setTimeout(() => {
+            const audio2 = document.getElementById('ctAudio_' + audioId);
+            if (!audio2) return;
+            // Restore position
+            const savedT = (window._ctSavedTime || {})[audioId] || 0;
+            if (savedT > 0) try { audio2.currentTime = savedT; } catch(e2) {}
+            audio2.play().then(() => {
               _ctPlayingId = audioId;
-              const btn = document.getElementById('ctAudioBtn_'+audioId);
-              const wave = document.getElementById('ctMusicWave_'+audioId);
-              if (btn) btn.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="var(--ac2)"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
-              if (wave) wave.style.display = 'inline-flex';
+              const btn2 = document.getElementById('ctAudioBtn_' + audioId);
+              const wave2 = document.getElementById('ctMusicWave_' + audioId);
+              if (btn2) btn2.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="var(--ac2)"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+              if (wave2) wave2.style.display = 'inline-flex';
             }).catch(() => {});
-          };
-          if (audio) {
-            doPlay(audio);
-          } else {
-            // Audio element not in DOM yet (re-render) — retry after short delay
-            setTimeout(() => {
-              const a2 = document.getElementById('ctAudio_' + audioId);
-              if (a2) doPlay(a2);
-            }, 100);
-          }
+          }, 80);
         }
       }
     });
-  }, { threshold: 0.15 });
+  }, { 
+    threshold: [0, 0.1],
+    rootMargin: '0px' 
+  });
+
+  // Observe all audio cards
   document.querySelectorAll('.ct-card[data-audio-id]').forEach(card => {
     _ctAudioObserver.observe(card);
   });
@@ -7204,31 +7353,36 @@ function clearDMPendingAudio() {
 }
 
 function startDMAudioRecord(e) {
-  e.preventDefault();
-  _dmRecHoldTimeout = setTimeout(async () => {
-    const btn = document.getElementById('dmAudioRecBtn');
+  if (e) e.preventDefault();
+  if (_dmMediaRecorder && _dmMediaRecorder.state === 'recording') return;
+  const btn = document.getElementById('dmAudioRecBtn');
+  (async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       _dmAudioChunks = [];
-      _dmMediaRecorder = new MediaRecorder(stream, { mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg' });
-      _dmMediaRecorder.ondataavailable = ev => { if (ev.data.size > 0) _dmAudioChunks.push(ev.data); };
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus'
+        : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm'
+        : MediaRecorder.isTypeSupported('audio/ogg') ? 'audio/ogg' : '';
+      _dmMediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+      _dmMediaRecorder.ondataavailable = ev => { if (ev.data && ev.data.size > 0) _dmAudioChunks.push(ev.data); };
       _dmMediaRecorder.onstop = () => {
         stream.getTracks().forEach(t => t.stop());
-        if (!_dmAudioChunks.length) return;
-        const blob = new Blob(_dmAudioChunks, { type: _dmMediaRecorder.mimeType });
+        if (!_dmAudioChunks.length) { toast('Rekaman kosong','warn'); return; }
+        const blob = new Blob(_dmAudioChunks, { type: _dmMediaRecorder.mimeType || 'audio/webm' });
         const reader = new FileReader();
         reader.onload = ev2 => _showDMPendingAudio(ev2.target.result);
         reader.readAsDataURL(blob);
         _stopDMRecTimer(); if (btn) btn.classList.remove('recording');
       };
-      _dmMediaRecorder.start();
+      _dmMediaRecorder.start(100);
       if (btn) btn.classList.add('recording');
       _startDMRecTimer();
-    } catch(err) { toast('Izin mikrofon diperlukan','warn'); }
-  }, 300);
+    } catch(err) { toast('Izin mikrofon diperlukan — aktifkan di browser','warn'); }
+  })();
 }
 
 function stopDMAudioRecord(e) {
+  if (e) e.preventDefault();
   clearTimeout(_dmRecHoldTimeout);
   if (_dmMediaRecorder && _dmMediaRecorder.state === 'recording') {
     if (_dmRecSeconds < 1) {
@@ -8157,11 +8311,12 @@ async function createVoucher() {
   const code = document.getElementById('vcCode')?.value.trim().toUpperCase();
   const discount = parseInt(document.getElementById('vcDiscount')?.value||'0');
   const expiry = document.getElementById('vcExpiry')?.value;
+  const targetEmail = document.getElementById('vcTarget')?.value || '';
   if (!title||!code||!discount||!expiry) { toast('Lengkapi semua field voucher','warn'); return; }
   if (discount < 1 || discount > 90) { toast('Diskon harus 1-90%','warn'); return; }
   const expiryTs = new Date(expiry).getTime();
   if (expiryTs <= Date.now()) { toast('Waktu masa aktif harus di masa depan','warn'); return; }
-  const voucher = { title, desc, code, discount, expiryTs, createdBy: D.user||'?', createdAt: Date.now() };
+  const voucher = { title, desc, code, discount, expiryTs, createdBy: D.user||'?', createdAt: Date.now(), targetEmail: targetEmail||null };
   try {
     await fbSet('vouchers/' + code, voucher);
     toast('Voucher "'+code+'" berhasil dibuat! 🎟️','success');
@@ -8198,6 +8353,7 @@ async function loadVoucherList() {
             <span style="background:rgba(108,78,242,.15);color:var(--ac2);border-radius:4px;padding:1px 6px;font-weight:700">${code}</span>
             <span style="color:var(--ok);margin-left:5px">-${v.discount}%</span>
             <span style="color:var(--tx2);margin-left:5px">⏱ ${timeLeft}</span>
+            ${v.targetEmail ? '<span style="color:var(--ac2);margin-left:5px;font-size:.65rem">👤 '+v.targetEmail.split('@')[0]+'</span>' : ''}
           </div>
         </div>
         <button onclick="deleteVoucher('${code}')" style="background:none;border:none;color:var(--err);cursor:pointer;padding:4px;font-size:.75rem">Hapus</button>
@@ -8221,6 +8377,11 @@ async function redeemVoucher() {
     const snap = await fbGet('vouchers/'+code);
     const v = snap.val();
     if (!v) { if (statusEl) statusEl.innerHTML = '<span style="color:var(--err)">Kode tidak valid atau kadaluarsa ❌</span>'; return; }
+    // Check target restriction
+    if (v.targetEmail && v.targetEmail !== (D.email||'')) {
+      if (statusEl) statusEl.innerHTML = '<span style="color:var(--err)">Voucher ini tidak ditujukan untuk akun kamu ❌</span>';
+      return;
+    }
     if (v.expiryTs < Date.now()) {
       fbRemove('vouchers/'+code).catch(()=>{});
       if (statusEl) statusEl.innerHTML = '<span style="color:var(--err)">Voucher sudah kadaluarsa ❌</span>';
@@ -8238,9 +8399,10 @@ async function loadActiveVouchers() {
   const el = document.getElementById('activeVouchersList');
   if (!el) return;
   if (_activeVoucherDiscount > 0) {
-    el.innerHTML = `<div style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.5rem .8rem;font-size:.78rem;color:var(--ok)">
-      🎟️ Voucher aktif: Diskon <b>${_activeVoucherDiscount}%</b> berlaku untuk pembelian saham berikutnya
-    </div>`;
+    el.innerHTML = '<div style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.5rem .8rem;font-size:.78rem;color:var(--ok)">'
+      + '🎟️ Voucher aktif: Diskon <b>' + _activeVoucherDiscount + '%</b> berlaku untuk pembelian saham berikutnya'
+      + '<br><span style="color:var(--tx2);font-size:.7rem">Contoh harga 1000 CQ: <s style=\'opacity:.5\'>Rp ' + (1000*5000).toLocaleString('id-ID') + '</s> → <b style=\'color:var(--ok)\'>Rp ' + Math.round(1000*5000*(1-_activeVoucherDiscount/100)).toLocaleString('id-ID') + '</b></span>'
+      + '</div>';
   } else {
     el.innerHTML = '';
   }
@@ -9736,6 +9898,3 @@ const _origBootApp = window.bootApp;
 </script>
 </body>
 </html>
-  loadVoucherList();
-  loadMemberRestoreLog();
-}
