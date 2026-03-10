@@ -820,6 +820,26 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 .portfolio-val{font-size:.82rem;font-weight:700;font-family:'Syne',sans-serif}
 .portfolio-pnl{font-size:.68rem;font-weight:700}
 
+
+/* ══ CIUNTIK TEXT POST ══ */
+.ct-tpl-thumb{width:54px;height:78px;border-radius:7px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:2px solid transparent;transition:border-color .15s,transform .15s;font-size:.5rem;font-weight:800;text-align:center;padding:4px;line-height:1.2;-webkit-user-select:none;user-select:none}
+.ct-tpl-thumb.selected{border-color:var(--ac2);transform:scale(1.06)}
+.ct-music-wave{display:inline-flex;align-items:flex-end;gap:1.5px;height:14px;vertical-align:middle;margin-left:4px}
+.ct-music-wave span{width:2px;border-radius:1px;background:currentColor;animation:ct-wave .7s ease-in-out infinite}
+.ct-music-wave span:nth-child(2){animation-delay:.15s}
+.ct-music-wave span:nth-child(3){animation-delay:.3s}
+@keyframes ct-wave{0%,100%{height:3px}50%{height:12px}}
+/* hashtag chip */
+.ct-htag{display:inline-flex;align-items:center;gap:3px;background:rgba(108,78,242,.12);border:1px solid rgba(108,78,242,.25);color:var(--ac2);border-radius:12px;padding:2px 9px;font-size:.72rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;-webkit-user-select:none;user-select:none;transition:background .15s}
+.ct-htag:hover{background:rgba(108,78,242,.22)}
+.ct-htag.active{background:rgba(108,78,242,.3);border-color:var(--ac2)}
+.ct-preset-item{display:flex;align-items:center;gap:7px;padding:6px 9px;border-radius:7px;background:var(--s1);border:1px solid var(--b1);cursor:pointer;transition:background .15s,border-color .15s;font-size:.72rem}
+.ct-preset-item:hover,.ct-preset-item.selected{background:rgba(108,78,242,.1);border-color:rgba(108,78,242,.35)}
+.ct-preset-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tx);font-weight:600}
+.ct-preset-by{color:var(--tx2);font-size:.65rem;white-space:nowrap}
+.ct-preset-play{color:var(--ac2);font-size:.7rem;padding:2px 5px;border-radius:4px;background:rgba(108,78,242,.1);transition:background .15s;flex-shrink:0}
+.ct-preset-play:hover{background:rgba(108,78,242,.25)}
+
 /* ══ ANALYTICS ══ */
 .analytics-member-card{background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem 1rem;margin-bottom:.6rem;transition:border-color .2s}
 .analytics-member-card:hover{border-color:var(--b2)}
@@ -3089,19 +3109,51 @@ function tickInterest() {
   if (!_cachedBankAcc||!_cachedBankAcc.interestActivatedAt) return;
   const principal = _cachedBankAcc.principal||0;
   if (!principal) return;
-  // Rate acak per menit: 0.01% - 0.05%
-  const rate = BANK_CONFIG.INTEREST_RATE_MIN + Math.random()*(BANK_CONFIG.INTEREST_RATE_MAX-BANK_CONFIG.INTEREST_RATE_MIN);
-  const earned = principal * rate;
-  const newInterest = (_cachedBankAcc.interestBalance||0) + earned;
+
+  // Tentukan arah: naik atau turun
+  // Base chance turun 38%, naik jika berita positif, turun jika pasar koreksi
+  let downChance = BANK_CONFIG.INTEREST_DOWN_CHANCE;
+
+  // Kalau ada berita negatif aktif → chance turun lebih besar
+  const negativeNews = (_currentNews||[]).filter(n => n.sentiment < 0).length;
+  const positiveNews = (_currentNews||[]).filter(n => n.sentiment > 0).length;
+  downChance += negativeNews * 0.08;
+  downChance -= positiveNews * 0.05;
+  downChance = Math.min(0.72, Math.max(0.15, downChance)); // clamp 15%-72%
+
+  // Kalau saham yang dimiliki sedang merah → chance turun lebih besar
+  // (cek dari stockTrends — negatif berarti lagi turun)
+  const ownedStocks = Object.keys(_stockTrends || {});
+  const redStocks = ownedStocks.filter(id => (_stockTrends[id]||0) < -0.005).length;
+  downChance += redStocks * 0.06;
+  downChance = Math.min(0.78, downChance);
+
+  const goingDown = Math.random() < downChance;
+
+  let delta;
+  if (goingDown) {
+    // Turun: random 0.01% - 0.03% dari principal
+    const rate = Math.random() * BANK_CONFIG.INTEREST_RATE_DOWN;
+    delta = -(principal * rate);
+  } else {
+    // Naik: random 0.01% - 0.05% dari principal
+    const rate = BANK_CONFIG.INTEREST_RATE_MIN + Math.random() * (BANK_CONFIG.INTEREST_RATE_MAX - BANK_CONFIG.INTEREST_RATE_MIN);
+    delta = principal * rate;
+  }
+
+  // Bunga tidak bisa minus — worst case 0
+  const newInterest = Math.max(0, (_cachedBankAcc.interestBalance||0) + delta);
   _cachedBankAcc.interestBalance = newInterest;
-  // Save to Firebase (debounced)
-  const key = (D.email||D.user||'').replace(/[.#$/[\]]/g,'_');
+
+  // Save ke Firebase
+  const key = (D.email||D.user||'').replace(/[.#$\/\[\]]/g,'_');
   fbSet('bank/'+key+'/interestBalance', newInterest).catch(()=>{});
-  // Update UI
-  updateInterestUI();
+
+  // Update UI dengan arah perubahan
+  updateInterestUI(goingDown, Math.abs(delta));
 }
 
-function updateInterestUI() {
+function updateInterestUI(wentDown, delta) {
   const acc = _cachedBankAcc;
   if (!acc||!acc.interestActivatedAt) return;
   const interestBal = acc.interestBalance||0;
@@ -3112,18 +3164,42 @@ function updateInterestUI() {
   const lockTxt = document.getElementById('memberInterestLockTxt');
   const wdBtn  = document.getElementById('memberInterestWithdrawBtn');
   if (!card) return;
-  if (interestBal <= 0) { card.style.display='none'; return; }
+
+  // Tampilkan kartu bahkan kalau 0 (supaya user bisa lihat bunga lagi nambah)
+  if (interestBal <= 0 && !acc.interestActivatedAt) { card.style.display='none'; return; }
   card.style.display='block';
-  if (balEl) balEl.textContent = fmtRp(interestBal);
-  // Cek 7 hari kerja (7×24h sebagai approx)
+
+  if (balEl) {
+    balEl.textContent = fmtRp(interestBal);
+    // Flash animasi sesuai arah
+    if (delta !== undefined) {
+      balEl.style.transition = 'color .3s';
+      balEl.style.color = wentDown ? '#e8546a' : '#1ec99a';
+      setTimeout(() => { balEl.style.color = ''; }, 1200);
+    }
+  }
+
+  // Arah terakhir di subtitle
+  if (subEl && delta !== undefined) {
+    const dirLabel = wentDown
+      ? `▼ -${fmtRp(delta)} menit lalu`
+      : `▲ +${fmtRp(delta)} menit lalu`;
+    const dirColor = wentDown ? '#e8546a' : '#1ec99a';
+    const activatedAt = acc.interestActivatedAt||Date.now();
+    const daysPassed = (Date.now()-activatedAt)/(1000*60*60*24);
+    const workDaysPassed = Math.floor(daysPassed*(5/7));
+    const canWith = workDaysPassed >= 7;
+    subEl.innerHTML = `<span style="color:${dirColor};font-weight:700">${dirLabel}</span>${canWith?' · Siap ditarik':' · '+workDaysPassed+'/7 hr kerja'}`;
+  }
+
+  // Cek 7 hari kerja
   const activatedAt = acc.interestActivatedAt||Date.now();
   const daysPassed = (Date.now()-activatedAt)/(1000*60*60*24);
-  const workDaysPassed = Math.floor(daysPassed*(5/7)); // approx hari kerja
+  const workDaysPassed = Math.floor(daysPassed*(5/7));
   const canWithdraw = workDaysPassed >= 7;
-  if (lockEl) lockEl.style.display = canWithdraw?'none':'flex';
+  if (lockEl) lockEl.style.display = canWithdraw ? 'none' : 'flex';
   if (lockTxt) lockTxt.textContent = `Bisa ditarik setelah ${Math.max(0,7-workDaysPassed)} hari kerja lagi`;
   if (wdBtn) wdBtn.disabled = !canWithdraw;
-  if (subEl) subEl.textContent = canWithdraw ? 'Bunga siap ditarik ke saldo utama' : `Tumbuh per menit · ${workDaysPassed}/7 hari kerja`;
 }
 
 async function withdrawInterest() {
@@ -3826,13 +3902,25 @@ async function handleBotCommand(query) {
   }
 
   if (!botImgs.length) {
-    // Unsplash source URLs — no key needed, works as random image by keyword
-    const seeds = [Date.now(), Date.now()+1, Date.now()+2];
-    botImgs = [
-      `https://source.unsplash.com/400x280/?${encodeURIComponent(query)},${seeds[0]}`,
-      `https://source.unsplash.com/400x280/?${encodeURIComponent(query)},${seeds[1]}`,
-    ];
-    sourceLabel = 'Unsplash';
+    // Pakai Picsum + keyword hash sebagai image bot (Unsplash source.unsplash.com deprecated 2023)
+    // Fallback: cari di Wikipedia/Wikimedia commons via REST API
+    try {
+      const wikiResp = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`, { signal: AbortSignal.timeout(4000) });
+      if (wikiResp.ok) {
+        const wikiData = await wikiResp.json();
+        if (wikiData.thumbnail?.source) {
+          botImgs.push(wikiData.thumbnail.source);
+          sourceLabel = 'Wikipedia';
+        }
+      }
+    } catch(e) {}
+    // Tambah gambar dari Lorem Picsum dengan seed dari query hash (stabil per keyword)
+    let hash = 0;
+    for (let i=0;i<query.length;i++) hash = ((hash<<5)-hash)+query.charCodeAt(i);
+    const seedBase = Math.abs(hash) % 1000;
+    botImgs.push(`https://picsum.photos/seed/${seedBase}/400/280`);
+    botImgs.push(`https://picsum.photos/seed/${seedBase+1}/400/280`);
+    if (!sourceLabel) sourceLabel = 'Picsum';
   }
 
   const botMsg = {
@@ -4148,28 +4236,115 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
       </button>
     </div>
 
+    <!-- Search bar -->
+    <div class="member-search-wrap" style="margin-bottom:.8rem">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="ctSearchInp" placeholder="Cari pengguna, video, #hashtag..." oninput="ctSearch(this.value)" style="-webkit-user-select:text;user-select:text"/>
+    </div>
+    <!-- Hashtag filter chips -->
+    <div id="ctHashtagChips" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.8rem"></div>
+
     <!-- Upload panel (only for logged in members, hidden by default) -->
     <div class="ct-upload-panel" id="ctUploadPanel" style="display:none">
       <div class="ct-upload-hd">
         <span>Buat Post Baru</span>
         <button onclick="ctToggleCreate()" style="background:none;border:none;color:var(--tx2);cursor:pointer;font-size:.9rem">✕</button>
       </div>
-      <!-- Media drop zone -->
-      <div class="ct-drop" id="ctDropZone" onclick="document.getElementById('ctFileInput').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="ctHandleDrop(event)">
-        <div class="ct-drop-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><polygon points="5,3 19,12 5,21 5,3"/></svg>
+      <!-- Mode tabs: Video/Foto vs Teks -->
+      <div style="display:flex;gap:4px;margin-bottom:.85rem;background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:3px">
+        <button class="pub-tab active" id="ctModeVideo" onclick="ctSwitchMode('video')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="5,3 19,12 5,21 5,3"/></svg>
+          Foto / Video
+        </button>
+        <button class="pub-tab" id="ctModeText" onclick="ctSwitchMode('text')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+          Post Teks
+        </button>
+      </div>
+
+      <!-- VIDEO/FOTO MODE -->
+      <div id="ctVideoSection">
+        <div class="ct-drop" id="ctDropZone" onclick="document.getElementById('ctFileInput').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="ctHandleDrop(event)">
+          <div class="ct-drop-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><polygon points="5,3 19,12 5,21 5,3"/></svg>
+          </div>
+          <div class="ct-drop-label">Tap untuk pilih foto atau video</div>
+          <div class="ct-drop-sub">JPG, PNG, MP4 · maks 8MB</div>
         </div>
-        <div class="ct-drop-label">Tap untuk pilih foto atau video</div>
-        <div class="ct-drop-sub">JPG, PNG, MP4 · maks 8MB</div>
+        <div id="ctPreviewWrap" style="display:none;position:relative;margin-top:.7rem;border-radius:10px;overflow:hidden;background:#000">
+          <video id="ctVideoPreview" style="width:100%;max-height:320px;object-fit:contain;display:none" controls playsinline></video>
+          <img id="ctImgPreview" style="width:100%;max-height:320px;object-fit:contain;display:none" alt="preview"/>
+          <button onclick="ctClearMedia()" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.7);border:none;color:#fff;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)">✕</button>
+        </div>
       </div>
-      <!-- Preview -->
-      <div id="ctPreviewWrap" style="display:none;position:relative;margin-top:.7rem;border-radius:10px;overflow:hidden;background:#000">
-        <video id="ctVideoPreview" style="width:100%;max-height:320px;object-fit:contain;display:none" controls playsinline></video>
-        <img id="ctImgPreview" style="width:100%;max-height:320px;object-fit:contain;display:none" alt="preview"/>
-        <button onclick="ctClearMedia()" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.7);border:none;color:#fff;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)">✕</button>
+
+      <!-- TEXT POST MODE -->
+      <div id="ctTextSection" style="display:none">
+        <!-- Template picker -->
+        <div style="font-size:.72rem;color:var(--tx2);margin-bottom:.5rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Pilih Template</div>
+        <div id="ctTemplatePicker" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:.7rem;scrollbar-width:thin"></div>
+        <!-- Text post canvas preview -->
+        <div id="ctTextPreview" style="border-radius:12px;overflow:hidden;margin-bottom:.7rem;position:relative;min-height:200px;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="ctFocusTextInPreview()">
+          <div id="ctTextOverlay" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:1.5rem">
+            <div id="ctTextDisplay" style="text-align:center;word-break:break-word;max-width:100%">Teks muncul di sini...</div>
+          </div>
+        </div>
+        <!-- Text controls -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.6rem">
+          <div class="field" style="margin:0">
+            <label style="font-size:.62rem">Posisi Teks</label>
+            <select id="ctTextAlign" onchange="ctUpdateTextPreview()" style="background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.45rem .6rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.8rem;outline:none;width:100%">
+              <option value="center center">Tengah</option>
+              <option value="center flex-start">Atas Tengah</option>
+              <option value="center flex-end">Bawah Tengah</option>
+              <option value="flex-start center">Kiri Tengah</option>
+              <option value="flex-end center">Kanan Tengah</option>
+              <option value="flex-start flex-start">Kiri Atas</option>
+              <option value="flex-end flex-end">Kanan Bawah</option>
+            </select>
+          </div>
+          <div class="field" style="margin:0">
+            <label style="font-size:.62rem">Ukuran Font</label>
+            <select id="ctFontSize" onchange="ctUpdateTextPreview()" style="background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.45rem .6rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.8rem;outline:none;width:100%">
+              <option value="1rem">Kecil</option>
+              <option value="1.3rem" selected>Sedang</option>
+              <option value="1.7rem">Besar</option>
+              <option value="2.2rem">Sangat Besar</option>
+            </select>
+          </div>
+        </div>
+        <!-- Music section for text post -->
+        <div style="background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:.65rem .8rem;margin-bottom:.6rem">
+          <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:.75rem;font-weight:700;color:var(--tx)">Musik (opsional)</div>
+              <div id="ctMusicName" style="font-size:.65rem;color:var(--tx2);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Belum ada musik dipilih</div>
+            </div>
+            <button onclick="document.getElementById('ctMusicInput').click()" style="padding:4px 10px;border:1px solid rgba(108,78,242,.4);background:rgba(108,78,242,.08);color:var(--ac2);border-radius:7px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">
+              📂 Upload
+            </button>
+            <button id="ctMusicClearBtn" onclick="ctClearMusic()" style="display:none;padding:4px 8px;border:none;background:none;color:var(--tx2);cursor:pointer;font-size:.8rem">✕</button>
+          </div>
+          <!-- Preset list dari Firebase -->
+          <div id="ctMusicPresetWrap" style="display:none">
+            <div style="font-size:.62rem;color:var(--tx2);margin-bottom:.35rem;font-weight:600;text-transform:uppercase;letter-spacing:.4px">🎵 Preset dari member lain</div>
+            <div id="ctMusicPresetList" style="display:flex;flex-direction:column;gap:4px;max-height:140px;overflow-y:auto"></div>
+          </div>
+        </div>
+        <input type="file" id="ctMusicInput" accept="audio/*" style="display:none" onchange="ctHandleMusic(this)"/>
       </div>
-      <textarea class="ct-caption-inp" id="ctCaptionInp" placeholder="Tulis caption...&#10;(opsional, bisa hanya gambar/video)"></textarea>
+
+      <!-- Caption + Hashtag (shared between modes) -->
+      <textarea class="ct-caption-inp" id="ctCaptionInp" placeholder="Tulis caption... (opsional)" oninput="if(_ctMode==='text')ctUpdateTextPreview()"></textarea>
+      <!-- Hashtag input -->
+      <div style="position:relative;margin-bottom:.6rem">
+        <div style="position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--ac2);font-weight:700;font-size:.85rem;pointer-events:none">#</div>
+        <input type="text" id="ctHashtagInp" placeholder="hashtag1, hashtag2, ... (pisah koma)" style="-webkit-user-select:text;user-select:text;padding-left:1.6rem;background:var(--s2);border:1px solid var(--b2);border-radius:8px;width:100%;padding:.6rem .75rem .6rem 1.6rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;box-sizing:border-box" oninput="ctPreviewHashtags(this.value)"/>
+      </div>
+      <div id="ctHashtagPreview" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.6rem"></div>
+
       <!-- Upload progress -->
       <div id="ctLoadBar" style="display:none;margin:.5rem 0;height:4px;background:var(--b2);border-radius:4px;overflow:hidden">
         <div id="ctLoadFill" style="height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));animation:ct-load 1.2s ease-in-out infinite;width:60%"></div>
@@ -4935,7 +5110,9 @@ function renderCiunTik() {
   const createToggle = document.getElementById('ctCreateToggle');
   if (!feed) return;
   // Show create button if logged in
-  if (createToggle) createToggle.style.display = (D.role && D.role !== 'guest') ? 'flex' : 'none';
+  if (createToggle) createToggle.style.display = (D.ciuntikOpen && D.role && D.role !== 'guest') ? 'flex' : 'none';
+  _ctAllPosts = CIUNTIK.posts;
+  ctBuildHashtagChips(CIUNTIK.posts);
   if (!CIUNTIK.posts.length) {
     if (empty) empty.style.display = 'block';
     feed.innerHTML = '';
@@ -4943,10 +5120,24 @@ function renderCiunTik() {
     return;
   }
   if (empty) empty.style.display = 'none';
-  feed.innerHTML = CIUNTIK.posts.map((p, i) => buildCTCard(p, i)).join('');
+  // Apply active filter if any
+  const toShow = _ctActiveHashtagFilter
+    ? CIUNTIK.posts.filter(p => (p.hashtags||[]).includes(_ctActiveHashtagFilter))
+    : CIUNTIK.posts;
+  feed.innerHTML = toShow.map((p, i) => buildCTCard(p, i)).join('');
+  // Attach music to audio elements
+  toShow.forEach(p => {
+    if (p.music?.data) {
+      const audio = document.getElementById('ctAudio_'+p.id);
+      if (audio) audio.src = p.music.data;
+    }
+  });
 }
 
 function ctToggleCreate() {
+  // BUG FIX: cek D.ciuntikOpen setiap kali tombol diklik, bukan hanya saat load
+  if (!D.ciuntikOpen) { toast('Upload dinonaktifkan oleh Leader','warn'); return; }
+  if (!D.role || D.role === 'guest') { toast('Login sebagai member untuk upload','warn'); return; }
   const panel = document.getElementById('ctUploadPanel');
   if (!panel) return;
   if (panel.style.display === 'none' || !panel.style.display) {
@@ -4957,6 +5148,7 @@ function ctToggleCreate() {
     ctClearMedia();
     const capInp = document.getElementById('ctCaptionInp');
     if (capInp) capInp.value = '';
+    _ctMode = 'video'; // reset mode
   }
 }
 
@@ -4972,7 +5164,14 @@ function buildCTCard(p, i) {
   else timeStr = d.toLocaleDateString('id-ID', {day:'numeric', month:'short'});
   const roleGrad = p.role==='admin'?'linear-gradient(135deg,#e8b84b,#f5c842)':p.role==='leader'?'linear-gradient(135deg,#e8546a,#f06080)':'linear-gradient(135deg,var(--ac),var(--ac2))';
   let mediaHTML = '';
-  if (p.media) {
+  // TEXT POST — render with template background
+  if (p.postType === 'text' && p.textStyle) {
+    const t = p.textStyle;
+    const parts = (p.textAlign||'center center').split(' ');
+    const jc = parts[0], ai = parts[1]||'center';
+    const ta = jc==='flex-start'?'left':jc==='flex-end'?'right':'center';
+    mediaHTML = `<div style="min-height:200px;background:${t.bg};display:flex;align-items:${ai};justify-content:${jc};padding:1.5rem;border-radius:0 0 10px 10px"><div style="color:${t.color};font-family:${t.font};font-size:${p.fontSize||'1.3rem'};font-weight:700;text-shadow:${t.shadow};line-height:1.4;word-break:break-word;max-width:100%;text-align:${ta}">${(p.text||'').replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div></div>`;
+  } else if (p.media) {
     if (p.type === 'video') {
       mediaHTML = `<div class="ct-media-wrap"><video class="ct-media" src="${p.media}" preload="metadata" playsinline controlsList="nodownload nofullscreen" disablePictureInPicture oncontextmenu="return false"></video><div class="ct-play-btn" onclick="ctToggleVideo(this)"><div class="ct-play-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21 5,3"/></svg></div></div></div>`;
     } else {
@@ -4982,7 +5181,13 @@ function buildCTCard(p, i) {
   const likes = p.likes || 0;
   const myLike = (p.likedBy || []).includes(D.email || D.user || '');
   const canDel = (D.email && D.email === p.email) || D.role === 'admin' || D.role === 'leader';
-  const capHTML = p.caption ? `<div class="ct-caption">${p.caption.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>` : '';
+  // Hashtags row
+  const hashHTML = p.hashtags && p.hashtags.length
+    ? `<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:.4rem">${p.hashtags.map(h=>`<span class="ct-htag" onclick="ctFilterByHashtag('${h}')">#${h}</span>`).join('')}</div>` : '';
+  // Music player
+  const musicHTML = p.music && p.music.name
+    ? `<div style="display:flex;align-items:center;gap:7px;background:rgba(108,78,242,.08);border:1px solid rgba(108,78,242,.2);border-radius:8px;padding:5px 10px;margin-top:.5rem"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span style="font-size:.7rem;color:var(--tx2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.music.name}</span><audio id="ctAudio_${p.id||p._key}" src="${p.music.data||''}" preload="none" style="display:none"></audio><button onclick="ctToggleAudio('${p.id||p._key}')" style="background:none;border:none;color:var(--ac2);cursor:pointer;font-size:.8rem;padding:0">▶</button></div>` : '';
+  const capHTML = (p.postType !== 'text' && p.caption) ? `<div class="ct-caption">${p.caption.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>` : '';
   return `<div class="ct-card" id="ct-${p._key||i}">
     <div class="ct-card-top">
       <div class="ct-author">
@@ -4994,6 +5199,8 @@ function buildCTCard(p, i) {
         <span class="ct-time">${timeStr}</span>
       </div>
       ${capHTML}
+      ${hashHTML}
+      ${musicHTML}
     </div>
     ${mediaHTML}
     <div class="ct-actions">
@@ -5028,6 +5235,266 @@ function ctToggleVideo(btn) {
 
 // CiunTik per-session upload state (NOT shared across renders)
 const _CT_UPLOAD = { file: null, type: 'image', uploading: false };
+
+// ══ TEXT POST TEMPLATES ══
+const CT_TEXT_TEMPLATES = [
+  { id:'neon',    label:'Neon',    bg:'linear-gradient(135deg,#0d0d1a,#131330)', color:'#a78bfa', font:"'Syne',sans-serif", shadow:'0 0 20px rgba(167,139,250,.5)' },
+  { id:'fire',    label:'Fire',    bg:'linear-gradient(135deg,#7c2d12,#dc2626,#fbbf24)', color:'#fff', font:"'Syne',sans-serif", shadow:'0 2px 12px rgba(0,0,0,.4)' },
+  { id:'ocean',   label:'Ocean',   bg:'linear-gradient(135deg,#0c4a6e,#0ea5e9,#67e8f9)', color:'#fff', font:"'DM Sans',sans-serif", shadow:'0 2px 8px rgba(0,0,0,.3)' },
+  { id:'forest',  label:'Forest',  bg:'linear-gradient(135deg,#052e16,#15803d,#86efac)', color:'#fff', font:"'DM Sans',sans-serif", shadow:'none' },
+  { id:'sunset',  label:'Sunset',  bg:'linear-gradient(135deg,#4c1d95,#db2777,#f59e0b)', color:'#fff', font:"'Syne',sans-serif", shadow:'0 2px 8px rgba(0,0,0,.3)' },
+  { id:'dark',    label:'Dark',    bg:'#111', color:'#e5e5e5', font:"'DM Sans',sans-serif", shadow:'none' },
+  { id:'white',   label:'Clean',   bg:'#fff', color:'#111', font:"'DM Sans',sans-serif", shadow:'none' },
+  { id:'galaxy',  label:'Galaxy',  bg:'radial-gradient(ellipse at center,#1e1b4b 0%,#0f172a 60%,#020617 100%)', color:'#c4b5fd', font:"'Syne',sans-serif", shadow:'0 0 30px rgba(196,181,253,.3)' },
+  { id:'candy',   label:'Candy',   bg:'linear-gradient(135deg,#fce7f3,#fdf4ff,#ede9fe)', color:'#9333ea', font:"'DM Sans',sans-serif", shadow:'none' },
+  { id:'retro',   label:'Retro',   bg:'linear-gradient(135deg,#78350f,#d97706)', color:'#fef3c7', font:"'Syne',sans-serif", shadow:'0 2px 4px rgba(0,0,0,.4)' },
+];
+
+let _ctMode = 'video'; // 'video' | 'text'
+let _ctSelectedTemplate = CT_TEXT_TEMPLATES[0];
+let _ctMusicFile = null;
+let _ctMusicB64 = null;
+let _ctActiveHashtagFilter = null;
+
+function ctSwitchMode(mode) {
+  _ctMode = mode;
+  document.getElementById('ctModeVideo').classList.toggle('active', mode==='video');
+  document.getElementById('ctModeText').classList.toggle('active', mode==='text');
+  document.getElementById('ctVideoSection').style.display = mode==='video' ? 'block' : 'none';
+  document.getElementById('ctTextSection').style.display  = mode==='text'  ? 'block' : 'none';
+  if (mode === 'text') {
+    ctRenderTemplatePicker();
+    ctUpdateTextPreview();
+    ctLoadMusicPresets(); // load preset dari Firebase
+  }
+}
+
+function ctRenderTemplatePicker() {
+  const el = document.getElementById('ctTemplatePicker');
+  if (!el) return;
+  el.innerHTML = CT_TEXT_TEMPLATES.map(t => {
+    const isSelected = _ctSelectedTemplate.id === t.id;
+    return `<div class="ct-tpl-thumb ${isSelected?'selected':''}" style="background:${t.bg};color:${t.color};font-family:${t.font}" onclick="ctSelectTemplate('${t.id}')">${t.label}</div>`;
+  }).join('');
+}
+
+function ctSelectTemplate(id) {
+  _ctSelectedTemplate = CT_TEXT_TEMPLATES.find(t=>t.id===id) || CT_TEXT_TEMPLATES[0];
+  ctRenderTemplatePicker();
+  ctUpdateTextPreview();
+}
+
+function ctUpdateTextPreview() {
+  const preview = document.getElementById('ctTextPreview');
+  const display = document.getElementById('ctTextDisplay');
+  const caption = document.getElementById('ctCaptionInp')?.value || '';
+  const alignVal = document.getElementById('ctTextAlign')?.value || 'center center';
+  const fontSize = document.getElementById('ctFontSize')?.value || '1.3rem';
+  if (!preview || !display) return;
+  const t = _ctSelectedTemplate;
+  const [justifyContent, alignItems] = alignVal.split(' ');
+  preview.style.background = t.bg;
+  preview.style.minHeight = '200px';
+  const overlay = document.getElementById('ctTextOverlay');
+  if (overlay) { overlay.style.justifyContent = justifyContent; overlay.style.alignItems = alignItems; }
+  display.style.color = t.color;
+  display.style.fontFamily = t.font;
+  display.style.fontSize = fontSize;
+  display.style.textShadow = t.shadow;
+  display.style.fontWeight = '700';
+  display.style.lineHeight = '1.4';
+  display.textContent = caption || 'Teks muncul di sini...';
+}
+
+function ctPreviewHashtags(val) {
+  const tags = val.split(',').map(s=>s.trim().replace(/^#/,'')).filter(Boolean);
+  const el = document.getElementById('ctHashtagPreview');
+  if (!el) return;
+  el.innerHTML = tags.map(t=>`<span class="ct-htag">#${t}</span>`).join('');
+}
+
+let _ctMusicPresets = []; // cache dari Firebase
+
+function ctHandleMusic(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5*1024*1024) { toast('Musik maks 5MB','warn'); input.value=''; return; }
+  _ctMusicFile = file;
+  const nameEl = document.getElementById('ctMusicName');
+  const clearBtn = document.getElementById('ctMusicClearBtn');
+  if (nameEl) nameEl.innerHTML = `🎵 ${file.name} <span class="ct-music-wave"><span></span><span></span><span></span></span>`;
+  if (clearBtn) clearBtn.style.display = 'inline-block';
+  // Read as base64
+  const reader = new FileReader();
+  reader.onload = e => {
+    _ctMusicB64 = e.target.result;
+    // Simpan ke Firebase sebagai preset (async, tidak perlu tunggu)
+    ctSaveMusicPreset(file.name, e.target.result);
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+async function ctSaveMusicPreset(name, data) {
+  try {
+    // Cek apakah preset dengan nama ini sudah ada
+    const existing = _ctMusicPresets.find(p => p.name === name);
+    if (existing) return; // sudah ada, skip
+    const preset = {
+      name,
+      data,
+      uploadedBy: D.user || 'Unknown',
+      ts: Date.now()
+    };
+    await fbPush('musicPresets', preset);
+    // Reload preset list
+    await ctLoadMusicPresets();
+  } catch(e) {
+    console.warn('Gagal simpan preset musik:', e);
+  }
+}
+
+async function ctLoadMusicPresets() {
+  try {
+    const snap = await fbGet('musicPresets');
+    if (snap.val()) {
+      _ctMusicPresets = Object.entries(snap.val())
+        .map(([k,v]) => ({...v, _key: k}))
+        .sort((a,b) => b.ts - a.ts)
+        .slice(0, 20); // maks 20 preset
+    } else {
+      _ctMusicPresets = [];
+    }
+    ctRenderMusicPresets();
+  } catch(e) {
+    _ctMusicPresets = [];
+  }
+}
+
+function ctRenderMusicPresets() {
+  const wrap = document.getElementById('ctMusicPresetWrap');
+  const list = document.getElementById('ctMusicPresetList');
+  if (!wrap || !list) return;
+  if (!_ctMusicPresets.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  list.innerHTML = _ctMusicPresets.map(p => `
+    <div class="ct-preset-item" onclick="ctSelectMusicPreset('${p._key}')">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      <span class="ct-preset-name">${p.name}</span>
+      <span class="ct-preset-by">by ${p.uploadedBy}</span>
+      <span class="ct-preset-play" onclick="event.stopPropagation();ctPreviewPreset('${p._key}')">▶</span>
+    </div>
+  `).join('');
+}
+
+function ctSelectMusicPreset(key) {
+  const preset = _ctMusicPresets.find(p => p._key === key);
+  if (!preset) return;
+  _ctMusicB64 = preset.data;
+  _ctMusicFile = { name: preset.name }; // fake file object just for name
+  const nameEl = document.getElementById('ctMusicName');
+  const clearBtn = document.getElementById('ctMusicClearBtn');
+  if (nameEl) nameEl.innerHTML = `🎵 ${preset.name} <span class="ct-music-wave"><span></span><span></span><span></span></span>`;
+  if (clearBtn) clearBtn.style.display = 'inline-block';
+  // Highlight selected
+  document.querySelectorAll('.ct-preset-item').forEach(el => el.classList.remove('selected'));
+  const items = document.querySelectorAll('.ct-preset-item');
+  const idx = _ctMusicPresets.findIndex(p => p._key === key);
+  if (items[idx]) items[idx].classList.add('selected');
+  toast('Musik dipilih: ' + preset.name, 'success');
+}
+
+let _ctPreviewAudio = null;
+function ctPreviewPreset(key) {
+  const preset = _ctMusicPresets.find(p => p._key === key);
+  if (!preset || !preset.data) return;
+  if (_ctPreviewAudio) { _ctPreviewAudio.pause(); _ctPreviewAudio = null; }
+  _ctPreviewAudio = new Audio(preset.data);
+  _ctPreviewAudio.play().catch(()=>{});
+  // Auto stop after 15s
+  setTimeout(() => { if (_ctPreviewAudio) { _ctPreviewAudio.pause(); _ctPreviewAudio = null; } }, 15000);
+}
+
+function ctClearMusic() {
+  _ctMusicFile = null; _ctMusicB64 = null;
+  if (_ctPreviewAudio) { _ctPreviewAudio.pause(); _ctPreviewAudio = null; }
+  const nameEl = document.getElementById('ctMusicName');
+  const clearBtn = document.getElementById('ctMusicClearBtn');
+  if (nameEl) nameEl.textContent = 'Belum ada musik dipilih';
+  if (clearBtn) clearBtn.style.display = 'none';
+  // Clear preset selection highlight
+  document.querySelectorAll('.ct-preset-item').forEach(el => el.classList.remove('selected'));
+}
+
+// ══ SEARCH ══
+let _ctAllPosts = [];
+
+function ctSearch(q) {
+  const sq = q.toLowerCase().trim();
+  const feed = document.getElementById('ctFeed');
+  if (!feed) return;
+  // Filter from _ctAllPosts
+  let filtered = _ctAllPosts;
+  if (sq.startsWith('#')) {
+    const tag = sq.replace(/^#/,'');
+    filtered = _ctAllPosts.filter(p => (p.hashtags||[]).some(h=>h.toLowerCase().includes(tag)));
+  } else if (sq) {
+    filtered = _ctAllPosts.filter(p =>
+      (p.author||'').toLowerCase().includes(sq) ||
+      (p.caption||'').toLowerCase().includes(sq) ||
+      (p.text||'').toLowerCase().includes(sq) ||
+      (p.hashtags||[]).some(h=>h.toLowerCase().includes(sq))
+    );
+  }
+  renderCiunTikFiltered(filtered);
+}
+
+function ctFilterByHashtag(tag) {
+  if (_ctActiveHashtagFilter === tag) {
+    _ctActiveHashtagFilter = null;
+  } else {
+    _ctActiveHashtagFilter = tag;
+  }
+  // Update chip active state
+  document.querySelectorAll('.ct-htag-filter').forEach(el => {
+    el.classList.toggle('active', el.dataset.tag === _ctActiveHashtagFilter);
+  });
+  const filtered = _ctActiveHashtagFilter
+    ? _ctAllPosts.filter(p => (p.hashtags||[]).includes(_ctActiveHashtagFilter))
+    : _ctAllPosts;
+  renderCiunTikFiltered(filtered);
+}
+
+function ctBuildHashtagChips(posts) {
+  const tagCounts = {};
+  posts.forEach(p => (p.hashtags||[]).forEach(t => { tagCounts[t] = (tagCounts[t]||0)+1; }));
+  const sorted = Object.entries(tagCounts).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const el = document.getElementById('ctHashtagChips');
+  if (!el || !sorted.length) { if(el) el.innerHTML=''; return; }
+  el.innerHTML = sorted.map(([tag,cnt]) =>
+    `<span class="ct-htag ct-htag-filter${_ctActiveHashtagFilter===tag?' active':''}" data-tag="${tag}" onclick="ctFilterByHashtag('${tag}')">#${tag} <span style="opacity:.6;font-size:.6rem">${cnt}</span></span>`
+  ).join('');
+}
+
+function renderCiunTikFiltered(posts) {
+  const feed = document.getElementById('ctFeed');
+  const empty = document.getElementById('ctEmpty');
+  if (!feed) return;
+  if (!posts.length) {
+    feed.innerHTML = '';
+    if (empty) { empty.style.display='flex'; feed.appendChild(empty); }
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  feed.innerHTML = posts.map((p,i) => buildCTCard(p,i)).join('');
+  // Attach audio players if any
+  posts.forEach(p => {
+    if (p.music && p.music.data) {
+      const audio = document.getElementById('ctAudio_'+p.id);
+      if (audio) audio.src = p.music.data;
+    }
+  });
+}
 
 function ctHandleFile(input) {
   const file = input.files[0]; if (!file) return;
@@ -5072,9 +5539,12 @@ function ctClearMedia() {
 
 async function ctPost() {
   if (_CT_UPLOAD.uploading) return;
+  // BUG FIX: double-check ciuntikOpen even if somehow panel was visible
+  if (!D.ciuntikOpen) { toast('Upload dinonaktifkan oleh Leader','warn'); return; }
   const captionEl = document.getElementById('ctCaptionInp');
   const caption = captionEl ? captionEl.value.trim() : '';
-  if (!_CT_UPLOAD.file && !caption) { toast('Tambahkan video/foto atau caption dulu','warn'); return; }
+  const hashtagEl = document.getElementById('ctHashtagInp');
+  const hashtags = hashtagEl ? hashtagEl.value.trim() : '';
   if (!D.user || !D.role || D.role === 'guest') { toast('Login dulu','warn'); return; }
 
   // Show loading state
@@ -5128,9 +5598,28 @@ async function ctPost() {
   }
 
   const post = {
+    id: Date.now(),
     ts: Date.now(), author: D.user, email: D.email||null, role: D.role,
     caption: caption||null, media: mediaData, type: _CT_UPLOAD.type,
-    likes: 0, likedBy: []
+    likes: 0, likedBy: [],
+    // Text post fields
+    postType: _ctMode === 'text' ? 'text' : 'media',
+    text: _ctMode === 'text' ? (caption||'') : null,
+    textStyle: _ctMode === 'text' ? {
+      bg: _ctSelectedTemplate.bg,
+      color: _ctSelectedTemplate.color,
+      font: _ctSelectedTemplate.font,
+      shadow: _ctSelectedTemplate.shadow
+    } : null,
+    textAlign: _ctMode === 'text' ? (document.getElementById('ctTextAlign')?.value||'center center') : null,
+    fontSize: _ctMode === 'text' ? (document.getElementById('ctFontSize')?.value||'1.3rem') : null,
+    // Hashtags
+    hashtags: hashtags ? hashtags.split(',').map(s=>s.trim().replace(/^#/,'')).filter(Boolean) : [],
+    // Music (only for text posts, limit to keep firebase size down)
+    music: (_ctMode === 'text' && _ctMusicB64 && _ctMusicFile) ? {
+      name: _ctMusicFile.name,
+      data: _ctMusicB64
+    } : null,
   };
 
   try {
@@ -5148,8 +5637,15 @@ async function ctPost() {
 
   // Reset form
   if (captionEl) captionEl.value = '';
+  const hashEl = document.getElementById('ctHashtagInp');
+  if (hashEl) hashEl.value = '';
+  const hashPrev = document.getElementById('ctHashtagPreview');
+  if (hashPrev) hashPrev.innerHTML = '';
   ctClearMedia();
+  ctClearMusic();
   _CT_UPLOAD.uploading = false;
+  _ctMode = 'video';
+  ctSwitchMode('video');
   if (postBtn) { postBtn.disabled=false; postBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg> Bagikan'; }
   if (loadBar) loadBar.style.display='none';
   const statusEl2 = document.getElementById('ctUploadStatus');
@@ -5500,8 +5996,10 @@ function dmKeyDown(e) {
 
 // ══ CBANK SYSTEM ══
 const BANK_CONFIG = {
-  INTEREST_RATE_MIN: 0.0001,  // min bunga per menit (acak 0.01%-0.05%)
+  INTEREST_RATE_MIN: 0.0001,  // max naik per menit: +0.05% dari principal
   INTEREST_RATE_MAX: 0.0005,
+  INTEREST_RATE_DOWN: 0.0003, // max turun per menit: -0.03% dari principal
+  INTEREST_DOWN_CHANCE: 0.38, // 38% chance tiap menit bunga turun
   DEPOSIT_ADMIN_FEE: 2000,
   WITHDRAW_ADMIN_FEE: 3000,
   MIN_DEPOSIT: 50000,
@@ -5616,9 +6114,7 @@ function renderMemberBank(acc) {
   if (growEl) {
     if (acc.status === 'active' && acc.principal) {
       growEl.style.display = 'flex';
-      const rateNow = BANK_CONFIG.INTEREST_RATE_MIN + Math.random() * (BANK_CONFIG.INTEREST_RATE_MAX - BANK_CONFIG.INTEREST_RATE_MIN);
-      const perMin = acc.principal * rateNow;
-      if (growTxt) growTxt.textContent = '~+' + fmtRp(perMin) + '/mnt (acak)';
+      if (growTxt) growTxt.textContent = 'Bunga acak · bisa naik atau turun tiap menit';
     } else {
       growEl.style.display = 'none';
     }
