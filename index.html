@@ -2697,9 +2697,9 @@ function showPg(id) {
   if (id === 'stocks') {
     setTimeout(() => {
       loadStockPrices().then(renderStockList);
-      // Load news separately only on first open or explicit refresh
       if (!_newsLoaded) { refreshMarketNews(); _newsLoaded = true; }
       loadActiveVouchers();
+      loadMyVouchers(); // Load vouchers targeted to this user
       loadUserCoin().then(c => {
         const el = document.getElementById('stockPageCoin');
         if (el) el.textContent = c;
@@ -3220,26 +3220,17 @@ async function confirmBuyCoin() {
   const qty = parseInt(document.getElementById('coinBuyAmount').value)||0;
   if (qty < COIN_CONFIG.MIN_BUY) { toast('Minimum beli '+COIN_CONFIG.MIN_BUY+' coin','warn'); return; }
   const cost = qty * COIN_CONFIG.PRICE_RP;
-  // Check saldo
-  if (!_cachedBankAcc || (_cachedBankAcc.balance||0) < cost) { toast('Saldo tidak cukup (butuh '+fmtRp(cost)+')','error'); return; }
-  const key = (D.email||D.user||'').replace(/[.#$/[\]]/g,'_');
+  if (!_cachedBankAcc || (_cachedBankAcc.balance||0) < cost) {
+    toast('Saldo tidak cukup! Butuh '+fmtRp(cost)+' tapi saldo kamu '+fmtRp(_cachedBankAcc?.balance||0),'error'); return;
+  }
+  const userKey = (D.email||D.user||'').replace(/[.#$\/\[\]]/g,'_');
   try {
-    const curCoin = await loadUserCoin();
-    await saveUserCoin(curCoin + qty);
-    // Kurangi saldo
-    const newBal = (_cachedBankAcc.balance||0) - cost;
-    const tx = {type:'coin_buy',amount:cost,note:`Beli ${qty} CQ Coin`,ts:Date.now(),status:'approved'};
-    const txs = (_cachedBankAcc.transactions||[]); txs.push(tx);
-    await fbSet('bank/'+key, {..._cachedBankAcc, balance:newBal, transactions:txs});
-    _cachedBankAcc = {..._cachedBankAcc, balance:newBal, transactions:txs};
-    toast(`${qty} CQ Coin berhasil dibeli!`,'success');
+    const txKey = 'tx_' + Date.now();
+    const tx = { type:'coin_buy', amount:cost, qty, memberName:D.user||'?', userKey, requestedAt:Date.now(), status:'pending', note:'Beli '+qty+' CQ Coin (Rp '+cost.toLocaleString('id-ID')+')' };
+    await fbSet('pendingTransactions/'+userKey+'/'+txKey, tx);
+    toast('Permintaan beli '+qty+' CQ dikirim — menunggu persetujuan Leader ⏳','info');
     closeBuyCoin();
-    loadMemberBank();
-    // Update coin display
-    const coinEls = ['memberCoinChip','stockPageCoin'];
-    coinEls.forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=curCoin+qty;});
-    document.getElementById('memberCoinBal') && (document.getElementById('memberCoinBal').textContent=curCoin+qty);
-  } catch(e) { toast('Gagal beli coin','error'); }
+  } catch(e) { toast('Gagal mengirim permintaan','error'); }
 }
 
 // ── Beli Saham ──
@@ -3277,27 +3268,27 @@ function previewStockBuy() {
 }
 async function confirmBuyStock() {
   const qty = parseInt(document.getElementById('stockBuyQty').value)||0;
-  if (!qty||!_currentBuyStock) return;
+  if (!qty||!_currentBuyStock) { toast('Masukkan jumlah lot','warn'); return; }
   const s = _currentBuyStock;
   const price = _stockPrices[s.id]||s.basePrice;
-  const coinPerLot = Math.ceil(price/100);
+  const vcDsc = _activeVoucherDiscount || 0;
+  const discountedPrice = vcDsc > 0 ? Math.round(price*(1-vcDsc/100)) : price;
+  const coinPerLot = Math.ceil(discountedPrice/100);
   const total = qty*coinPerLot;
   const curCoin = await loadUserCoin();
-  if (curCoin < total) { toast('CQ Coin tidak cukup (butuh '+total+' CQ)','error'); return; }
+  if (curCoin < total) {
+    toast('CQ Coin tidak cukup! Butuh '+total+' CQ tapi kamu punya '+curCoin+' CQ','error'); return;
+  }
+  const userKey = (D.email||D.user||'').replace(/[.#$\/\[\]]/g,'_');
   try {
-    await saveUserCoin(curCoin - total);
-    const portfolio = await loadUserPortfolio();
-    const existing = portfolio[s.id]||{qty:0, avgBuy:0};
-    const newQty = existing.qty + qty;
-    const newAvg = (existing.avgBuy*existing.qty + price*qty) / newQty;
-    portfolio[s.id] = {qty:newQty, avgBuy:newAvg, lastBuy:Date.now()};
-    await savePortfolio(portfolio);
-    toast(`${qty} lot ${s.name} berhasil dibeli!`,'success');
+    const txKey = 'tx_' + Date.now();
+    const tx = { type:'stock_buy', stockId:s.id, stockName:s.name, qty, coinCost:total, pricePerLot:coinPerLot, vcDiscount:vcDsc, memberName:D.user||'?', userKey, requestedAt:Date.now(), status:'pending', note:'Beli '+qty+' lot '+s.name+(vcDsc>0?' (diskon '+vcDsc+'%)':'') };
+    await fbSet('pendingTransactions/'+userKey+'/'+txKey, tx);
+    if (vcDsc > 0) _activeVoucherDiscount = 0;
+    toast('Permintaan beli '+qty+' lot '+s.name+' dikirim — menunggu persetujuan Leader ⏳','info');
     closeBuyStock();
-    renderStockList();
-    // Aktifkan bunga jika belum aktif
-    activateInterest();
-  } catch(e) { toast('Gagal beli saham','error'); console.error(e); }
+    loadActiveVouchers();
+  } catch(e) { toast('Gagal mengirim permintaan','error'); console.error(e); }
 }
 
 // ── Jual Saham ──
@@ -3464,21 +3455,18 @@ function updateInterestUI(wentDown, delta) {
 }
 
 async function withdrawInterest() {
-  if (!_cachedBankAcc) return;
-  const interest = _cachedBankAcc.interestBalance||0;
-  if (interest < 100) { toast('Bunga belum cukup untuk ditarik','warn'); return; }
-  if (!confirm(`Tarik ${fmtRp(interest)} bunga ke saldo utama?`)) return;
-  const key = (D.email||D.user||'').replace(/[.#$/[\]]/g,'_');
-  const newBal = (_cachedBankAcc.balance||0) + interest;
-  const tx = {type:'interest_withdraw',amount:interest,note:'Tarik hasil bunga',ts:Date.now(),status:'approved'};
-  const txs = (_cachedBankAcc.transactions||[]); txs.push(tx);
+  if (!_cachedBankAcc) { toast('Muat data bank dulu','warn'); return; }
+  const ib = _cachedBankAcc.interestBalance || 0;
+  if (ib < 1) { toast('Belum ada bunga yang bisa ditarik','warn'); return; }
+  const userKey = (D.email||D.user||'').replace(/[.#$\/\[\]]/g,'_');
+  const txKey = 'tx_' + Date.now();
+  const tx = { type:'interest_withdraw', amount:ib, memberName:D.user||'?', userKey, requestedAt:Date.now(), status:'pending', note:'Tarik bunga Rp '+ib.toLocaleString('id-ID') };
   try {
-    await fbSet('bank/'+key, {..._cachedBankAcc, balance:newBal, interestBalance:0, transactions:txs});
-    _cachedBankAcc = {..._cachedBankAcc, balance:newBal, interestBalance:0, transactions:txs};
-    toast(`+${fmtRp(interest)} berhasil ditarik ke saldo!`,'success');
-    loadMemberBank();
-  } catch(e) { toast('Gagal tarik bunga','error'); }
+    await fbSet('pendingTransactions/'+userKey+'/'+txKey, tx);
+    toast('Permintaan tarik bunga '+fmtRp(ib)+' dikirim — menunggu persetujuan Leader ⏳','info');
+  } catch(e) { toast('Gagal kirim permintaan','error'); }
 }
+
 
 // ── Leader isi saldo member (giveaway) ──
 // ════ POPULATE VOUCHER TARGET SELECT ════
@@ -3521,6 +3509,35 @@ async function submitWithdrawRequest(userKey, amount, memberName) {
   toast('Permintaan penarikan dikirim — menunggu persetujuan Leader ⏳', 'info');
 }
 
+function submitDepositWA() {
+  const amt = parseInt(document.getElementById('bankDepositAmt')?.value||'0');
+  const method = document.getElementById('bankDepositMethod')?.value||'';
+  if (!amt || amt < 50000) { toast('Minimal deposit Rp 50.000','warn'); return; }
+  const userKey = (D.email||D.user||'').replace(/[.#$\/\[\]]/g,'_');
+  submitDepositRequest(userKey, amt, method, D.user||'?')
+    .then(() => { document.getElementById('bankDepositAmt').value=''; })
+    .catch(() => toast('Gagal kirim permintaan','error'));
+}
+
+function submitWithdrawWA() {
+  const amt = parseInt(document.getElementById('bankWithdrawAmt')?.value||'0');
+  const dest = document.getElementById('bankWithdrawDest')?.value||'';
+  if (!amt || amt < 10000) { toast('Minimal tarik Rp 10.000','warn'); return; }
+  if (!_cachedBankAcc || (_cachedBankAcc.balance||0) < amt) {
+    toast('Saldo tidak cukup! Saldo kamu: '+fmtRp(_cachedBankAcc?.balance||0),'error'); return;
+  }
+  const userKey = (D.email||D.user||'').replace(/[.#$\/\[\]]/g,'_');
+  const txKey = 'tx_' + Date.now();
+  const tx = { type:'withdraw', amount:amt, dest, memberName:D.user||'?', userKey, requestedAt:Date.now(), status:'pending', note:'Penarikan ke: '+dest };
+  fbSet('pendingTransactions/'+userKey+'/'+txKey, tx)
+    .then(() => {
+      toast('Permintaan penarikan Rp '+amt.toLocaleString('id-ID')+' dikirim — menunggu persetujuan Leader ⏳','info');
+      document.getElementById('bankWithdrawAmt').value='';
+      document.getElementById('bankWithdrawDest').value='';
+    })
+    .catch(() => toast('Gagal kirim permintaan','error'));
+}
+
 async function loadPendingTransactions() {
   if (D.role !== 'leader' && D.role !== 'admin') return;
   const el = document.getElementById('pendingTxList');
@@ -3540,14 +3557,16 @@ async function loadPendingTransactions() {
     el.innerHTML = entries.map(tx => {
       const d = new Date(tx.requestedAt||0);
       const timeStr = d.toLocaleDateString('id-ID',{day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
-      const typeLabel = tx.type === 'deposit' ? '💰 Deposit' : '🏧 Penarikan';
-      const color = tx.type === 'deposit' ? 'var(--ok)' : 'var(--warn)';
+      const typeLabels = { deposit:'💰 Deposit', withdraw:'🏧 Penarikan', coin_buy:'🪙 Beli Coin', stock_buy:'📈 Beli Saham', stock_sell:'💰 Jual Saham', interest_withdraw:'💎 Tarik Bunga' };
+      const typeLabel = typeLabels[tx.type] || tx.type;
+      const typeColors = { deposit:'var(--ok)', withdraw:'var(--warn)', coin_buy:'var(--gold)', stock_buy:'var(--ac2)', stock_sell:'var(--ok)', interest_withdraw:'var(--gold)' };
+      const color = typeColors[tx.type] || 'var(--tx)';
       return '<div style="background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:.6rem .8rem;margin-bottom:.5rem">'
         + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem">'
         + '<span style="font-weight:700;font-size:.82rem">' + tx.memberName + '</span>'
         + '<span style="font-size:.68rem;color:var(--tx2)">' + timeStr + '</span>'
         + '</div>'
-        + '<div style="font-size:.78rem;color:' + color + ';margin-bottom:.4rem">' + typeLabel + ' — <b>Rp ' + (tx.amount||0).toLocaleString('id-ID') + '</b>' + (tx.method ? ' via ' + tx.method : '') + '</div>'
+        + '<div style="font-size:.78rem;color:' + color + ';margin-bottom:.4rem">' + typeLabel + (tx.note ? ' — ' + tx.note : (tx.amount ? ' — <b>Rp ' + (tx.amount||0).toLocaleString('id-ID') + '</b>' + (tx.method ? ' via ' + tx.method : '') : '')) + '</div>'
         + '<div style="display:flex;gap:6px">'
         + '<button onclick="approveTx(\'' + tx._uKey + '\',\'' + tx._txKey + '\')" style="flex:1;padding:.45rem;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.35);border-radius:7px;color:var(--ok);font-family:\'DM Sans\',sans-serif;font-size:.78rem;cursor:pointer;font-weight:700">✓ Setujui</button>'
         + '<button onclick="rejectTx(\'' + tx._uKey + '\',\'' + tx._txKey + '\')" style="flex:1;padding:.45rem;background:rgba(232,69,96,.1);border:1px solid rgba(232,69,96,.3);border-radius:7px;color:var(--err);font-family:\'DM Sans\',sans-serif;font-size:.78rem;cursor:pointer">✗ Tolak</button>'
@@ -3561,26 +3580,91 @@ async function approveTx(uKey, txKey) {
     const snap = await fbGet('pendingTransactions/' + uKey + '/' + txKey);
     const tx = snap.val();
     if (!tx) { toast('Transaksi tidak ditemukan','error'); return; }
-    // Apply to bank
-    const bankSnap = await fbGet('bank/' + uKey);
-    let acc = bankSnap.val() || { balance: 0, principal: 0, transactions: [] };
+
     if (tx.type === 'deposit') {
+      const bankSnap = await fbGet('bank/' + uKey);
+      let acc = bankSnap.val() || { balance:0, principal:0, transactions:[] };
       acc.principal = (acc.principal||0) + tx.amount;
       acc.balance = (acc.balance||0) + tx.amount;
       acc.status = 'active';
       if (!acc.interestActivatedAt) acc.interestActivatedAt = Date.now();
+      if (!acc.transactions) acc.transactions = [];
+      acc.transactions.push({ type:'deposit', amount:tx.amount, ts:Date.now(), status:'approved', note:'Deposit '+fmtRp(tx.amount)+' disetujui oleh '+(D.user||'Leader') });
+      await fbSet('bank/'+uKey, acc);
+      toast('Deposit '+fmtRp(tx.amount)+' disetujui ✓','success');
+
     } else if (tx.type === 'withdraw') {
-      if ((acc.balance||0) < tx.amount) { toast('Saldo tidak cukup untuk penarikan ini','error'); return; }
+      const bankSnap = await fbGet('bank/' + uKey);
+      let acc = bankSnap.val() || { balance:0, principal:0, transactions:[] };
+      if ((acc.balance||0) < tx.amount) { toast('Saldo tidak cukup','error'); return; }
       acc.balance = (acc.balance||0) - tx.amount;
       acc.principal = Math.max(0, (acc.principal||0) - tx.amount);
+      if (!acc.transactions) acc.transactions = [];
+      acc.transactions.push({ type:'withdraw', amount:tx.amount, ts:Date.now(), status:'approved', note:'Penarikan disetujui oleh '+(D.user||'Leader') });
+      await fbSet('bank/'+uKey, acc);
+      toast('Penarikan '+fmtRp(tx.amount)+' disetujui ✓','success');
+
+    } else if (tx.type === 'coin_buy') {
+      const bankSnap = await fbGet('bank/' + uKey);
+      let acc = bankSnap.val() || { balance:0, transactions:[] };
+      if ((acc.balance||0) < tx.amount) { toast('Saldo tidak cukup','error'); return; }
+      acc.balance = (acc.balance||0) - tx.amount;
+      if (!acc.transactions) acc.transactions = [];
+      acc.transactions.push({ type:'coin_buy', amount:tx.amount, ts:Date.now(), status:'approved', note:tx.note||'Beli CQ Coin' });
+      await fbSet('bank/'+uKey, acc);
+      // Add coins to user
+      const coinSnap = await fbGet('coins/'+uKey);
+      const curCoin = coinSnap.val() || 0;
+      await fbSet('coins/'+uKey, curCoin + (tx.qty||0));
+      toast('Pembelian '+( tx.qty||0)+' CQ Coin disetujui ✓','success');
+
+    } else if (tx.type === 'stock_buy') {
+      // Deduct coins
+      const coinSnap = await fbGet('coins/'+uKey);
+      const curCoin = coinSnap.val() || 0;
+      if (curCoin < tx.coinCost) { toast('CQ Coin tidak cukup','error'); return; }
+      await fbSet('coins/'+uKey, curCoin - tx.coinCost);
+      // Add to portfolio
+      const portSnap = await fbGet('portfolio/'+uKey);
+      const portfolio = portSnap.val() || {};
+      const existing = portfolio[tx.stockId] || {qty:0, avgBuy:0};
+      const price = _stockPrices[tx.stockId] || 0;
+      const newQty = existing.qty + tx.qty;
+      const newAvg = newQty > 0 ? (existing.avgBuy*existing.qty + price*tx.qty)/newQty : price;
+      portfolio[tx.stockId] = { qty:newQty, avgBuy:newAvg, lastBuy:Date.now() };
+      await fbSet('portfolio/'+uKey, portfolio);
+      toast('Pembelian '+tx.qty+' lot '+tx.stockName+' disetujui ✓','success');
+
+    } else if (tx.type === 'stock_sell') {
+      // Remove from portfolio
+      const portSnap = await fbGet('portfolio/'+uKey);
+      const portfolio = portSnap.val() || {};
+      if (portfolio[tx.stockId]) {
+        portfolio[tx.stockId] = { qty:0, avgBuy:0 };
+        await fbSet('portfolio/'+uKey, portfolio);
+      }
+      // Add coins
+      const coinSnap = await fbGet('coins/'+uKey);
+      const curCoin = coinSnap.val() || 0;
+      await fbSet('coins/'+uKey, curCoin + (tx.coinGain||0));
+      toast('Penjualan '+tx.qty+' lot '+tx.stockName+' disetujui ✓ (+'+tx.coinGain+' CQ)','success');
+
+    } else if (tx.type === 'interest_withdraw') {
+      const bankSnap = await fbGet('bank/'+uKey);
+      let acc = bankSnap.val() || {};
+      const ib = acc.interestBalance || 0;
+      if (ib < 1) { toast('Tidak ada bunga untuk ditarik','warn'); return; }
+      acc.balance = (acc.balance||0) + ib;
+      acc.interestBalance = 0;
+      if (!acc.transactions) acc.transactions = [];
+      acc.transactions.push({ type:'interest', amount:ib, ts:Date.now(), status:'approved', note:'Bunga dicairkan oleh '+(D.user||'Leader') });
+      await fbSet('bank/'+uKey, acc);
+      toast('Pencairan bunga '+fmtRp(ib)+' disetujui ✓','success');
     }
-    if (!acc.transactions) acc.transactions = [];
-    acc.transactions.push({ type: tx.type, amount: tx.amount, ts: Date.now(), status: 'approved', note: 'Disetujui oleh ' + (D.user||'Leader') });
-    await fbSet('bank/' + uKey, acc);
-    await fbSet('pendingTransactions/' + uKey + '/' + txKey + '/status', 'approved');
-    toast((tx.type==='deposit'?'Deposit':'Penarikan') + ' Rp ' + (tx.amount||0).toLocaleString('id-ID') + ' disetujui ✓', 'success');
+
+    await fbSet('pendingTransactions/'+uKey+'/'+txKey+'/status', 'approved');
     loadPendingTransactions();
-  } catch(e) { toast('Gagal menyetujui: ' + e.message,'error'); }
+  } catch(e) { toast('Gagal menyetujui: '+e.message,'error'); console.error(e); }
 }
 
 async function rejectTx(uKey, txKey) {
@@ -3627,11 +3711,14 @@ window.addEventListener('pagehide', _saveSessionNow); // iOS Safari
 async function restoreSession() {
   const raw = localStorage.getItem('c_session_restore');
   if (!raw) return false;
-  // Don't remove immediately — only remove after successful restore
-  // localStorage.removeItem('c_session_restore');
+  let s;
+  try { s = JSON.parse(raw); } catch(e) { localStorage.removeItem('c_session_restore'); return false; }
+  if (!s || !s.user || !s.role) { localStorage.removeItem('c_session_restore'); return false; }
+  // Expire sessions older than 7 days
+  if (s.savedAt && (Date.now() - s.savedAt) > 7*24*3600*1000) {
+    localStorage.removeItem('c_session_restore'); return false;
+  }
   try {
-    const s = JSON.parse(raw);
-    if (!s.user || !s.role) return false;
     if (s.role === 'guest') {
       D.user = s.user; D.email = s.email; D.role = 'guest';
       D.guestJoinDate = s.guestJoinDate;
@@ -3642,11 +3729,15 @@ async function restoreSession() {
       toast('Sesi dipulihkan ✓', 'success');
       return true;
     } else if (s.role === 'member') {
-      // Re-verify dari Firebase
-      await loadData();
+      // Data already loaded by bootApp — just find the member
+      if (!D.members || !D.members.length) await loadData();
       const mem = D.members.find(m => m.email === s.email && m.status === 'active');
-      if (!mem) return false;
-      D.user = mem.name; D.email = mem.email; D.role = 'member';
+      if (!mem) {
+        // Could be data not loaded yet — use saved data as fallback
+        D.user = s.user; D.email = s.email; D.role = 'member';
+      } else {
+        D.user = mem.name; D.email = mem.email; D.role = 'member';
+      }
       updateNav(); showPg('member'); showChatSidebarLink(); showProfileBtn();
       checkChatNotifs(); loadMemberBank(); startBankTicker();
       setTimeout(setupLiveListener, 500);
@@ -3654,7 +3745,7 @@ async function restoreSession() {
       toast('Sesi dipulihkan ✓', 'success');
       return true;
     } else if (s.role === 'admin') {
-      await loadData();
+      if (!D.members || !D.members.length) await loadData();
       D.user = 'Admin'; D.role = 'admin';
       renderAdminPanel(); updateNav(); showPg('admin');
       showChatSidebarLink(); showProfileBtn(); checkChatNotifs();
@@ -3662,7 +3753,7 @@ async function restoreSession() {
       toast('Sesi dipulihkan ✓', 'success');
       return true;
     } else if (s.role === 'leader') {
-      await loadData();
+      if (!D.members || !D.members.length) await loadData();
       D.user = 'Leader'; D.role = 'leader';
       renderLeaderPanel(); updateNav(); showPg('leader');
       showChatSidebarLink(); showProfileBtn(); checkChatNotifs();
@@ -3671,7 +3762,10 @@ async function restoreSession() {
       toast('Sesi dipulihkan ✓', 'success');
       return true;
     }
-  } catch(e) { console.error('restoreSession:', e); }
+  } catch(e) {
+    console.error('restoreSession error:', e);
+    // Don't remove — let them try again on next refresh
+  }
   return false;
 }
 
@@ -5341,17 +5435,23 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
     <div class="panel" id="redeemVoucherPanel">
       <div class="panel-h">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5A2.5 2.5 0 0 1 7.5 2C10 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C14 2 12 7 12 7z"/></svg>
-        <h3>Redeem Voucher</h3>
+        <h3>Voucher Saya</h3>
       </div>
-      <p style="font-size:.78rem;color:var(--tx2);margin-bottom:.7rem">Punya kode voucher dari Leader? Masukkan di sini untuk dapat diskon harga saham.</p>
-      <div style="display:flex;gap:.5rem">
-        <input type="text" id="redeemCodeInput" placeholder="Masukkan kode voucher..."
-          style="flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:.6rem .9rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;text-transform:uppercase"/>
-        <button onclick="redeemVoucher()" style="background:var(--ac2);border:none;border-radius:8px;padding:.6rem 1.1rem;color:#fff;font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:700;cursor:pointer;white-space:nowrap">
-          🎟️ Klaim
-        </button>
+      <p style="font-size:.78rem;color:var(--tx2);margin-bottom:.7rem">Voucher dari Leader untuk kamu — klik tombol untuk langsung menggunakannya.</p>
+      <!-- Vouchers auto-loaded from system -->
+      <div id="myVoucherList" style="margin-bottom:.8rem"></div>
+      <!-- Manual redeem fallback -->
+      <div style="border-top:1px solid var(--b1);padding-top:.7rem;margin-top:.3rem">
+        <div style="font-size:.72rem;color:var(--tx2);margin-bottom:.5rem">Atau masukkan kode manual:</div>
+        <div style="display:flex;gap:.5rem">
+          <input type="text" id="redeemCodeInput" placeholder="Kode voucher..."
+            style="flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:.6rem .9rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;text-transform:uppercase"/>
+          <button onclick="redeemVoucher()" style="background:var(--ac2);border:none;border-radius:8px;padding:.6rem 1.1rem;color:#fff;font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:700;cursor:pointer;white-space:nowrap">
+            🎟️ Klaim
+          </button>
+        </div>
+        <div id="redeemStatus" style="font-size:.78rem;margin-top:.5rem"></div>
       </div>
-      <div id="redeemStatus" style="font-size:.78rem;margin-top:.5rem"></div>
       <!-- Active vouchers list -->
       <div id="activeVouchersList" style="margin-top:.7rem"></div>
     </div>
@@ -8366,6 +8466,56 @@ async function deleteVoucher(code) {
   await fbRemove('vouchers/'+code).catch(()=>{});
   toast('Voucher '+code+' dihapus','warn');
   loadVoucherList();
+}
+
+async function loadMyVouchers() {
+  // Load vouchers from Firebase and show ones targeted to this user or all-users
+  const el = document.getElementById('myVoucherList');
+  if (!el) return;
+  const myEmail = D.email || '';
+  try {
+    const snap = await fbGet('vouchers');
+    const allVouchers = snap.val();
+    if (!allVouchers) { el.innerHTML = '<div style="color:var(--tx2);font-size:.75rem;text-align:center;padding:.5rem">Tidak ada voucher untukmu saat ini.</div>'; return; }
+    const now = Date.now();
+    const mine = Object.entries(allVouchers).filter(([code, v]) => {
+      if (v.expiryTs < now) return false; // expired
+      if (!v.targetEmail) return true; // public voucher
+      return v.targetEmail === myEmail; // targeted to me
+    });
+    if (!mine.length) { el.innerHTML = '<div style="color:var(--tx2);font-size:.75rem;text-align:center;padding:.5rem">Tidak ada voucher untukmu saat ini.</div>'; return; }
+    el.innerHTML = mine.map(([code, v]) => {
+      const remain = v.expiryTs - now;
+      const hrs = Math.floor(remain/3600000);
+      const mins = Math.floor((remain%3600000)/60000);
+      const timeLeft = hrs > 24 ? Math.floor(hrs/24)+'h ' + (hrs%24)+'j' : hrs+'j '+mins+'m';
+      const isPublic = !v.targetEmail;
+      return '<div style="background:linear-gradient(135deg,rgba(108,78,242,.12),rgba(108,78,242,.05));border:1px solid rgba(108,78,242,.3);border-radius:10px;padding:.75rem .9rem;margin-bottom:.6rem">'
+        + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem">'
+        + '<div style="font-weight:700;font-size:.85rem">' + v.title + '</div>'
+        + (isPublic ? '<span style="font-size:.65rem;background:rgba(34,197,94,.15);color:var(--ok);border-radius:4px;padding:1px 6px">Publik</span>'
+                    : '<span style="font-size:.65rem;background:rgba(108,78,242,.15);color:var(--ac2);border-radius:4px;padding:1px 6px">Khusus kamu</span>')
+        + '</div>'
+        + (v.desc ? '<div style="font-size:.72rem;color:var(--tx2);margin-bottom:.4rem">' + v.desc + '</div>' : '')
+        + '<div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">'
+        + '<span style="background:rgba(108,78,242,.15);color:var(--ac2);border-radius:5px;padding:2px 8px;font-weight:800;font-size:.82rem;letter-spacing:.5px">' + code + '</span>'
+        + '<span style="color:var(--ok);font-weight:700;font-size:.85rem">Diskon ' + v.discount + '%</span>'
+        + '<span style="color:var(--tx2);font-size:.72rem;margin-left:auto">⏱ ' + timeLeft + '</span>'
+        + '</div>'
+        + '<button onclick="applyVoucherDirect(this)" data-code="' + code + '" data-discount="' + v.discount + '" style="margin-top:.5rem;width:100%;padding:.45rem;background:rgba(108,78,242,.2);border:1px solid rgba(108,78,242,.4);border-radius:7px;color:var(--ac2);font-size:.78rem;font-weight:700;cursor:pointer">🎟️ Gunakan Voucher Ini</button>'
+        + '</div>';
+    }).join('');
+  } catch(e) { el.innerHTML = ''; }
+}
+
+function applyVoucherDirect(btn) {
+  const code = btn.dataset.code;
+  const discount = parseFloat(btn.dataset.discount) || 0;
+  _activeVoucherDiscount = discount;
+  loadActiveVouchers();
+  toast('Voucher aktif! Diskon ' + discount + '% untuk pembelian saham berikutnya 🎟️','success');
+  // Scroll to stock list
+  document.querySelector('#page-stocks .panel')?.scrollIntoView({ behavior:'smooth' });
 }
 
 async function redeemVoucher() {
