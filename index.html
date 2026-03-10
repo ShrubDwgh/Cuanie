@@ -1102,7 +1102,7 @@ canvas{-webkit-user-select:none;user-select:none}
 .mem-prof-info .row .val{color:var(--tx);font-weight:500;text-align:right}
 .mem-prof-info .bio-row{flex-direction:column;align-items:flex-start}
 .mem-prof-info .bio-row .val{text-align:left;color:var(--tx2);line-height:1.6;font-size:.83rem;font-weight:400}
-.mem-prof-actions{width:100%;display:flex;gap:.6rem;margin-top:.2rem}
+.mem-prof-actions{width:100%;display:flex;flex-direction:column;align-items:center;gap:.5rem;margin-top:.3rem}
 .mem-prof-pm-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:var(--ac);border:none;color:#fff;padding:.65rem 1rem;border-radius:9px;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:background .2s}
 .mem-prof-pm-btn:hover{background:#7b60f4}
 .mem-prof-posts{width:100%;margin-top:.5rem}
@@ -1921,11 +1921,26 @@ canvas{-webkit-user-select:none;user-select:none}
       </div>
       <div class="tgl-row" style="margin-top:.6rem">
         <div>
+          <div class="tgl-lbl">Akses Tamu</div>
+          <div class="tgl-sub">Izinkan pengguna baru masuk sebagai tamu (tutup untuk membatasi)</div>
+        </div>
+        <label class="tgl"><input type="checkbox" id="leaderGuestAccessTgl" onchange="setGuestAccessOpen(this.checked)"><span class="tgl-tr"></span></label>
+      </div>
+      <div class="tgl-row" style="margin-top:.6rem">
+        <div>
           <div class="tgl-lbl">Form Tamu</div>
           <div class="tgl-sub">Aktifkan formulir wajib bagi tamu Google sebelum masuk</div>
         </div>
         <label class="tgl"><input type="checkbox" id="leaderGuestFormTgl" onchange="setGuestFormEnabled(this.checked)"><span class="tgl-tr"></span></label>
       </div>
+    </div>
+    <!-- MEMBER RESTORE LOG -->
+    <div class="panel">
+      <div class="panel-h">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        <h3>Log Keluar / Pulihkan Member</h3>
+      </div>
+      <div id="memberRestoreLog" style="font-size:.82rem;color:var(--tx2)">Memuat log...</div>
     </div>
     <!-- GUEST FORM BUILDER -->
     <div class="panel" id="guestFormBuilderPanel" style="display:none">
@@ -1982,6 +1997,36 @@ canvas{-webkit-user-select:none;user-select:none}
       <button class="btn-p" onclick="leaderTopupMember()" style="width:100%;font-size:.84rem;padding:.6rem">
         🎁 Kirim Saldo
       </button>
+    </div>
+
+    <!-- VOUCHER PANEL -->
+    <div class="panel">
+      <div class="panel-h">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5A2.5 2.5 0 0 1 7.5 2C10 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C14 2 12 7 12 7z"/></svg>
+        <h3>Voucher Diskon Saham</h3>
+      </div>
+      <p style="font-size:.78rem;color:var(--tx2);margin-bottom:.9rem">Buat voucher kode redeem untuk diskon harga beli saham. Member/Tamu bisa klaim di halaman Saham.</p>
+      <div class="form-q"><label>Judul Voucher</label>
+        <input type="text" id="vcTitle" placeholder="Contoh: Promo Saham Minggu Ini" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;box-sizing:border-box"/>
+      </div>
+      <div class="form-q"><label>Deskripsi</label>
+        <input type="text" id="vcDesc" placeholder="Contoh: Diskon 20% untuk semua saham" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;box-sizing:border-box"/>
+      </div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <div class="form-q" style="flex:1;min-width:120px"><label>Kode Redeem</label>
+          <input type="text" id="vcCode" placeholder="Contoh: CUANIE20" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;box-sizing:border-box;text-transform:uppercase"/>
+        </div>
+        <div class="form-q" style="flex:1;min-width:120px"><label>Diskon (%)</label>
+          <input type="number" id="vcDiscount" placeholder="Contoh: 20" min="1" max="90" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;box-sizing:border-box"/>
+        </div>
+      </div>
+      <div class="form-q"><label>Masa Aktif</label>
+        <input type="datetime-local" id="vcExpiry" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.83rem;outline:none;box-sizing:border-box"/>
+      </div>
+      <button class="btn-p" onclick="createVoucher()" style="width:100%;font-size:.84rem;padding:.6rem;margin-bottom:.7rem">
+        🎟️ Buat Voucher
+      </button>
+      <div id="vcList" style="font-size:.8rem;color:var(--tx2)">Memuat voucher aktif...</div>
     </div>
 
     <!-- KTP GENERATOR PANEL -->
@@ -2065,34 +2110,30 @@ canvas{-webkit-user-select:none;user-select:none}
           onkeydown="chatKeyDown(event)" oninput="chatInputChange(this)"></textarea>
         <!-- Actions row below textarea -->
         <div class="chat-input-actions">
-          <!-- Gambar -->
           <button class="chat-input-btn chat-img-btn" onclick="triggerImgUpload()" title="Gambar">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
           </button>
-          <!-- Emoji -->
-          <button class="chat-input-btn chat-img-btn" onclick="toggleEmojiPicker()" title="Emoji" id="emojiBtn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-          </button>
-          <!-- Upload audio — sebelah kiri stiker -->
           <button class="chat-input-btn chat-img-btn" onclick="triggerAudioUpload()" title="Upload audio">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
           </button>
-          <!-- Stiker -->
           <button class="chat-input-btn chat-img-btn" onclick="toggleStickerPanel()" title="Stiker" id="stickerBtn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
           </button>
-          <!-- Rekam suara — sebelah kiri tombol kirim -->
+          <button class="chat-input-btn chat-img-btn" onclick="toggleEmojiPicker()" title="Emoji" id="emojiBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </button>
           <button class="chat-audio-rec-btn" id="chatAudioRecBtn"
             title="Tahan untuk rekam suara"
+            style="touch-action:none;position:relative;z-index:5"
             onmousedown="startAudioRecord(event)"
             onmouseup="stopAudioRecord(event)"
             onmouseleave="stopAudioRecord(event)"
-            ontouchstart="startAudioRecord(event)"
-            ontouchend="stopAudioRecord(event)">
+            ontouchstart="event.preventDefault();startAudioRecord(event)"
+            ontouchend="event.preventDefault();stopAudioRecord(event)"
+            ontouchcancel="stopAudioRecord(event)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
             <span class="rec-timer" id="recTimer" style="display:none"></span>
           </button>
-          <!-- Kirim -->
           <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMsg()" title="Kirim" style="width:36px;height:36px;border-radius:50%;background:var(--ac2);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
           </button>
@@ -3711,6 +3752,8 @@ function renderLeaderPanel() {
   // Load guest form toggle state
   const gfTgl = document.getElementById('leaderGuestFormTgl');
   if (gfTgl) gfTgl.checked = !!D.guestFormEnabled;
+  const gaTgl = document.getElementById('leaderGuestAccessTgl');
+  if (gaTgl) gaTgl.checked = D.guestAccessOpen !== false;
   const gfPanel = document.getElementById('guestFormBuilderPanel');
   if (gfPanel) gfPanel.style.display = D.guestFormEnabled ? 'block' : 'none';
   if (D.guestFormEnabled) loadGuestFormBlocks();
@@ -4881,13 +4924,13 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
   <div class="chat-page-wrap">
     <div class="chat-wrap">
       <div class="chat-header">
-        <div style="display:flex;align-items:center;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px;overflow:visible;flex:1;min-width:0">
           <button onclick="closeDM()" style="background:none;border:none;color:var(--tx2);cursor:pointer;display:flex;align-items:center;gap:5px;font-size:.82rem;padding:0">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15,18 9,12 15,6"/></svg>
           </button>
           <div class="dm-av" id="dmHeaderAv"></div>
           <div>
-            <div class="chat-header h3" id="dmHeaderName" style="font-family:Syne,sans-serif;font-size:.9rem;font-weight:700"></div>
+            <div class="chat-header h3" id="dmHeaderName" style="font-family:Syne,sans-serif;font-size:.9rem;font-weight:700;white-space:nowrap;overflow:visible;max-width:200px;text-overflow:ellipsis"></div>
             <div style="font-size:.67rem;color:var(--tx2)" id="dmHeaderSub">Pesan Pribadi</div>
           </div>
         </div>
@@ -4906,34 +4949,36 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
           <div class="emoji-search"><input type="text" placeholder="Cari emoji..." oninput="filterDMEmoji(this.value)" id="dmEmojiSearch"/></div>
           <div class="emoji-grid" id="dmEmojiGrid"></div>
         </div>
+        <!-- DM stiker panel -->
+        <div class="sticker-panel" id="dmStickerPanel" style="display:none"></div>
         <div class="chat-input-row">
           <textarea class="chat-input-box" id="dmInput" placeholder="Pesan ke..." rows="1"
             onkeydown="dmKeyDown(event)" oninput="autoResizeInput(this)"></textarea>
           <div class="chat-input-actions">
-            <!-- Gambar -->
             <button class="chat-input-btn chat-img-btn" onclick="triggerDMImgUpload()" title="Gambar">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
             </button>
-            <!-- Upload audio -->
             <button class="chat-input-btn chat-img-btn" onclick="triggerDMAudioUpload()" title="Upload audio">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
             </button>
-            <!-- Emoji -->
+            <button class="chat-input-btn chat-img-btn" onclick="toggleDMStickerPanel()" title="Stiker" id="dmStickerBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            </button>
             <button class="chat-input-btn chat-img-btn" onclick="toggleDMEmojiPicker()" title="Emoji" id="dmEmojiBtn">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
             </button>
-            <!-- Rekam -->
             <button class="chat-audio-rec-btn" id="dmAudioRecBtn"
               title="Tahan untuk rekam"
+              style="touch-action:none;position:relative;z-index:5"
               onmousedown="startDMAudioRecord(event)"
               onmouseup="stopDMAudioRecord(event)"
               onmouseleave="stopDMAudioRecord(event)"
-              ontouchstart="startDMAudioRecord(event)"
-              ontouchend="stopDMAudioRecord(event)">
+              ontouchstart="event.preventDefault();startDMAudioRecord(event)"
+              ontouchend="event.preventDefault();stopDMAudioRecord(event)"
+              ontouchcancel="stopDMAudioRecord(event)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
               <span class="rec-timer" id="dmRecTimer" style="display:none"></span>
             </button>
-            <!-- Kirim -->
             <button class="chat-send-btn" onclick="sendDM()" title="Kirim" style="width:36px;height:36px;border-radius:50%;background:var(--ac2);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
             </button>
@@ -5143,6 +5188,25 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
       <div id="portfolioList"></div>
     </div>
 
+    <!-- REDEEM VOUCHER -->
+    <div class="panel" id="redeemVoucherPanel">
+      <div class="panel-h">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5A2.5 2.5 0 0 1 7.5 2C10 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C14 2 12 7 12 7z"/></svg>
+        <h3>Redeem Voucher</h3>
+      </div>
+      <p style="font-size:.78rem;color:var(--tx2);margin-bottom:.7rem">Punya kode voucher dari Leader? Masukkan di sini untuk dapat diskon harga saham.</p>
+      <div style="display:flex;gap:.5rem">
+        <input type="text" id="redeemCodeInput" placeholder="Masukkan kode voucher..."
+          style="flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:.6rem .9rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;text-transform:uppercase"/>
+        <button onclick="redeemVoucher()" style="background:var(--ac2);border:none;border-radius:8px;padding:.6rem 1.1rem;color:#fff;font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:700;cursor:pointer;white-space:nowrap">
+          🎟️ Klaim
+        </button>
+      </div>
+      <div id="redeemStatus" style="font-size:.78rem;margin-top:.5rem"></div>
+      <!-- Active vouchers list -->
+      <div id="activeVouchersList" style="margin-top:.7rem"></div>
+    </div>
+
     <!-- Daftar saham -->
     <div class="panel">
       <div class="panel-h">
@@ -5337,6 +5401,10 @@ async function loadProfilesFromFB() {
 }
 function saveProfiles() {
   fbSet('profiles', PROFILES).catch(()=>localStorage.setItem('c_profiles', JSON.stringify(PROFILES)));
+}
+function saveProfileToFirebase(email) {
+  const key = email.replace(/[.#$\/\[\]]/g,'_');
+  fbSet('profiles/' + key, PROFILES[key] || PROFILES[email] || {}).catch(()=>{});
 }
 function getProfile(key) {
   if (!key) return {};
@@ -5861,6 +5929,7 @@ function ctToggleVideo(btn) {
 
 // ══ AUDIO PLAYER ══
 let _ctPlayingId = null;
+let _ctLastPausedByScroll = null; // track which card was paused due to scroll
 
 function ctToggleAudio(id) {
   const audio = document.getElementById('ctAudio_'+id);
@@ -5927,29 +5996,48 @@ function setupCTAudioObserver() {
       const card = entry.target;
       const audioId = card.dataset.audioId;
       if (!audioId) return;
-      const audio = document.getElementById('ctAudio_' + audioId);
-      if (!audio) return;
       if (!entry.isIntersecting) {
-        // Card scrolled out — pause if playing
-        if (!audio.paused) {
-          audio.pause();
-          ctSetAudioStopped(audioId);
-          if (_ctPlayingId === audioId) _ctPlayingId = null;
+        // Card scrolled out — pause if THIS card is playing
+        if (_ctPlayingId === audioId) {
+          const audio = document.getElementById('ctAudio_' + audioId);
+          if (audio && !audio.paused) {
+            window._ctSavedTime = window._ctSavedTime || {};
+            window._ctSavedTime[audioId] = audio.currentTime;
+            audio.pause();
+            ctSetAudioStopped(audioId);
+            _ctPlayingId = null;
+            _ctLastPausedByScroll = audioId; // remember this was paused by scroll
+          }
         }
       } else {
-        // Card visible again — resume if it was the playing one
-        if (_ctPlayingId === audioId && audio.paused) {
-          audio.play().catch(()=>{});
-          const btn = document.getElementById('ctAudioBtn_'+audioId);
-          const wave = document.getElementById('ctMusicWave_'+audioId);
-          if (btn) btn.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="var(--ac2)"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
-          if (wave) wave.style.display = 'inline-flex';
+        // Card scrolled back in — resume if it was paused by scroll
+        if (_ctLastPausedByScroll === audioId) {
+          _ctLastPausedByScroll = null;
+          const audio = document.getElementById('ctAudio_' + audioId);
+          const doPlay = (a) => {
+            const t = (window._ctSavedTime || {})[audioId] || 0;
+            if (t > 0) try { a.currentTime = t; } catch(e){}
+            a.play().then(() => {
+              _ctPlayingId = audioId;
+              const btn = document.getElementById('ctAudioBtn_'+audioId);
+              const wave = document.getElementById('ctMusicWave_'+audioId);
+              if (btn) btn.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="var(--ac2)"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+              if (wave) wave.style.display = 'inline-flex';
+            }).catch(() => {});
+          };
+          if (audio) {
+            doPlay(audio);
+          } else {
+            // Audio element not in DOM yet (re-render) — retry after short delay
+            setTimeout(() => {
+              const a2 = document.getElementById('ctAudio_' + audioId);
+              if (a2) doPlay(a2);
+            }, 100);
+          }
         }
       }
     });
-  }, { threshold: 0.2 }); // 20% visible = counts as visible
-
-  // Observe all cards with audio
+  }, { threshold: 0.15 });
   document.querySelectorAll('.ct-card[data-audio-id]').forEach(card => {
     _ctAudioObserver.observe(card);
   });
@@ -7022,7 +7110,9 @@ function renderDMChat() {
     const safeT = (m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
     // Build body
     let body = '';
-    if (safeT) body += '<div class="dm-bubble ' + (isMine?'mine':'theirs') + '">' + safeT + '</div>';
+    if (m.sticker) {
+      body += '<img src="' + m.sticker + '" style="max-width:100px;border-radius:8px" />';
+    } else if (safeT) body += '<div class="dm-bubble ' + (isMine?'mine':'theirs') + '">' + safeT + '</div>';
     if (m.images && m.images.length) {
       body += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;max-width:220px">'
         + m.images.map(src => '<img src="'+src+'" style="max-width:100px;border-radius:8px;cursor:pointer" onclick="showFullImg(this.src)"/>').join('')
@@ -7167,6 +7257,36 @@ function _stopDMRecTimer() {
   const el = document.getElementById('dmRecTimer');
   if (el) el.style.display = 'none';
   _dmRecSeconds = 0;
+}
+
+function toggleDMStickerPanel() {
+  const panel = document.getElementById('dmStickerPanel');
+  if (!panel) return;
+  const showing = panel.style.display !== 'none';
+  panel.style.display = showing ? 'none' : 'block';
+  if (!showing) {
+    // Populate with same stickers as main chat
+    const mainPanel = document.getElementById('stickerPanel');
+    if (mainPanel) {
+      panel.innerHTML = mainPanel.innerHTML;
+      // Re-wire onclick to use sendDMSticker
+      panel.querySelectorAll('[onclick]').forEach(el => {
+        const orig = el.getAttribute('onclick');
+        if (orig && orig.includes('sendSticker')) {
+          el.setAttribute('onclick', orig.replace('sendSticker(', 'sendDMSticker('));
+        }
+      });
+    }
+  }
+}
+
+function sendDMSticker(url) {
+  if (!DM_STATE.roomKey) return;
+  const msg = { ts: Date.now(), name: D.user, email: D.email||null, role: D.role, sticker: url };
+  DM_STATE.msgs.push(msg);
+  renderDMChat();
+  FB.push(FB.ref(FB.db, 'dm/' + DM_STATE.roomKey), msg).catch(()=>{});
+  document.getElementById('dmStickerPanel').style.display = 'none';
 }
 
 function toggleDMEmojiPicker() {
@@ -7663,6 +7783,11 @@ function applyGoogleAsMember(user) {
     return;
   }
   D.user = nm; D.email = em; D.role = 'guest';
+  // Save Google photo for member-pending user
+  if (user.picture && em) {
+    const pk = getProfile(em);
+    if (!pk.avatar) { pk.avatar = user.picture; saveProfileToFirebase(em); }
+  }
   updateNav();
   const gnEl = document.getElementById('guestName'); if (gnEl) gnEl.textContent = nm;
   renderForm(); showPg('form');
@@ -7670,8 +7795,13 @@ function applyGoogleAsMember(user) {
 
 // applyGoogleAsGuest — dipanggil setelah Google auth jika pilih "guest"
 function applyGoogleAsGuest(user) {
-  const { shortName: nm, email: em, name: fullName } = user;
+  const { shortName: nm, email: em, name: fullName, picture } = user;
   D.user = nm; D.email = em; D.role = 'guest'; D.guestName = fullName;
+  // Save Google profile photo
+  if (picture && em) {
+    const pk = getProfile(em);
+    if (!pk.avatar) { pk.avatar = picture; saveProfileToFirebase(em); }
+  }
   // Simpan/ambil tanggal bergabung dari localStorage
   const joinKey = 'c_guest_join_' + em.replace(/[^a-z0-9]/gi,'_');
   if (!localStorage.getItem(joinKey)) localStorage.setItem(joinKey, new Date().toISOString());
@@ -7976,6 +8106,210 @@ async function setGuestFormEnabled(v) {
   await fbSet('settings/guestFormEnabled', v).catch(()=>localStorage.setItem('c_guestFormEnabled', JSON.stringify(v)));
   if (v) loadGuestFormBlocks();
   toast(v ? 'Form tamu diaktifkan' : 'Form tamu dinonaktifkan', v ? 'success' : 'warn');
+}
+
+async function setGuestAccessOpen(v) {
+  D.guestAccessOpen = v;
+  await fbSet('settings/guestAccessOpen', v).catch(()=>localStorage.setItem('c_guestAccess', JSON.stringify(v)));
+  toast(v ? 'Akses tamu dibuka ✓' : 'Akses tamu ditutup — tamu baru tidak bisa masuk', v ? 'success' : 'warn');
+}
+
+// ════ MEMBER RESTORE LOG ════
+async function loadMemberRestoreLog() {
+  const el = document.getElementById('memberRestoreLog');
+  if (!el) return;
+  try {
+    const snap = await fbGet('memberLogs');
+    const logs = snap.val();
+    if (!logs) { el.innerHTML = '<div style="color:var(--tx2);font-size:.78rem">Belum ada log.</div>'; return; }
+    const entries = Object.entries(logs)
+      .map(([k, v]) => v)
+      .sort((a, b) => (b.ts||0) - (a.ts||0));
+    el.innerHTML = entries.map(log => {
+      const d = new Date(log.ts||0);
+      const timeStr = d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) + ' ' + d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+      const isKicked = log.action === 'kicked';
+      const color = isKicked ? 'var(--err)' : 'var(--ok)';
+      const icon = isKicked ? '🚫' : '✅';
+      // Find member index for restore button
+      const mIdx = D.members ? D.members.findIndex(m => m.email === log.email && m.status === 'kicked') : -1;
+      const restoreBtn = isKicked && mIdx >= 0
+        ? `<button onclick="restoreMember(${mIdx})" style="font-size:.7rem;padding:2px 8px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);border-radius:5px;color:var(--ok);cursor:pointer">Pulihkan</button>`
+        : '';
+      return `<div style="display:flex;align-items:center;gap:8px;padding:.45rem 0;border-bottom:1px solid var(--b1)">
+        <span style="font-size:1rem">${icon}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:.8rem;color:${color}">${log.name||log.email||'?'}</div>
+          <div style="font-size:.7rem;color:var(--tx2)">${isKicked ? 'Dikeluarkan' : 'Dipulihkan'} oleh ${log.by||'?'} · ${timeStr}</div>
+        </div>
+        ${restoreBtn}
+      </div>`;
+    }).join('');
+  } catch(e) { el.innerHTML = '<div style="color:var(--err);font-size:.78rem">Gagal memuat log.</div>'; }
+}
+
+// ════ VOUCHER SYSTEM ════
+let _activeVoucherDiscount = 0; // % discount from redeemed voucher this session
+
+async function createVoucher() {
+  const title = document.getElementById('vcTitle')?.value.trim();
+  const desc = document.getElementById('vcDesc')?.value.trim();
+  const code = document.getElementById('vcCode')?.value.trim().toUpperCase();
+  const discount = parseInt(document.getElementById('vcDiscount')?.value||'0');
+  const expiry = document.getElementById('vcExpiry')?.value;
+  if (!title||!code||!discount||!expiry) { toast('Lengkapi semua field voucher','warn'); return; }
+  if (discount < 1 || discount > 90) { toast('Diskon harus 1-90%','warn'); return; }
+  const expiryTs = new Date(expiry).getTime();
+  if (expiryTs <= Date.now()) { toast('Waktu masa aktif harus di masa depan','warn'); return; }
+  const voucher = { title, desc, code, discount, expiryTs, createdBy: D.user||'?', createdAt: Date.now() };
+  try {
+    await fbSet('vouchers/' + code, voucher);
+    toast('Voucher "'+code+'" berhasil dibuat! 🎟️','success');
+    document.getElementById('vcTitle').value='';document.getElementById('vcDesc').value='';
+    document.getElementById('vcCode').value='';document.getElementById('vcDiscount').value='';document.getElementById('vcExpiry').value='';
+    loadVoucherList();
+  } catch(e) { toast('Gagal membuat voucher','error'); }
+}
+
+async function loadVoucherList() {
+  const el = document.getElementById('vcList');
+  if (!el) return;
+  try {
+    const snap = await fbGet('vouchers');
+    const vouchers = snap.val();
+    if (!vouchers) { el.innerHTML = '<div style="color:var(--tx2);font-size:.75rem">Belum ada voucher.</div>'; return; }
+    const now = Date.now();
+    // Auto-delete expired
+    for (const [code, v] of Object.entries(vouchers)) {
+      if (v.expiryTs && v.expiryTs < now) fbRemove('vouchers/'+code).catch(()=>{});
+    }
+    const active = Object.entries(vouchers).filter(([,v]) => v.expiryTs > now);
+    if (!active.length) { el.innerHTML = '<div style="color:var(--tx2);font-size:.75rem">Tidak ada voucher aktif.</div>'; return; }
+    el.innerHTML = active.map(([code, v]) => {
+      const remain = v.expiryTs - now;
+      const hrs = Math.floor(remain/3600000);
+      const mins = Math.floor((remain%3600000)/60000);
+      const timeLeft = hrs > 24 ? Math.floor(hrs/24)+'h' : hrs+'j '+mins+'m';
+      return `<div style="background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:.6rem .8rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.6rem">
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:.82rem">${v.title}</div>
+          <div style="font-size:.72rem;color:var(--tx2)">${v.desc||''}</div>
+          <div style="font-size:.7rem;margin-top:2px">
+            <span style="background:rgba(108,78,242,.15);color:var(--ac2);border-radius:4px;padding:1px 6px;font-weight:700">${code}</span>
+            <span style="color:var(--ok);margin-left:5px">-${v.discount}%</span>
+            <span style="color:var(--tx2);margin-left:5px">⏱ ${timeLeft}</span>
+          </div>
+        </div>
+        <button onclick="deleteVoucher('${code}')" style="background:none;border:none;color:var(--err);cursor:pointer;padding:4px;font-size:.75rem">Hapus</button>
+      </div>`;
+    }).join('');
+  } catch(e) { el.innerHTML = '<div style="color:var(--err);font-size:.75rem">Gagal memuat.</div>'; }
+}
+
+async function deleteVoucher(code) {
+  await fbRemove('vouchers/'+code).catch(()=>{});
+  toast('Voucher '+code+' dihapus','warn');
+  loadVoucherList();
+}
+
+async function redeemVoucher() {
+  const inp = document.getElementById('redeemCodeInput');
+  const statusEl = document.getElementById('redeemStatus');
+  const code = inp?.value.trim().toUpperCase();
+  if (!code) { if (statusEl) statusEl.innerHTML = '<span style="color:var(--err)">Masukkan kode voucher dulu</span>'; return; }
+  try {
+    const snap = await fbGet('vouchers/'+code);
+    const v = snap.val();
+    if (!v) { if (statusEl) statusEl.innerHTML = '<span style="color:var(--err)">Kode tidak valid atau kadaluarsa ❌</span>'; return; }
+    if (v.expiryTs < Date.now()) {
+      fbRemove('vouchers/'+code).catch(()=>{});
+      if (statusEl) statusEl.innerHTML = '<span style="color:var(--err)">Voucher sudah kadaluarsa ❌</span>';
+      return;
+    }
+    _activeVoucherDiscount = v.discount;
+    if (inp) inp.value = '';
+    if (statusEl) statusEl.innerHTML = `<span style="color:var(--ok)">✅ Voucher aktif! Diskon <b>${v.discount}%</b> untuk pembelian saham berikutnya.</span>`;
+    loadActiveVouchers();
+    toast('Voucher "'+v.title+'" diklaim! Diskon '+v.discount+'%','success');
+  } catch(e) { if (statusEl) statusEl.innerHTML = '<span style="color:var(--err)">Gagal memuat voucher</span>'; }
+}
+
+async function loadActiveVouchers() {
+  const el = document.getElementById('activeVouchersList');
+  if (!el) return;
+  if (_activeVoucherDiscount > 0) {
+    el.innerHTML = `<div style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:.5rem .8rem;font-size:.78rem;color:var(--ok)">
+      🎟️ Voucher aktif: Diskon <b>${_activeVoucherDiscount}%</b> berlaku untuk pembelian saham berikutnya
+    </div>`;
+  } else {
+    el.innerHTML = '';
+  }
+}
+
+// Voucher cleanup — check expired every 5 mins
+setInterval(async () => {
+  try {
+    const snap = await fbGet('vouchers');
+    const vouchers = snap.val();
+    if (!vouchers) return;
+    const now = Date.now();
+    for (const [code, v] of Object.entries(vouchers)) {
+      if (v.expiryTs && v.expiryTs < now) fbRemove('vouchers/'+code).catch(()=>{});
+    }
+  } catch(e){}
+}, 300000);
+
+// ════ SCREEN SHARE LIVE (game only) ════
+let _liveStream = null;
+let _liveVideoEl = null;
+
+async function requestLive() {
+  if (!D.user || !D.role || D.role === 'guest') { toast('Hanya member yang bisa live', 'warn'); return; }
+  _doRequestLive();
+}
+
+async function _doRequestLive() {
+  try {
+    // Screen share (for game streaming)
+    const stream = await navigator.mediaDevices.getDisplayMedia({
+      video: { cursor: 'always' },
+      audio: true
+    });
+    _liveStream = stream;
+    _showLiveModal(stream);
+    stream.getVideoTracks()[0].addEventListener('ended', () => stopLive());
+  } catch(err) {
+    if (err.name === 'NotAllowedError') toast('Izin berbagi layar ditolak','warn');
+    else toast('Gagal memulai live: '+err.message,'error');
+  }
+}
+
+function _showLiveModal(stream) {
+  const existing = document.getElementById('liveModal');
+  if (existing) existing.remove();
+  const m = document.createElement('div');
+  m.id = 'liveModal';
+  m.style.cssText = 'position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.9);display:flex;flex-direction:column;align-items:center;justify-content:center';
+  m.innerHTML = `<div style="color:#fff;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:.8rem">🔴 LIVE — Berbagi Layar</div>
+    <video id="livePreviewVideo" autoplay muted style="max-width:90vw;max-height:60vh;border-radius:10px;border:2px solid #e8546a"></video>
+    <div style="color:rgba(255,255,255,.6);font-size:.75rem;margin:.6rem 0">Penonton lain akan melihat notifikasi live kamu</div>
+    <button onclick="stopLive()" style="background:#e8546a;border:none;border-radius:9px;padding:.65rem 2rem;color:#fff;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;margin-top:.5rem">■ Stop Live</button>`;
+  document.body.appendChild(m);
+  const vid = document.getElementById('livePreviewVideo');
+  if (vid && stream) vid.srcObject = stream;
+  _startLiveAnnounce();
+}
+
+function stopLive() {
+  if (_liveStream) {
+    _liveStream.getTracks().forEach(t => t.stop());
+    _liveStream = null;
+  }
+  document.getElementById('liveModal')?.remove();
+  document.getElementById('liveBanner')?.remove();
+  const myKey = (D.email||D.user||'').replace(/[.#$\/\[\]]/g,'_');
+  fbSet('liveSession/'+myKey, { active: false }).catch(()=>{});
+  toast('Live dihentikan','warn');
 }
 
 let _guestFormBlocks = [];
@@ -8318,81 +8652,9 @@ function cancelGuestForm() {
   toast('Pendaftaran dibatalkan', 'warn');
 }
 
-// ══ LIVE REQUEST ══
-async function requestLive() {
-  if (!D.ciuntikOpen) { toast('Upload dinonaktifkan oleh Leader', 'warn'); return; }
-  // Request camera + mic permissions
-  const modal = document.getElementById('livePermModal');
-  if (modal) { modal.style.display = 'flex'; return; }
-  _doRequestLive();
-}
 
-async function _doRequestLive() {
-  document.getElementById('livePermModal')?.remove();
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    // Got permission — show live modal
-    stream.getTracks().forEach(t => t.stop()); // stop preview tracks
-    _showLiveModal();
-  } catch(e) {
-    if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
-      toast('Izin kamera/mikrofon ditolak. Aktifkan di pengaturan browser.', 'error');
-    } else {
-      toast('Perangkat kamera/mikrofon tidak tersedia', 'error');
-    }
-  }
-}
+// ══ LIVE — handled by screen share above ══
 
-function _showLiveModal() {
-  // Remove any existing
-  document.getElementById('liveSessionModal')?.remove();
-  const m = document.createElement('div');
-  m.id = 'liveSessionModal';
-  m.style.cssText = 'position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:1rem';
-  m.innerHTML = `
-    <div style="background:var(--s1);border:1px solid var(--b2);border-radius:16px;padding:1.5rem;max-width:340px;width:100%;text-align:center">
-      <div style="width:56px;height:56px;background:linear-gradient(135deg,#e94560,#e8152a);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .8rem">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polygon points="23,7 16,12 23,17 23,7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-      </div>
-      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;margin-bottom:.4rem">Mulai Live</div>
-      <p style="font-size:.82rem;color:var(--tx2);margin-bottom:1.1rem">Fitur Live memerlukan server streaming. Untuk sekarang, Live akan mengirim notifikasi ke semua member bahwa kamu sedang live, dan membuka sesi live di halaman CiunTik.</p>
-      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:.7rem;margin-bottom:1rem;font-size:.78rem;color:var(--tx2)">
-        <strong style="color:var(--tx)">Catatan:</strong> Fitur live streaming penuh (WebRTC) memerlukan server backend terpisah. Saat ini akan mengirim pengumuman live ke semua member.
-      </div>
-      <div style="display:flex;gap:8px">
-        <button onclick="document.getElementById('liveSessionModal').remove()" style="flex:1;padding:.6rem;background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.83rem;cursor:pointer">Batal</button>
-        <button onclick="_startLiveAnnounce()" style="flex:1;padding:.6rem;background:linear-gradient(135deg,#e94560,#e8152a);border:none;border-radius:9px;color:#fff;font-family:'Syne',sans-serif;font-size:.83rem;font-weight:700;cursor:pointer">
-          <span style="width:6px;height:6px;background:#fff;border-radius:50%;display:inline-block;margin-right:4px;animation:pulse 1s infinite"></span>
-          Mulai Live
-        </button>
-      </div>
-    </div>`;
-  document.body.appendChild(m);
-}
-
-function _startLiveAnnounce() {
-  document.getElementById('liveSessionModal')?.remove();
-  const liveData = { user: D.user, role: D.role, ts: Date.now(), active: true };
-  fbSet('liveSession/' + (D.email||D.user||'').replace(/[.#$\/\[\]]/g,'_'), liveData).catch(()=>{});
-  toast('🔴 Live dimulai! Member lain akan mendapat notifikasi.', 'success');
-  // Show live indicator banner on CiunTik
-  _showLiveBanner(D.user);
-}
-
-function _showLiveBanner(userName) {
-  const existing = document.getElementById('ctLiveBanner');
-  if (existing) existing.remove();
-  const banner = document.createElement('div');
-  banner.id = 'ctLiveBanner';
-  banner.style.cssText = 'background:linear-gradient(135deg,#e94560,#7c3aed);color:#fff;padding:.6rem 1rem;border-radius:10px;margin-bottom:.8rem;display:flex;align-items:center;gap:8px;font-size:.82rem;font-family:Syne,sans-serif;font-weight:700';
-  banner.innerHTML = `<span style="width:8px;height:8px;background:#fff;border-radius:50%;flex-shrink:0;animation:pulse 1s infinite"></span>
-    ${userName} sedang LIVE
-    <button onclick="document.getElementById('ctLiveBanner')?.remove();fbSet('liveSession/'+(D.email||D.user||'').replace(/[.#\$\\/\\[\\]]/g,'_')+'/active',false).catch(()=>{})" style="margin-left:auto;background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:6px;padding:2px 8px;cursor:pointer;font-size:.72rem">Stop Live</button>`;
-  const feed = document.getElementById('ctFeed');
-  if (feed) feed.parentElement.insertBefore(banner, feed);
-}
-
-// Watch for others going live
 function setupLiveListener() {
   fbOn('liveSession', val => {
     if (!val) return;
@@ -9474,3 +9736,6 @@ const _origBootApp = window.bootApp;
 </script>
 </body>
 </html>
+  loadVoucherList();
+  loadMemberRestoreLog();
+}
