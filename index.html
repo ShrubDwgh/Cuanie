@@ -2859,8 +2859,13 @@ function showPg(id) {
         const el = document.getElementById('stockPageCoin');
         if (el) el.textContent = c;
       });
+      // Mission: viewed stocks
+      if (typeof _missionProgress_ === 'function') _missionProgress_('dm_stock', 1);
+      // Price alerts
+      if (typeof loadPriceAlerts === 'function' && (!window._paList || !window._paList.length)) loadPriceAlerts();
     }, 80);
   }
+  if (id === 'missions') { setTimeout(() => { if(typeof switchMTab==='function') switchMTab('daily'); }, 50); }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const pg = document.getElementById('page-' + id);
   if (pg) pg.classList.add('active');
@@ -3086,6 +3091,7 @@ function loginAs(role) {
     setTimeout(maybeAskNotifPermission, 2000);
     setupLiveListener();
     startDraftScheduler();
+    setTimeout(_initAllFeatures, 1000);
 
   } else if (role === 'admin') {
     if (document.getElementById('adminUser').value.trim()!=='admin'||document.getElementById('adminPass').value!=='admin123')
@@ -3905,6 +3911,7 @@ async function restoreSession() {
       setTimeout(setupLiveListener, 500);
       localStorage.removeItem('c_session_restore');
       toast('Sesi dipulihkan ✓', 'success');
+      setTimeout(_initAllFeatures, 1000);
       return true;
     } else if (s.role === 'admin') {
       if (!D.members || !D.members.length) await loadData();
@@ -4549,6 +4556,11 @@ function sendChatMsg() {
     renderChat();
     toast('Pesan tersimpan lokal (offline)', 'warn');
   });
+  // Mission progress tracking
+  if (typeof _missionProgress_ === 'function') {
+    _missionProgress_('dm_chat', 1);
+    _missionProgress_('wm_chat20', 1);
+  }
 }
 
 /* Bot command — search image */
@@ -7165,6 +7177,10 @@ async function ctPost() {
   try {
     await fbPush('ciuntik', post);
     toast('Post berhasil diunggah!','success');
+    if (typeof _missionProgress_ === 'function') {
+      _missionProgress_('dm_ciuntik', 1);
+      _missionProgress_('wm_post3', 1);
+    }
   } catch(e) {
     const existing = JSON.parse(localStorage.getItem('c_ciuntik') || '[]');
     post._key = 'local_' + Date.now();
@@ -7332,6 +7348,31 @@ function openMemberProfile(emailOrKey, displayName) {
 
   document.getElementById('memProfBg').classList.add('show');
   document.getElementById('memProfPanel').classList.add('open');
+
+  // Show own-profile extras: theme selector, birthday, referral
+  const themeSection = document.getElementById('themeSelectorSection');
+  const bdaySection = document.getElementById('birthdaySection');
+  const refSection = document.getElementById('referralSection');
+  if (isSelf) {
+    if (themeSection) themeSection.style.display = 'block';
+    if (bdaySection) {
+      bdaySection.style.display = 'block';
+      // Pre-fill birthday if saved
+      fbGet('profiles/' + _eKey(D.email) + '/birthday').then(s => {
+        const inp = document.getElementById('birthdayInput');
+        if (inp && s.val()) inp.value = s.val();
+      }).catch(() => {});
+    }
+    if (refSection) {
+      refSection.style.display = 'block';
+      const linkEl = document.getElementById('referralLinkDisplay');
+      if (linkEl) linkEl.textContent = getReferralLink();
+    }
+  } else {
+    if (themeSection) themeSection.style.display = 'none';
+    if (bdaySection) bdaySection.style.display = 'none';
+    if (refSection) refSection.style.display = 'none';
+  }
 }
 
 function buildProfThumb(p, i) {
@@ -10290,6 +10331,36 @@ const _origBootApp = window.bootApp;
       <div class="mem-prof-posts-grid" id="memProfLikedGrid" style="display:none"></div>
       <div class="mem-prof-posts-grid" id="memProfDraftGrid" style="display:none"></div>
     </div>
+
+    <!-- ── CUSTOM THEME SELECTOR (own profile only) ── -->
+    <div id="themeSelectorSection" style="display:none;margin-top:1rem">
+      <div style="font-size:.78rem;font-weight:700;color:var(--tx2);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px">🎨 Tema Tampilan</div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <button onclick="applyTheme('purple')" style="flex:1;min-width:80px;background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.4);border-radius:8px;padding:.4rem .5rem;color:#a78bfa;font-size:.74rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700">🟣 Purple</button>
+        <button onclick="applyTheme('blue')" style="flex:1;min-width:80px;background:rgba(29,78,216,.2);border:1px solid rgba(29,78,216,.4);border-radius:8px;padding:.4rem .5rem;color:#60a5fa;font-size:.74rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700">🔵 Blue</button>
+        <button onclick="applyTheme('green')" style="flex:1;min-width:80px;background:rgba(6,95,70,.2);border:1px solid rgba(6,95,70,.4);border-radius:8px;padding:.4rem .5rem;color:#34d399;font-size:.74rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700">🟢 Green</button>
+        <button onclick="applyTheme('red')" style="flex:1;min-width:80px;background:rgba(153,27,27,.2);border:1px solid rgba(153,27,27,.4);border-radius:8px;padding:.4rem .5rem;color:#f87171;font-size:.74rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700">🔴 Red</button>
+        <button onclick="applyTheme('gold')" style="flex:1;min-width:80px;background:rgba(146,64,14,.2);border:1px solid rgba(146,64,14,.4);border-radius:8px;padding:.4rem .5rem;color:#f59e0b;font-size:.74rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700">🟡 Gold</button>
+      </div>
+    </div>
+
+    <!-- ── BIRTHDAY FIELD (own profile only) ── -->
+    <div id="birthdaySection" style="display:none;margin-top:.8rem">
+      <div style="font-size:.78rem;font-weight:700;color:var(--tx2);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.5px">🎂 Ulang Tahun</div>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <input type="date" id="birthdayInput" style="flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.45rem .7rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none"/>
+        <button onclick="saveBirthday()" style="background:var(--ac2);border:none;border-radius:7px;padding:.45rem .8rem;color:#fff;font-size:.8rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700">Simpan</button>
+      </div>
+      <div style="font-size:.7rem;color:var(--tx2);margin-top:.3rem">Sistem akan post ucapan + 500 CQ otomatis di hari ulang tahunmu 🎉</div>
+    </div>
+
+    <!-- ── REFERRAL LINK (own profile only) ── -->
+    <div id="referralSection" style="display:none;margin-top:.8rem;margin-bottom:.5rem">
+      <div style="font-size:.78rem;font-weight:700;color:var(--tx2);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.5px">🔗 Referral Link</div>
+      <div style="background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:.55rem .8rem;font-size:.74rem;color:var(--tx2);word-break:break-all;margin-bottom:.4rem" id="referralLinkDisplay">—</div>
+      <button onclick="copyReferralLink()" style="width:100%;background:rgba(108,78,242,.15);border:1px solid rgba(108,78,242,.3);border-radius:8px;padding:.45rem;color:var(--ac2);font-size:.8rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700">📋 Copy Link</button>
+      <div style="font-size:.7rem;color:var(--tx2);margin-top:.3rem">Ajak member baru: kamu +200 CQ, mereka +100 CQ setelah aktif 7 hari.</div>
+    </div>
   </div>
 </div>
 <!-- Swipe back indicator -->
@@ -10855,26 +10926,46 @@ async function doAttendance(sess){
 }
 
 // ─── 🎂 BIRTHDAY SYSTEM ───────────────────────────────────
+// ─── 🎂 BIRTHDAY SYSTEM (from profile, not Google) ───────
+async function saveBirthday(){
+  if(!D.email) return;
+  const val=document.getElementById('birthdayInput')?.value;
+  if(!val){ toast('Pilih tanggal lahirmu dulu','warn'); return; }
+  const key=_eKey(D.email);
+  await fbSet('profiles/'+key+'/birthday', val);
+  toast('Tanggal lahir tersimpan! 🎂','success');
+}
+
 async function checkBirthdays(){
   if(!D.email) return;
-  const now=new Date(), todayMMDD=String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  const now=new Date();
+  const todayMMDD=String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
   try{
-    const snap=await fbGet('members');
-    const members=snap.val(); if(!Array.isArray(members)) return;
-    for(const m of members){
-      if(!m||!m.birthday) continue;
-      const bday=m.birthday.slice(5); // mm-dd from yyyy-mm-dd
-      if(bday===todayMMDD){
-        const lastKey='c_bday_sent_'+m.name+'_'+now.getFullYear();
-        if(localStorage.getItem(lastKey)) continue;
-        localStorage.setItem(lastKey,'1');
-        // Post to chat
-        try{FB.push(fbRef('chat'),{ts:Date.now(),name:'🎂 Cuanie Bot',bot:true,text:'🎉🎂 Selamat Ulang Tahun, @'+m.name+'! Semoga sukses dan sehat selalu! 🎊🎁',role:'admin'});}catch(e){}
-        // Give reward if it's me
-        if(m.email===D.email){ await _addCoin(500,'birthday'); toast('🎂 Selamat Ulang Tahun! +500 CQ Coin dari Cuanie Team! 🎉','success'); }
+    // Check all member profiles for birthdays
+    const snap=await fbGet('profiles');
+    const profiles=snap.val(); if(!profiles) return;
+    for(const [emailKey, prof] of Object.entries(profiles)){
+      if(!prof||!prof.birthday) continue;
+      const bday=prof.birthday.slice(5); // yyyy-mm-dd → mm-dd
+      if(bday!==todayMMDD) continue;
+      const lastKey='c_bday_'+emailKey+'_'+now.getFullYear();
+      if(localStorage.getItem(lastKey)) continue;
+      localStorage.setItem(lastKey,'1');
+      // Find name from members
+      const memberSnap=await fbGet('members');
+      const members=memberSnap.val()||[];
+      const memberArr=Array.isArray(members)?members:Object.values(members);
+      const mem=memberArr.find(m=>m&&_eKey(m.email||'')===emailKey);
+      const name=mem?.name||prof.displayName||emailKey;
+      try{FB.push(fbRef('chat'),{ts:Date.now(),name:'🎂 Cuanie Bot',bot:true,
+        text:'🎉🎂 Selamat Ulang Tahun, @'+name+'! Semoga sukses, sehat, dan makin jago! 🎊🎁',role:'admin'});}catch(e){}
+      if(_eKey(D.email)===emailKey){
+        await _addCoin(500,'birthday');
+        toast('🎂 Selamat Ulang Tahun! +500 CQ Coin! 🎉','success');
+        unlockAchievement && unlockAchievement('birthday');
       }
     }
-  }catch(e){}
+  }catch(e){ console.error('birthday check',e); }
 }
 
 // ─── 🏅 ACHIEVEMENT SYSTEM ───────────────────────────────
@@ -10937,23 +11028,38 @@ function loadSavedTheme(){
 loadSavedTheme();
 
 // ─── 🔗 REFERRAL PROGRAM ─────────────────────────────────
-function getReferralLink(){
+function getReferralCode(){
   if(!D.email) return '';
-  const code=btoa(D.email).replace(/=/g,'').slice(0,12).toUpperCase();
-  return window.location.href.split('?')[0]+'?ref='+code;
+  // Stable code: base of email key
+  return _eKey(D.email).slice(0,10).toUpperCase().replace(/_/g,'');
+}
+function getReferralLink(){
+  const code=getReferralCode(); if(!code) return '';
+  return window.location.origin+window.location.pathname+'?ref='+code;
+}
+function copyReferralLink(){
+  const link=getReferralLink(); if(!link) return;
+  navigator.clipboard.writeText(link).then(()=>toast('Link referral disalin! 🔗','success')).catch(()=>{
+    // Fallback
+    const el=document.getElementById('referralLinkDisplay');
+    if(el){ el.select?.(); document.execCommand('copy'); }
+    toast('Copy manual dari kolom referral','warn');
+  });
 }
 async function checkReferral(){
   const params=new URLSearchParams(window.location.search);
   const ref=params.get('ref'); if(!ref||!D.email) return;
-  const myCode=btoa(D.email).replace(/=/g,'').slice(0,12).toUpperCase();
-  if(ref===myCode) return; // self-referral
-  const key='c_ref_claimed';
+  const myCode=getReferralCode();
+  if(ref.toUpperCase()===myCode.toUpperCase()) return; // self-referral
+  const key='c_ref_claimed_'+D.email;
   if(localStorage.getItem(key)) return;
   localStorage.setItem(key,'1');
   await _addCoin(100,'referral_bonus');
-  // Give referrer bonus via Firebase log (leader resolves manually for now)
-  await fbSet('referrals/'+_eKey(D.email),{ref,email:D.email,name:D.user,ts:Date.now()});
-  toast('🔗 Kamu diundang! +100 CQ Coin bonus referral! 🎉','success');
+  // Log referral for leader to reward referrer
+  await fbSet('referrals/'+_eKey(D.email),{refCode:ref,email:D.email,name:D.user,ts:Date.now(),rewarded:false});
+  toast('🔗 +100 CQ Coin bonus referral! Selamat bergabung! 🎉','success');
+  // Remove ref from URL without refresh
+  const url=new URL(window.location.href); url.searchParams.delete('ref'); history.replaceState({},'',url);
 }
 
 // ─── INIT HOOK ────────────────────────────────────────────
@@ -10975,24 +11081,7 @@ function _initAllFeatures(){
   setTimeout(checkAchievements,3000);
 }
 
-// Hook into restoreSession
-(function(){
-  const _orig=window.restoreSession;
-  if(typeof _orig==='function'){
-    window.restoreSession=async function(){
-      const r=await _orig();
-      if(D.role==='member'||D.role==='guest') setTimeout(_initAllFeatures,900);
-      return r;
-    };
-  }
-})();
-
-// Hook into mission progress from chat messages
-(function(){
-  const _oc=window.sendChatMsg||null;
-  // We hook the Firebase push in chat instead - track via counter
-  const _origPush=typeof FB!=='undefined'?FB.push:null;
-})();
+// Direct init calls are in loginAs() and restoreSession() — no wrapper needed here
 </script>
 </body>
 </html>
