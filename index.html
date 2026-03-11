@@ -852,6 +852,21 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 .chat-audio-rec-btn{width:36px;height:36px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);color:var(--tx2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;flex-shrink:0}
 .chat-audio-rec-btn:hover{background:var(--b1)}
 .chat-audio-rec-btn.recording{background:var(--err);border-color:var(--err);color:#fff;animation:pulse 1s infinite}
+.tab-pill{background:var(--s2);border:1px solid var(--b2);border-radius:20px;padding:.32rem .85rem;font-size:.78rem;font-family:'DM Sans',sans-serif;color:var(--tx2);cursor:pointer;transition:all .2s;font-weight:600}
+.tab-pill.active{background:var(--ac2);border-color:var(--ac2);color:#fff}
+.ci-day{flex:1;border-radius:7px;padding:.35rem .2rem;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;border:1px solid var(--b2);background:var(--s2);color:var(--tx2);gap:1px;min-width:0;cursor:default}
+.ci-day.ci-done{background:rgba(30,201,154,.15);border-color:rgba(30,201,154,.4);color:var(--ok)}
+.ci-day.ci-today{border-color:var(--ac2);color:var(--ac2)}
+.ci-day.ci-done.ci-today{background:rgba(30,201,154,.2);border-color:var(--ok);color:var(--ok)}
+.m-card{background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:.65rem .85rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.65rem}
+.m-card.m-claimed{opacity:.55}
+.m-prog{flex:1;height:4px;background:var(--b2);border-radius:3px;overflow:hidden;margin-top:3px}
+.m-prog-fill{height:100%;background:var(--ac2);border-radius:3px;transition:width .4s}
+.achievement-card{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:.7rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.achievement-card.unlocked{border-color:var(--gold);background:rgba(232,184,75,.08)}
+.rank-badge-tiny{display:inline-block;border-radius:4px;padding:1px 6px;font-size:.65rem;font-weight:700;vertical-align:middle}
+.rec-indicator-bar{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:rgba(220,38,38,.93);color:#fff;border-radius:20px;padding:.4rem 1rem;font-size:.78rem;font-weight:700;display:flex;align-items:center;gap:7px;z-index:999;box-shadow:0 4px 20px rgba(220,38,38,.5);pointer-events:none;white-space:nowrap}
+.rec-indicator-bar .rib-dot{width:8px;height:8px;border-radius:50%;background:#fff;animation:pulse 0.8s infinite}
 .chat-audio-preview{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:6px 10px;margin-bottom:6px}
 .chat-audio-preview audio{flex:1;height:32px;min-width:0}
 .chat-audio-preview audio::-webkit-media-controls-panel{background:var(--s2)}
@@ -1709,6 +1724,26 @@ canvas{-webkit-user-select:none;user-select:none}
         </button>
       </div>
     </div>
+    <!-- DAILY CHECK-IN -->
+    <div class="panel" id="checkinPanel" style="background:linear-gradient(135deg,rgba(108,78,242,.1),rgba(30,201,154,.05));border:1px solid rgba(108,78,242,.2)">
+      <div class="panel-h">
+        <span style="font-size:1rem">📆</span>
+        <h3 style="color:var(--ac2)">Check-in Harian</h3>
+        <div id="ciStreakBadge" style="margin-left:auto;background:rgba(232,184,75,.15);border:1px solid rgba(232,184,75,.3);border-radius:20px;padding:2px 10px;font-size:.74rem;font-weight:700;color:var(--gold)">🔥 0 hari</div>
+      </div>
+      <div id="ciCalRow" style="display:flex;gap:4px;margin-bottom:.7rem"></div>
+      <button id="ciBtn" onclick="doCheckIn()" style="width:100%;padding:.6rem;border-radius:9px;border:none;background:var(--ac2);color:#fff;font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:700;cursor:pointer">✅ Check-in Sekarang</button>
+      <div id="ciRewardHint" style="text-align:center;font-size:.72rem;color:var(--tx2);margin-top:.4rem"></div>
+    </div>
+    <!-- MISSION PREVIEW -->
+    <div class="panel" id="missionPreviewPanel">
+      <div class="panel-h">
+        <span style="font-size:1rem">📋</span>
+        <h3>Misi Harian</h3>
+        <button onclick="showPg('missions')" style="margin-left:auto;background:rgba(108,78,242,.15);border:1px solid rgba(108,78,242,.3);border-radius:6px;padding:3px 9px;color:var(--ac2);font-size:.72rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700">Semua →</button>
+      </div>
+      <div id="missionPreviewList"></div>
+    </div>
     <!-- CBANK -->
     <div class="panel" id="memberBankPanel">
       <div class="panel-h">
@@ -1756,9 +1791,13 @@ canvas{-webkit-user-select:none;user-select:none}
         </button>
       </div>
       <!-- Pasar Saham shortcut -->
-      <button onclick="showPg('stocks')" style="width:100%;margin-bottom:.7rem;background:linear-gradient(135deg,rgba(108,78,242,.1),rgba(30,201,154,.05));border:1px solid rgba(108,78,242,.25);color:var(--ac2);border-radius:9px;padding:.6rem;font-size:.8rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px">
+      <button onclick="showPg('stocks')" style="width:100%;margin-bottom:.4rem;background:linear-gradient(135deg,rgba(108,78,242,.1),rgba(30,201,154,.05));border:1px solid rgba(108,78,242,.25);color:var(--ac2);border-radius:9px;padding:.6rem;font-size:.8rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
         📈 Pasar Saham CQ
+      </button>
+      <!-- Lucky Wheel Button -->
+      <button onclick="openLuckyWheel()" id="luckyWheelBtn" style="width:100%;margin-bottom:.7rem;background:linear-gradient(135deg,rgba(232,184,75,.12),rgba(249,115,22,.06));border:1px solid rgba(232,184,75,.3);color:var(--gold);border-radius:9px;padding:.6rem;font-size:.8rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px">
+        🎡 Lucky Wheel Harian <span id="lwAvailDot" style="width:8px;height:8px;border-radius:50%;background:#1ec99a;display:inline-block;margin-left:3px"></span>
       </button>
       <div class="bank-history-hd">Riwayat Transaksi</div>
       <div class="bank-history-list" id="memberBankHistory">
@@ -1772,6 +1811,69 @@ canvas{-webkit-user-select:none;user-select:none}
   </div>
 </div>
 
+<!-- ══ LUCKY WHEEL MODAL ══ -->
+<div class="bank-modal-bg" id="lwBg" onclick="closeLuckyWheel()" style="display:none"></div>
+<div class="bank-modal" id="lwModal" style="display:none;max-width:340px">
+  <div class="bank-modal-hd"><span>🎡 Lucky Wheel</span><button class="bank-modal-close" onclick="closeLuckyWheel()">✕</button></div>
+  <div style="text-align:center;padding:.4rem 0 .6rem">
+    <div style="position:relative;display:inline-block">
+      <canvas id="lwCanvas" width="260" height="260" style="border-radius:50%;cursor:pointer" onclick="spinWheel()"></canvas>
+      <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:1.6rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))">▼</div>
+    </div>
+    <div id="lwResult" style="min-height:28px;margin-top:.5rem;font-weight:700;font-size:.95rem;color:var(--gold)"></div>
+    <button id="lwSpinBtn" onclick="spinWheel()" style="margin-top:.5rem;background:var(--ac2);border:none;border-radius:10px;padding:.6rem 2rem;color:#fff;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;width:100%">🎡 SPIN!</button>
+    <div id="lwNext" style="font-size:.72rem;color:var(--tx2);margin-top:.4rem"></div>
+    <div style="font-size:.68rem;color:var(--tx2);margin-top:.3rem">Odds: 10CQ 30%·50CQ 25%·100CQ 18%·500CQ 10%·Voucher 5%·Item 6%·Asuransi 4%·Jackpot 2%</div>
+  </div>
+</div>
+
+<!-- ══ FLASH EVENT MODAL (Leader) ══ -->
+<div class="bank-modal-bg" id="flashBg" onclick="closeFlashModal()" style="display:none"></div>
+<div class="bank-modal" id="flashModal" style="display:none;max-width:340px">
+  <div class="bank-modal-hd"><span>⚡ Trigger Market Event</span><button class="bank-modal-close" onclick="closeFlashModal()">✕</button></div>
+  <div style="padding:.3rem 0">
+    <div class="form-q">
+      <label>Tipe Event</label>
+      <select id="flashType" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.5rem .7rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none">
+        <option value="bull">🚀 Bull Run — Saham naik cepat</option>
+        <option value="bear">📉 Bear Crash — Saham anjlok</option>
+        <option value="flash_coin">⚡ Flash Sale Coin — Diskon coin</option>
+        <option value="double_div">💰 Double Dividend — Dividen 2x</option>
+        <option value="bonus_xp">⭐ Bonus XP — Reward 2x</option>
+      </select>
+    </div>
+    <div class="form-q">
+      <label>Durasi</label>
+      <select id="flashDur" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.5rem .7rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none">
+        <option value="15">15 menit</option><option value="30">30 menit</option>
+        <option value="60">1 jam</option><option value="120" selected>2 jam</option><option value="180">3 jam</option>
+      </select>
+    </div>
+    <div class="form-q">
+      <label>Intensitas (%)</label>
+      <input type="number" id="flashIntensity" value="50" min="10" max="90" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.5rem .7rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;box-sizing:border-box"/>
+    </div>
+    <button onclick="triggerFlashEvent()" class="full-btn" style="margin-top:.4rem">⚡ Aktifkan Event</button>
+  </div>
+</div>
+
+<!-- ══ MISSION BOARD PAGE ══ -->
+<div class="page" id="page-missions">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Misi</div><h2>📋 Mission Board</h2></div>
+      <button onclick="showPg(getDashPage())" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <div style="display:flex;gap:.4rem;margin-bottom:.8rem;flex-wrap:wrap">
+      <button class="tab-pill active" id="mTabDaily" onclick="switchMTab('daily')">📅 Harian</button>
+      <button class="tab-pill" id="mTabWeekly" onclick="switchMTab('weekly')">📆 Mingguan</button>
+      <button class="tab-pill" id="mTabSpecial" onclick="switchMTab('special')">⭐ Spesial</button>
+    </div>
+    <div id="missionList"></div>
+  </div>
+</div>
+
+<!-- ══ PRICE ALERT PANEL (inside stocks page inject) ══ -->
 <!-- BANK DEPOSIT MODAL -->
 <div class="bank-modal-bg" id="bankDepositBg" onclick="closeBankModal('deposit')"></div>
 <div class="bank-modal" id="bankDepositModal">
@@ -1931,6 +2033,13 @@ canvas{-webkit-user-select:none;user-select:none}
       </div>
       <div class="tgl-row" style="margin-top:.6rem">
         <div>
+          <div class="tgl-lbl">🏦 Cuanie Bank</div>
+          <div class="tgl-sub">Tutup sementara semua aktivitas bank (deposit, tarik, beli coin/saham)</div>
+        </div>
+        <label class="tgl"><input type="checkbox" id="leaderBankOpenTgl" checked onchange="setBankOpen(this.checked)"><span class="tgl-tr"></span></label>
+      </div>
+      <div class="tgl-row" style="margin-top:.6rem">
+        <div>
           <div class="tgl-lbl">Form Tamu</div>
           <div class="tgl-sub">Aktifkan formulir wajib bagi tamu Google sebelum masuk</div>
         </div>
@@ -1946,6 +2055,39 @@ canvas{-webkit-user-select:none;user-select:none}
       <div id="memberRestoreLog" style="font-size:.82rem;color:var(--tx2)">Memuat log...</div>
     </div>
 
+    <!-- MARKET EVENT (Leader) -->
+    <div class="panel" style="background:linear-gradient(135deg,rgba(232,184,75,.06),rgba(108,78,242,.04));border:1px solid rgba(232,184,75,.2)">
+      <div class="panel-h">
+        <span>⚡</span><h3 style="color:var(--gold)">Market Event</h3>
+        <div id="flashLeaderStatus" style="margin-left:auto;font-size:.72rem;color:var(--tx2)">Tidak ada event aktif</div>
+      </div>
+      <div id="flashLeaderActive" style="display:none;background:rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.2);border-radius:8px;padding:.6rem .8rem;margin-bottom:.5rem">
+        <div style="font-weight:700;font-size:.84rem;color:var(--gold)" id="flashLeaderTitle">—</div>
+        <div style="display:flex;justify-content:space-between;margin-top:.2rem">
+          <span style="font-size:.74rem;color:var(--tx2)" id="flashLeaderDesc">—</span>
+          <span style="font-weight:700;color:#e8546a;font-size:.8rem" id="flashLeaderTimer">—</span>
+        </div>
+        <button onclick="stopFlashEvent()" style="margin-top:.4rem;width:100%;background:rgba(232,69,96,.12);border:1px solid rgba(232,69,96,.3);border-radius:7px;padding:.35rem;color:#e8546a;font-size:.76rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700">⏹ Hentikan</button>
+      </div>
+      <button onclick="openFlashModal()" style="width:100%;background:rgba(232,184,75,.15);border:1px solid rgba(232,184,75,.25);border-radius:9px;padding:.55rem;color:var(--gold);font-size:.82rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700">⚡ Trigger Event Baru</button>
+    </div>
+    <!-- ATTENDANCE SESSION (Leader) -->
+    <div class="panel">
+      <div class="panel-h"><span>✅</span><h3>Absensi Event</h3><div id="attendanceLeaderStatus" style="margin-left:auto;font-size:.72rem;color:var(--tx2)">Tidak ada sesi</div></div>
+      <div id="attendanceLeaderActive" style="display:none;background:rgba(30,201,154,.08);border:1px solid rgba(30,201,154,.2);border-radius:8px;padding:.6rem;margin-bottom:.5rem">
+        <div style="font-weight:700;font-size:.84rem;color:var(--ok)" id="attendanceSessionName">—</div>
+        <div style="font-size:.74rem;color:var(--tx2);margin:.2rem 0" id="attendanceSessionTimer">—</div>
+        <div id="attendanceResultList" style="font-size:.78rem;color:var(--tx);max-height:80px;overflow-y:auto"></div>
+        <button onclick="closeAttendanceSession()" style="margin-top:.4rem;width:100%;background:rgba(232,69,96,.1);border:1px solid rgba(232,69,96,.25);border-radius:7px;padding:.35rem;color:#e8546a;font-size:.76rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700">Tutup Sesi</button>
+      </div>
+      <div id="attendanceOpenForm" style="display:flex;gap:.4rem">
+        <input id="attendanceEventName" placeholder="Nama event (misal: Scrim Sabtu)" style="flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.45rem .6rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.8rem;outline:none"/>
+        <select id="attendanceDur" style="background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.45rem .5rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.8rem;outline:none">
+          <option value="5">5 mnt</option><option value="10" selected>10 mnt</option><option value="15">15 mnt</option><option value="30">30 mnt</option>
+        </select>
+        <button onclick="openAttendanceSession()" style="background:var(--ok);border:none;border-radius:7px;padding:.45rem .7rem;color:#fff;font-size:.78rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700">Buka</button>
+      </div>
+    </div>
     <!-- PENDING TRANSACTIONS -->
     <div class="panel">
       <div class="panel-h">
@@ -2279,6 +2421,7 @@ const DEFAULT_QUESTIONS = [
 
 const D = {
   regOpen:   true,
+  bankOpen:  true,
   questions: DEFAULT_QUESTIONS,
   members:   [],
   events:    [],
@@ -2337,6 +2480,8 @@ function bootApp() {
     D.regOpen   = regSnap.val() !== null ? regSnap.val() : true;
     const ctSnap = await fbGet('settings/ciuntikOpen');
     D.ciuntikOpen = ctSnap.val() !== null ? ctSnap.val() : true;
+    const bankSnap = await fbGet('settings/bankOpen');
+    D.bankOpen = bankSnap.val() !== null ? bankSnap.val() : true;
     D.questions = qSnap.val()   || DEFAULT_QUESTIONS;
     D.members   = memSnap.val() ? Object.values(memSnap.val()) : [];
     D.events    = evSnap.val()  ? Object.values(evSnap.val())  : [];
@@ -2417,6 +2562,7 @@ function setupRealtimeListeners() {
   // Settings
   fbOn('settings/regOpen', val => { if (val !== null) { D.regOpen = val; applyReg(); } });
   fbOn('settings/ciuntikOpen', val => { if (val !== null) { D.ciuntikOpen = val; applyCiunTikMode(); } });
+  fbOn('settings/bankOpen', val => { if (val !== null) { D.bankOpen = val; applyBankOpenState(val); } });
   fbOn('settings/questions', val => { if (val) D.questions = val; });
   fbOn('events', val => { D.events = val ? Object.values(val) : []; renderPubBlocks('events'); });
   fbOn('rules',  val => { D.rules  = val ? Object.values(val) : []; renderPubBlocks('rules'); });
@@ -2427,6 +2573,15 @@ window.addEventListener('fb-ready', () => { _fbReady = true; bootApp(); });
 setTimeout(() => { if (!_fbReady) { console.warn('Firebase timeout, using localStorage'); D.regOpen=JSON.parse(localStorage.getItem('c_reg')?? 'true'); D.ciuntikOpen=JSON.parse(localStorage.getItem('c_ciuntikOpen')?? 'true'); D.questions=JSON.parse(localStorage.getItem('c_q')||'null')||DEFAULT_QUESTIONS; D.members=JSON.parse(localStorage.getItem('c_members')||'[]'); D.events=JSON.parse(localStorage.getItem('c_events')||'[]'); D.rules=JSON.parse(localStorage.getItem('c_rules')||'[]'); applyReg(); renderPubPages(); showLoadingOverlay(false); } }, 4000);
 
 /* ══ REG STATUS ══ */
+function applyBankOpenState(isOpen) {
+  // Show/hide closed banner in bank page
+  const banner = document.getElementById('bankClosedBanner');
+  if (banner) banner.style.display = isOpen ? 'none' : 'flex';
+  // Update leader toggle
+  const tgl = document.getElementById('leaderBankOpenTgl');
+  if (tgl) tgl.checked = isOpen;
+}
+
 function applyReg() {
   const o = D.regOpen;
   document.getElementById('logoDot').classList.toggle('off',!o);
@@ -3217,16 +3372,21 @@ function previewCoinBuy() {
   prev.style.display='block';
 }
 async function confirmBuyCoin() {
+  if (D.bankOpen === false) { toast('Bank sedang ditutup sementara. Tidak bisa bertransaksi sekarang.','warn'); return; }
   const qty = parseInt(document.getElementById('coinBuyAmount').value)||0;
   if (qty < COIN_CONFIG.MIN_BUY) { toast('Minimum beli '+COIN_CONFIG.MIN_BUY+' coin','warn'); return; }
-  const cost = qty * COIN_CONFIG.PRICE_RP;
+  const vcDsc = _activeVoucherDiscount || 0;
+  const baseCost = qty * COIN_CONFIG.PRICE_RP;
+  const cost = vcDsc > 0 ? Math.round(baseCost * (1 - vcDsc/100)) : baseCost;
   if (!_cachedBankAcc || (_cachedBankAcc.balance||0) < cost) {
     toast('Saldo tidak cukup! Butuh '+fmtRp(cost)+' tapi saldo kamu '+fmtRp(_cachedBankAcc?.balance||0),'error'); return;
   }
   const userKey = (D.email||D.user||'').replace(/[.#$\/\[\]]/g,'_');
   try {
     const txKey = 'tx_' + Date.now();
-    const tx = { type:'coin_buy', amount:cost, qty, memberName:D.user||'?', userKey, requestedAt:Date.now(), status:'pending', note:'Beli '+qty+' CQ Coin (Rp '+cost.toLocaleString('id-ID')+')' };
+    const vNote = vcDsc > 0 ? ' (diskon '+vcDsc+'%)' : '';
+    const tx = { type:'coin_buy', amount:cost, qty, vcDiscount:vcDsc, memberName:D.user||'?', userKey, requestedAt:Date.now(), status:'pending', note:'Beli '+qty+' CQ Coin'+vNote };
+    if (vcDsc > 0) { _activeVoucherDiscount = 0; _activeVoucherCode = null; loadActiveVouchers(); }
     await fbSet('pendingTransactions/'+userKey+'/'+txKey, tx);
     toast('Permintaan beli '+qty+' CQ dikirim — menunggu persetujuan Leader ⏳','info');
     closeBuyCoin();
@@ -3510,6 +3670,7 @@ async function submitWithdrawRequest(userKey, amount, memberName) {
 }
 
 function submitDepositWA() {
+  if (D.bankOpen === false) { toast('Bank sedang ditutup sementara oleh Leader. Coba lagi nanti.','warn'); return; }
   const amt = parseInt(document.getElementById('bankDepositAmt')?.value||'0');
   const method = document.getElementById('bankDepositMethod')?.value||'';
   if (!amt || amt < 50000) { toast('Minimal deposit Rp 50.000','warn'); return; }
@@ -3520,6 +3681,7 @@ function submitDepositWA() {
 }
 
 function submitWithdrawWA() {
+  if (D.bankOpen === false) { toast('Bank sedang ditutup sementara oleh Leader. Coba lagi nanti.','warn'); return; }
   const amt = parseInt(document.getElementById('bankWithdrawAmt')?.value||'0');
   const dest = document.getElementById('bankWithdrawDest')?.value||'';
   if (!amt || amt < 10000) { toast('Minimal tarik Rp 10.000','warn'); return; }
@@ -3986,6 +4148,8 @@ function renderLeaderPanel() {
   if (gfTgl) gfTgl.checked = !!D.guestFormEnabled;
   const gaTgl = document.getElementById('leaderGuestAccessTgl');
   if (gaTgl) gaTgl.checked = D.guestAccessOpen !== false;
+  const bankTgl = document.getElementById('leaderBankOpenTgl');
+  if (bankTgl) bankTgl.checked = D.bankOpen !== false;
   const gfPanel = document.getElementById('guestFormBuilderPanel');
   if (gfPanel) gfPanel.style.display = D.guestFormEnabled ? 'block' : 'none';
   if (D.guestFormEnabled) loadGuestFormBlocks();
@@ -4463,6 +4627,27 @@ let _recTimerInterval = null;
 let _recSeconds = 0;
 let _recHoldTimeout = null;
 
+function _showRecBar(text) {
+  let bar = document.getElementById('globalRecBar');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'globalRecBar';
+    bar.className = 'rec-indicator-bar';
+    bar.innerHTML = '<div class="rib-dot"></div><span id="globalRecBarText"></span>';
+    document.body.appendChild(bar);
+  }
+  bar.style.display = 'flex';
+  document.getElementById('globalRecBarText').textContent = text || '⏺ Merekam...';
+}
+function _hideRecBar() {
+  const bar = document.getElementById('globalRecBar');
+  if (bar) bar.style.display = 'none';
+}
+function _updateRecBar(sec, label) {
+  const el = document.getElementById('globalRecBarText');
+  if (el) el.textContent = '⏺ ' + (label ? label+' — ' : '') + 'Merekam ' + sec + 's · Lepas untuk kirim';
+}
+
 function startAudioRecord(e) {
   if (e) e.preventDefault();
   if (_mediaRecorder && _mediaRecorder.state === 'recording') return; // already recording
@@ -4517,15 +4702,18 @@ function _startRecTimer() {
   _recSeconds = 0;
   const el = document.getElementById('recTimer');
   if (el) { el.style.display = 'inline'; el.textContent = '0s'; }
+  _showRecBar('⏺ Merekam 0s · Lepas untuk kirim');
   _recTimerInterval = setInterval(() => {
     _recSeconds++;
     if (el) el.textContent = _recSeconds + 's';
+    _updateRecBar(_recSeconds);
     if (_recSeconds >= 120) stopAudioRecord({preventDefault:()=>{}});
   }, 1000);
 }
 
 function _stopRecTimer() {
   clearInterval(_recTimerInterval);
+  _hideRecBar();
   const el = document.getElementById('recTimer');
   if (el) el.style.display = 'none';
   _recSeconds = 0;
@@ -5242,6 +5430,15 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
       <button onclick="showPg('member')" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
     </div>
 
+    <!-- Bank closed banner -->
+    <div id="bankClosedBanner" style="display:none;align-items:center;gap:10px;background:rgba(232,69,96,.12);border:1px solid rgba(232,69,96,.35);border-radius:10px;padding:.75rem 1rem;margin-bottom:.8rem">
+      <span style="font-size:1.2rem">🔒</span>
+      <div>
+        <div style="font-weight:700;color:var(--err);font-size:.85rem">Bank Sedang Ditutup</div>
+        <div style="font-size:.74rem;color:var(--tx2)">Leader menutup semua aktivitas bank untuk sementara. Pantau terus ya!</div>
+      </div>
+    </div>
+
     <!-- Balance card -->
     <div class="bank-balance-card" id="bankBalanceCard">
       <div class="bank-bal-label">Saldo Aktif</div>
@@ -5395,6 +5592,33 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
     <div class="dash-top">
       <div><div class="sec-tag">// Cbank</div><h2>Pasar Saham <span class="r-tag member">CQ Market</span></h2></div>
       <button onclick="showPg(getDashPage())" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <!-- Flash Event Banner -->
+    <div id="flashBanner" style="display:none;background:linear-gradient(135deg,rgba(232,184,75,.18),rgba(108,78,242,.08));border:1px solid rgba(232,184,75,.35);border-radius:10px;padding:.65rem 1rem;margin-bottom:.7rem">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span id="flashBannerEmoji" style="font-size:1.4rem">⚡</span>
+        <div style="flex:1"><div style="font-weight:700;font-size:.86rem;color:var(--gold)" id="flashBannerTitle">Event Aktif</div><div style="font-size:.72rem;color:var(--tx2)" id="flashBannerDesc">—</div></div>
+        <div style="text-align:right"><div style="font-size:.65rem;color:var(--tx2)">Berakhir</div><div style="font-weight:800;color:#e8546a;font-size:.88rem" id="flashBannerTimer">—</div></div>
+      </div>
+    </div>
+    <!-- Price Alert -->
+    <div class="panel" style="margin-bottom:.7rem">
+      <div class="panel-h"><span>🔔</span><h3>Price Alert</h3><button onclick="togglePriceAlertForm()" style="margin-left:auto;background:rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.3);border-radius:6px;padding:3px 9px;color:var(--gold);font-size:.72rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700">+ Tambah</button></div>
+      <div id="paList" style="margin-bottom:.4rem"></div>
+      <div id="paForm" style="display:none">
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.4rem">
+          <select id="paStock" style="flex:1;min-width:100px;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.45rem .6rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.8rem;outline:none">
+            <option value="CQG">🎮 CQ Gaming</option><option value="CQT">💻 CQ Tech</option>
+            <option value="CQE">🏆 CQ Esport</option><option value="CQS">🏦 CQ Stable</option><option value="CQM">🌐 CQ Meta</option>
+          </select>
+          <select id="paDir" style="background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.45rem .5rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.8rem;outline:none">
+            <option value="above">📈 ≥</option><option value="below">📉 ≤</option>
+          </select>
+          <input type="number" id="paPrice" placeholder="Harga CQ" style="width:85px;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:.45rem .5rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.8rem;outline:none"/>
+          <button onclick="addPriceAlert()" style="background:var(--ac2);border:none;border-radius:7px;padding:.45rem .8rem;color:#fff;font-size:.78rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:700">Set</button>
+        </div>
+        <div style="font-size:.68rem;color:var(--tx2);margin-top:.3rem">Max 5 alert · notif muncul saat harga tercapai</div>
+      </div>
     </div>
 
     <!-- Coin balance + buy -->
@@ -5652,13 +5876,17 @@ function saveProfiles() {
   fbSet('profiles', PROFILES).catch(()=>localStorage.setItem('c_profiles', JSON.stringify(PROFILES)));
 }
 function saveProfileToFirebase(email) {
-  const key = email.replace(/[.#$\/\[\]]/g,'_');
-  fbSet('profiles/' + key, PROFILES[key] || PROFILES[email] || {}).catch(()=>{});
+  const sKey = email.replace(/[.#$\/\[\]]/g,'_');
+  fbSet('profiles/' + sKey, PROFILES[sKey] || {}).catch(()=>{});
 }
 function getProfile(key) {
   if (!key) return {};
-  if (!PROFILES[key]) PROFILES[key] = { avatar: null, bio: '', gameRole: '', joinDate: '' };
-  return PROFILES[key];
+  const sKey = key.replace(/[.#$\/\[\]]/g,'_');
+  if (!PROFILES[sKey]) {
+    if (PROFILES[key]) { PROFILES[sKey] = PROFILES[key]; }
+    else { PROFILES[sKey] = { avatar: null, bio: '', gameRole: '', joinDate: '' }; }
+  }
+  return PROFILES[sKey];
 }
 function openProfilePanel() {
   if (!D.user || !D.role) { toast('Login dahulu','warn'); return; }
@@ -7340,6 +7568,74 @@ function closeDM() {
   else showPg('home');
 }
 
+function buildDMMsgHTML(m, i) {
+  const isMine = m.email === D.email || m.name === D.user;
+  const d = new Date(m.ts);
+  const timeStr = d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  const initials = (m.name||'?').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  const prof = m.email ? getProfile(m.email) : (m.name ? getProfile(m.name) : {});
+  const avInner = (prof && prof.avatar)
+    ? '<img src="'+prof.avatar+'" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:50%"/>'
+    : initials;
+  const roleClass = m.role || 'member';
+  const canDel = isMine || D.role === 'admin' || D.role === 'leader';
+  let bodyHTML = '';
+  if (m.sticker) {
+    bodyHTML += '<img src="' + m.sticker + '" style="max-width:110px;border-radius:10px;display:block" loading="lazy"/>';
+  }
+  if (m.text) {
+    const safeT = (m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+    bodyHTML += '<div class="dm-bubble ' + (isMine?'mine':'theirs') + '">' + safeT + '</div>';
+  }
+  if (m.images && m.images.length) {
+    bodyHTML += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">'
+      + m.images.map(src => '<img src="'+src+'" style="max-width:120px;max-height:120px;border-radius:8px;cursor:pointer;object-fit:cover" onclick="openImgZoom(this.src)" loading="lazy"/>').join('')
+      + '</div>';
+  }
+  if (m.audio) {
+    const aid = 'ca_dm_' + m.ts + '_' + i;
+    bodyHTML += buildCustomAudioPlayer(m.audio, aid, 'Suara');
+  }
+  const delBtn = canDel ? '<button class="msg-act-btn" onclick="deleteDMMsg('+i+')" title="Hapus">🗑</button>' : '';
+  if (isMine) {
+    return '<div class="chat-msg" id="dm-msg-'+i+'" style="flex-direction:row-reverse">'
+      + '<div class="msg-av '+roleClass+'" style="flex-shrink:0">'+avInner+'</div>'
+      + '<div class="msg-right" style="align-items:flex-end">'
+      + '<div class="msg-meta" style="justify-content:flex-end"><span class="msg-time">'+timeStr+'</span></div>'
+      + bodyHTML
+      + '</div>'
+      + '<div class="msg-actions">'+delBtn+'</div>'
+      + '</div>';
+  } else {
+    return '<div class="chat-msg" id="dm-msg-'+i+'">'
+      + '<div class="msg-av '+roleClass+'" style="cursor:pointer;flex-shrink:0" onclick="_dmAvClick(this)" data-email="'+(m.email||'')+'" data-name="'+m.name+'">'+avInner+'</div>'
+      + '<div class="msg-right">'
+      + '<div class="msg-meta"><span class="msg-name '+roleClass+'">'+m.name+'</span><span class="msg-time">'+timeStr+'</span></div>'
+      + bodyHTML
+      + '</div>'
+      + '<div class="msg-actions">'+delBtn+'</div>'
+      + '</div>';
+  }
+}
+
+function deleteDMMsg(idx) {
+  if (!DM_STATE.roomKey) return;
+  const msg = DM_STATE.msgs[idx];
+  if (!msg) return;
+  const canDel = (msg.email === D.email || msg.name === D.user) || D.role === 'admin' || D.role === 'leader';
+  if (!canDel) return;
+  if (!confirm('Hapus pesan ini?')) return;
+  DM_STATE.msgs.splice(idx, 1);
+  renderDMChat();
+  // Remove from Firebase — find by ts
+  FB.get(FB.ref(FB.db, 'dm/'+DM_STATE.roomKey)).then(snap => {
+    const all = snap.val();
+    if (!all) return;
+    const entry = Object.entries(all).find(([k,v]) => v.ts === msg.ts && v.name === msg.name);
+    if (entry) FB.remove(FB.ref(FB.db, 'dm/'+DM_STATE.roomKey+'/'+entry[0]));
+  }).catch(()=>{});
+}
+
 function renderDMChat() {
   const container = document.getElementById('dmMsgs');
   if (!container) return;
@@ -7347,41 +7643,19 @@ function renderDMChat() {
     container.innerHTML = '<div style="text-align:center;color:var(--tx2);font-size:.84rem;padding:3rem 1rem;user-select:none">Mulai percakapan dengan ' + (DM_STATE.targetUser||'') + ' 👋</div>';
     return;
   }
-  const html = DM_STATE.msgs.map((m, i) => {
-    const isMine = m.email === D.email || m.name === D.user;
+  let html = '';
+  let lastDay = '';
+  DM_STATE.msgs.forEach((m, i) => {
     const d = new Date(m.ts);
-    const diff = Date.now() - m.ts;
-    const timeStr = diff < 86400000 ? d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}) : d.toLocaleDateString('id-ID',{day:'numeric',month:'short'});
-    const initials = (m.name||'?').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
-    const prof = m.email ? getProfile(m.email) : {};
-    const avInner = (prof && prof.avatar) ? '<img src="'+prof.avatar+'" style="width:100%;height:100%;object-fit:cover"/>' : initials;
-    const roleClass = m.role || 'member';
-    const safeT = (m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-    // Build body
-    let body = '';
-    if (m.sticker) {
-      body += '<img src="' + m.sticker + '" style="max-width:100px;border-radius:8px" />';
-    } else if (safeT) body += '<div class="dm-bubble ' + (isMine?'mine':'theirs') + '">' + safeT + '</div>';
-    if (m.images && m.images.length) {
-      body += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;max-width:220px">'
-        + m.images.map(src => '<img src="'+src+'" style="max-width:100px;border-radius:8px;cursor:pointer" onclick="showFullImg(this.src)"/>').join('')
-        + '</div>';
+    const dayStr = d.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'});
+    if (dayStr !== lastDay) {
+      html += '<div class="chat-day-sep"><span>'+dayStr+'</span></div>';
+      lastDay = dayStr;
     }
-    if (m.audio) {
-      const aid = 'ca_dm_' + m.ts + '_' + i;
-      body += buildCustomAudioPlayer(m.audio, aid, 'Suara');
-    }
-    if (isMine) {
-      return '<div class="dm-msg-wrap mine">' + body + '<div class="dm-time">' + timeStr + '</div></div>';
-    } else {
-      return '<div class="dm-msg-wrap theirs">'
-        + '<div class="msg-av ' + roleClass + '" style="width:30px;height:30px;font-size:.65rem;margin-top:auto">' + avInner + '</div>'
-        + '<div>' + body + '<div class="dm-time">' + timeStr + '</div></div>'
-        + '</div>';
-    }
-  }).join('');
+    html += buildDMMsgHTML(m, i);
+  });
   container.innerHTML = html;
-  container.scrollTop = container.scrollHeight;
+  requestAnimationFrame(() => { container.scrollTop = container.scrollHeight; });
 }
 
 // ══ DM EXTRA STATE ══
@@ -7499,15 +7773,18 @@ function _startDMRecTimer() {
   _dmRecSeconds = 0;
   const el = document.getElementById('dmRecTimer');
   if (el) { el.style.display = 'inline'; el.textContent = '0s'; }
+  _showRecBar('⏺ Pesan Suara — Merekam 0s · Lepas untuk kirim');
   _dmRecTimerInterval = setInterval(() => {
     _dmRecSeconds++;
     if (el) el.textContent = _dmRecSeconds + 's';
+    _updateRecBar(_dmRecSeconds, 'Pesan Suara');
     if (_dmRecSeconds >= 120) stopDMAudioRecord({preventDefault:()=>{}});
   }, 1000);
 }
 
 function _stopDMRecTimer() {
   clearInterval(_dmRecTimerInterval);
+  _hideRecBar();
   const el = document.getElementById('dmRecTimer');
   if (el) el.style.display = 'none';
   _dmRecSeconds = 0;
@@ -8037,10 +8314,12 @@ function applyGoogleAsMember(user) {
     return;
   }
   D.user = nm; D.email = em; D.role = 'guest';
-  // Save Google photo for member-pending user
+  // Always save/update Google photo
   if (user.picture && em) {
-    const pk = getProfile(em);
-    if (!pk.avatar) { pk.avatar = user.picture; saveProfileToFirebase(em); }
+    const sKey = em.replace(/[.#$\/\[\]]/g,'_');
+    if (!PROFILES[sKey]) PROFILES[sKey] = {};
+    PROFILES[sKey].avatar = user.picture;
+    saveProfileToFirebase(em);
   }
   updateNav();
   const gnEl = document.getElementById('guestName'); if (gnEl) gnEl.textContent = nm;
@@ -8051,10 +8330,13 @@ function applyGoogleAsMember(user) {
 function applyGoogleAsGuest(user) {
   const { shortName: nm, email: em, name: fullName, picture } = user;
   D.user = nm; D.email = em; D.role = 'guest'; D.guestName = fullName;
-  // Save Google profile photo
+  // Always save/update Google profile photo
   if (picture && em) {
-    const pk = getProfile(em);
-    if (!pk.avatar) { pk.avatar = picture; saveProfileToFirebase(em); }
+    const sKey = em.replace(/[.#$\/\[\]]/g,'_');
+    if (!PROFILES[sKey]) PROFILES[sKey] = {};
+    PROFILES[sKey].avatar = picture;
+    saveProfileToFirebase(em);
+    refreshProfileAvatar(em);
   }
   // Simpan/ambil tanggal bergabung dari localStorage
   const joinKey = 'c_guest_join_' + em.replace(/[^a-z0-9]/gi,'_');
@@ -8362,6 +8644,16 @@ async function setGuestFormEnabled(v) {
   toast(v ? 'Form tamu diaktifkan' : 'Form tamu dinonaktifkan', v ? 'success' : 'warn');
 }
 
+async function setBankOpen(v) {
+  D.bankOpen = v;
+  fbSet('settings/bankOpen', v).then(() => {
+    toast(v ? 'Bank dibuka ✓' : 'Bank ditutup sementara ✓', v ? 'success' : 'warn');
+  }).catch(() => toast('Gagal update pengaturan bank','error'));
+  // Update closed banner if visible
+  const banner = document.getElementById('bankClosedBanner');
+  if (banner) banner.style.display = v ? 'none' : 'flex';
+}
+
 async function setGuestAccessOpen(v) {
   D.guestAccessOpen = v;
   await fbSet('settings/guestAccessOpen', v).catch(()=>localStorage.setItem('c_guestAccess', JSON.stringify(v)));
@@ -8404,6 +8696,7 @@ async function loadMemberRestoreLog() {
 
 // ════ VOUCHER SYSTEM ════
 let _activeVoucherDiscount = 0; // % discount from redeemed voucher this session
+let _activeVoucherCode = null; // code of active voucher
 
 async function createVoucher() {
   const title = document.getElementById('vcTitle')?.value.trim();
@@ -8512,10 +8805,12 @@ function applyVoucherDirect(btn) {
   const code = btn.dataset.code;
   const discount = parseFloat(btn.dataset.discount) || 0;
   _activeVoucherDiscount = discount;
+  _activeVoucherCode = code;
+  // Remove from Firebase immediately (single-use)
+  fbSet('vouchers/' + code, null).catch(()=>{});
   loadActiveVouchers();
-  toast('Voucher aktif! Diskon ' + discount + '% untuk pembelian saham berikutnya 🎟️','success');
-  // Scroll to stock list
-  document.querySelector('#page-stocks .panel')?.scrollIntoView({ behavior:'smooth' });
+  loadMyVouchers(); // Refresh list (will now be empty/removed)
+  toast('Voucher aktif! Diskon ' + discount + '% untuk semua pembelian berikutnya 🎟️','success');
 }
 
 async function redeemVoucher() {
@@ -10044,6 +10339,659 @@ const _origBootApp = window.bootApp;
     }
     _swipingBack = false;
   }, { passive: true });
+})();
+</script>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// CUANIE NEW FEATURES v2 — Session 13
+// Flash Event · Check-in · Streak · Mission Board ·
+// Price Alert · Lucky Wheel · Attendance · Birthday ·
+// Achievement System · Rank System · Custom Themes
+// ══════════════════════════════════════════════════════════
+
+// ─── UTILITIES ───────────────────────────────────────────
+function _eKey(email) { return (email||'').replace(/[.#$\/\[\]]/g,'_'); }
+function _today() { return new Date().toDateString(); }
+function _weekKey() {
+  const d=new Date(), j=new Date(d.getFullYear(),0,1);
+  return d.getFullYear()+'W'+Math.ceil(((d-j)/86400000+j.getDay()+1)/7);
+}
+async function _addCoin(amount, reason) {
+  const cur = await loadUserCoin();
+  const next = cur + amount;
+  await saveUserCoin(next);
+  // Refresh any coin displays
+  ['memberCoinBal','stockPageCoin'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=next;});
+  return next;
+}
+
+// ─── ⚡ FLASH EVENT ───────────────────────────────────────
+const FLASH_TYPES = {
+  bull:       {emoji:'🚀',title:'Bull Run!',      desc:'Saham naik lebih cepat'},
+  bear:       {emoji:'📉',title:'Bear Crash!',    desc:'Hati-hati saham anjlok'},
+  flash_coin: {emoji:'⚡',title:'Flash Sale Coin!',desc:'Harga coin diskon'},
+  double_div: {emoji:'💰',title:'Double Dividend!',desc:'Dividen 2x lipat'},
+  bonus_xp:   {emoji:'⭐',title:'Bonus XP Day!',  desc:'Semua reward 2x'},
+};
+let _feTimer=null;
+window._flashCoinDiscount=0; window._flashBullBoost=0; window._flashBearBoost=0;
+
+function openFlashModal(){ document.getElementById('flashBg').style.display='block'; document.getElementById('flashModal').style.display='block'; }
+function closeFlashModal(){ document.getElementById('flashBg').style.display='none'; document.getElementById('flashModal').style.display='none'; }
+
+async function triggerFlashEvent(){
+  const type=document.getElementById('flashType').value;
+  const dur=parseInt(document.getElementById('flashDur').value);
+  const intensity=parseInt(document.getElementById('flashIntensity').value)||50;
+  const ev={type,dur,intensity,endsAt:Date.now()+dur*60000,startedBy:D.user,active:true};
+  await fbSet('marketEvent',ev);
+  closeFlashModal();
+  // announce in chat
+  try{FB.push(fbRef('chat'),{ts:Date.now(),name:'⚡ Market Event',bot:true,
+    text:'⚡ '+FLASH_TYPES[type].title+' — '+FLASH_TYPES[type].desc+' selama '+dur+' menit! '+FLASH_TYPES[type].emoji,role:'admin'});}catch(e){}
+  toast('Event "'+FLASH_TYPES[type].title+'" aktif selama '+dur+' menit!','success');
+}
+async function stopFlashEvent(){ await fbSet('marketEvent/active',false); toast('Event dihentikan','warn'); }
+
+function setupFlashListener(){
+  fbOn('marketEvent', ev=>{
+    if(!ev||!ev.active||ev.endsAt<Date.now()){ _clearFlashUI(); return; }
+    _showFlashUI(ev);
+  });
+}
+function _showFlashUI(ev){
+  const info=FLASH_TYPES[ev.type]||{emoji:'⚡',title:ev.type,desc:''};
+  // stocks banner
+  const b=document.getElementById('flashBanner');
+  if(b){ b.style.display='block';
+    const e=document.getElementById('flashBannerEmoji'); if(e)e.textContent=info.emoji;
+    const t=document.getElementById('flashBannerTitle'); if(t)t.textContent=info.title+(ev.intensity?' ('+ev.intensity+'%)':'');
+    const d=document.getElementById('flashBannerDesc'); if(d)d.textContent=info.desc;
+  }
+  // leader panel
+  const la=document.getElementById('flashLeaderActive'); if(la)la.style.display='block';
+  const ls=document.getElementById('flashLeaderStatus'); if(ls)ls.textContent='🔴 Aktif';
+  const lt=document.getElementById('flashLeaderTitle'); if(lt)lt.textContent=info.emoji+' '+info.title;
+  const ld=document.getElementById('flashLeaderDesc'); if(ld)ld.textContent=info.desc;
+  // countdown
+  clearInterval(_feTimer);
+  function tick(){
+    const rem=ev.endsAt-Date.now();
+    if(rem<=0){_clearFlashUI();fbSet('marketEvent/active',false);return;}
+    const m=Math.floor(rem/60000),s=Math.floor((rem%60000)/1000);
+    const txt=m+':'+String(s).padStart(2,'0');
+    ['flashBannerTimer','flashLeaderTimer'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=txt;});
+  }
+  tick(); _feTimer=setInterval(tick,1000);
+  // effects
+  if(ev.type==='flash_coin') window._flashCoinDiscount=ev.intensity/100;
+  if(ev.type==='bull') window._flashBullBoost=ev.intensity/100;
+  if(ev.type==='bear') window._flashBearBoost=ev.intensity/100;
+}
+function _clearFlashUI(){
+  clearInterval(_feTimer);
+  const b=document.getElementById('flashBanner'); if(b)b.style.display='none';
+  const la=document.getElementById('flashLeaderActive'); if(la)la.style.display='none';
+  const ls=document.getElementById('flashLeaderStatus'); if(ls)ls.textContent='Tidak ada event aktif';
+  window._flashCoinDiscount=0; window._flashBullBoost=0; window._flashBearBoost=0;
+}
+
+// ─── 📆 DAILY CHECK-IN ────────────────────────────────────
+let _ciData=null;
+
+async function loadCheckIn(){
+  if(!D.email) return;
+  try{ const s=await fbGet('checkin/'+_eKey(D.email)); _ciData=s.val()||{streak:0,lastCheckIn:null,history:[]}; }
+  catch(e){ _ciData={streak:0,lastCheckIn:null,history:[]}; }
+  renderCheckIn();
+}
+
+function renderCheckIn(){
+  const today=_today(), data=_ciData||{};
+  const streak=data.streak||0, hist=data.history||[];
+  const alreadyDone=data.lastCheckIn===today;
+
+  // Streak badge
+  const sb=document.getElementById('ciStreakBadge'); if(sb)sb.textContent='🔥 '+streak+' hari';
+
+  // Calendar — last 7 days
+  const cal=document.getElementById('ciCalRow');
+  if(cal){
+    const days=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+    let html='';
+    for(let i=6;i>=0;i--){
+      const d=new Date(); d.setDate(d.getDate()-i);
+      const ds=d.toDateString(), isToday=i===0, done=hist.includes(ds);
+      const cls='ci-day'+(done?' ci-done':'')+(isToday?' ci-today':'');
+      html+='<div class="'+cls+'"><span>'+days[d.getDay()]+'</span><span style="font-size:.85rem">'+(done?'✓':d.getDate())+'</span></div>';
+    }
+    cal.innerHTML=html;
+  }
+  // Button
+  const btn=document.getElementById('ciBtn');
+  if(btn){
+    if(alreadyDone){ btn.disabled=true; btn.style.cssText='width:100%;padding:.6rem;border-radius:9px;border:none;background:var(--s2);color:var(--tx2);font-family:\'DM Sans\',sans-serif;font-size:.86rem;font-weight:700;cursor:default'; btn.textContent='✓ Sudah check-in hari ini'; }
+    else{ btn.disabled=false; btn.style.cssText='width:100%;padding:.6rem;border-radius:9px;border:none;background:var(--ac2);color:#fff;font-family:\'DM Sans\',sans-serif;font-size:.86rem;font-weight:700;cursor:pointer'; btn.textContent='✅ Check-in Sekarang'; }
+  }
+  // Reward hint
+  const rh=document.getElementById('ciRewardHint');
+  if(rh){ const day=(streak%7)+1, rew=day===7?'🎉 100 CQ Bonus!':'10 CQ'; rh.textContent=alreadyDone?'Kembali besok!':'Hari ke-'+day+' → '+rew; }
+
+  // Update streak badge in welcome
+  _updateDashStreak(streak);
+}
+
+async function doCheckIn(){
+  if(!D.email||!_ciData) return;
+  const today=_today();
+  if(_ciData.lastCheckIn===today){ toast('Sudah check-in hari ini!','warn'); return; }
+  const yd=new Date(); yd.setDate(yd.getDate()-1);
+  const cont=_ciData.lastCheckIn===yd.toDateString();
+  const newStreak=cont?(_ciData.streak||0)+1:1;
+  const day=(newStreak-1)%7+1;
+  const reward=day===7?100:10;
+  const hist=(_ciData.history||[]).slice(-60); hist.push(today);
+  _ciData={streak:newStreak,lastCheckIn:today,history:hist};
+  await fbSet('checkin/'+_eKey(D.email),_ciData);
+  await _addCoin(reward, 'check-in');
+  renderCheckIn();
+  // Mission progress
+  await _missionProgress_('dm_checkin',1);
+  if(day===7) toast('🎉 7 hari berturut! Bonus +100 CQ! Streak: '+newStreak+' 🔥','success');
+  else toast('✅ Check-in! +'+reward+' CQ · Streak: '+newStreak+' hari 🔥','success');
+}
+
+function _updateDashStreak(streak){
+  let el=document.getElementById('dashStreakEl');
+  const welcome=document.getElementById('memberWelcome');
+  if(!welcome) return;
+  if(!el&&streak>0){ el=document.createElement('span'); el.id='dashStreakEl'; el.style.cssText='display:inline-block;background:rgba(232,184,75,.15);border:1px solid rgba(232,184,75,.3);border-radius:10px;padding:1px 8px;font-size:.72rem;font-weight:700;color:var(--gold);margin-left:.4rem;vertical-align:middle'; welcome.appendChild(el); }
+  if(el) el.textContent=streak>0?'🔥'+streak:'';
+}
+
+// ─── 📋 MISSION BOARD ─────────────────────────────────────
+const DAILY_MISSIONS=[
+  {id:'dm_login',   emoji:'🌅',title:'Login Harian',    desc:'Buka app hari ini',              reward:5,  target:1},
+  {id:'dm_checkin', emoji:'📆',title:'Check-in',        desc:'Klik tombol check-in harian',    reward:5,  target:1},
+  {id:'dm_chat',    emoji:'💬',title:'Kirim 3 Pesan',   desc:'Chat di team chat',              reward:10, target:3},
+  {id:'dm_ciuntik', emoji:'📱',title:'Post CiunTik',    desc:'Buat 1 post di CiunTik',         reward:15, target:1},
+  {id:'dm_stock',   emoji:'📈',title:'Cek Saham',       desc:'Buka halaman Pasar Saham',       reward:5,  target:1},
+];
+const WEEKLY_MISSIONS=[
+  {id:'wm_trade',   emoji:'💹',title:'Trading 3x',      desc:'Beli atau jual saham 3 kali',    reward:80, target:3},
+  {id:'wm_chat20',  emoji:'🗣️',title:'20 Pesan Chat',   desc:'Kirim 20 pesan tim minggu ini',  reward:60, target:20},
+  {id:'wm_ci7',     emoji:'🔥',title:'Check-in 7 Hari', desc:'7 hari berturut-turut',           reward:150,target:7},
+  {id:'wm_post3',   emoji:'✨',title:'3 Post CiunTik',  desc:'Buat 3 post CiunTik',            reward:70, target:3},
+  {id:'wm_dm5',     emoji:'📩',title:'Kirim 5 DM',      desc:'DM ke 5 member berbeda',         reward:50, target:5},
+];
+let _mProg={daily:{},weekly:{}}, _mClaim={daily:{},weekly:{}};
+let _mTab='daily';
+
+async function loadMissions(){
+  if(!D.email) return;
+  try{
+    const [ps,cs]=await Promise.all([fbGet('missions/'+_eKey(D.email)+'/prog'),fbGet('missions/'+_eKey(D.email)+'/claim')]);
+    const p=ps.val()||{}, c=cs.val()||{};
+    _mProg.daily   = p.date===_today()   ? (p.daily||{})  : {};
+    _mProg.weekly  = p.week===_weekKey() ? (p.weekly||{}) : {};
+    _mClaim.daily  = c.date===_today()   ? (c.daily||{})  : {};
+    _mClaim.weekly = c.week===_weekKey() ? (c.weekly||{}) : {};
+  }catch(e){ _mProg={daily:{},weekly:{}}; _mClaim={daily:{},weekly:{}}; }
+  await _missionProgress_('dm_login',1);
+  renderMissionPreview();
+}
+
+async function _missionProgress_(id, count){
+  const isW=WEEKLY_MISSIONS.some(x=>x.id===id);
+  const bucket=isW?'weekly':'daily';
+  const m=[...DAILY_MISSIONS,...WEEKLY_MISSIONS].find(x=>x.id===id);
+  if(!m) return;
+  _mProg[bucket][id]=Math.min((_mProg[bucket][id]||0)+count, m.target);
+  const key=_eKey(D.email);
+  await fbSet('missions/'+key+'/prog',{date:_today(),week:_weekKey(),daily:_mProg.daily,weekly:_mProg.weekly}).catch(()=>{});
+  renderMissionPreview();
+}
+
+function renderMissionPreview(){
+  const el=document.getElementById('missionPreviewList'); if(!el) return;
+  const missions=DAILY_MISSIONS.slice(0,3);
+  el.innerHTML=missions.map(m=>{
+    const prog=_mProg.daily[m.id]||0, claimed=_mClaim.daily[m.id], done=prog>=m.target;
+    const pct=Math.min(100,(prog/m.target)*100);
+    return '<div class="m-card'+(claimed?' m-claimed':'')+'">'
+      +'<span style="font-size:1.2rem">'+m.emoji+'</span>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:.8rem;font-weight:700">'+m.title+'</div>'
+      +'<div class="m-prog"><div class="m-prog-fill" style="width:'+pct+'%"></div></div>'
+      +'<div style="font-size:.68rem;color:var(--tx2);margin-top:2px">'+prog+'/'+m.target+'</div></div>'
+      +'<div style="flex-shrink:0;text-align:right">'
+      +(claimed?'<span style="color:var(--ok);font-size:.82rem">✓</span>'
+        :done?'<button onclick="claimMission(\''+m.id+'\')" style="background:var(--ok);border:none;border-radius:6px;padding:3px 8px;color:#fff;font-size:.7rem;font-family:\'DM Sans\',sans-serif;cursor:pointer;font-weight:700">Klaim</button>'
+        :'<span style="color:var(--gold);font-size:.72rem;font-weight:700">+'+m.reward+' CQ</span>')
+      +'</div></div>';
+  }).join('')+'<div style="text-align:center;font-size:.7rem;color:var(--tx2);margin-top:.2rem">'
+    +DAILY_MISSIONS.filter(m=>(_mProg.daily[m.id]||0)>=m.target).length+'/'+DAILY_MISSIONS.length+' harian selesai</div>';
+}
+
+function switchMTab(tab){
+  _mTab=tab;
+  ['Daily','Weekly','Special'].forEach(t=>{ const b=document.getElementById('mTab'+t); if(b)b.classList.toggle('active',t.toLowerCase()===tab); });
+  renderMissionList();
+}
+function renderMissionList(){
+  const el=document.getElementById('missionList'); if(!el) return;
+  const isW=_mTab==='weekly', missions=isW?WEEKLY_MISSIONS:_mTab==='daily'?DAILY_MISSIONS:[];
+  if(!missions.length){ el.innerHTML='<div style="color:var(--tx2);text-align:center;padding:2rem">Tidak ada misi spesial saat ini.</div>'; return; }
+  el.innerHTML=missions.map(m=>{
+    const prog=(isW?_mProg.weekly:_mProg.daily)[m.id]||0;
+    const claimed=(isW?_mClaim.weekly:_mClaim.daily)[m.id], done=prog>=m.target;
+    const pct=Math.min(100,(prog/m.target)*100);
+    return '<div class="m-card'+(claimed?' m-claimed':'')+'" style="'+(done&&!claimed?'border-color:rgba(30,201,154,.35);background:rgba(30,201,154,.05)':'')+'">'
+      +'<span style="font-size:1.5rem">'+m.emoji+'</span>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:700">'+m.title+'</div>'
+      +'<div style="font-size:.72rem;color:var(--tx2);margin:.15rem 0">'+m.desc+'</div>'
+      +'<div class="m-prog"><div class="m-prog-fill" style="width:'+pct+'%"></div></div>'
+      +'<div style="font-size:.68rem;color:var(--tx2);margin-top:2px">'+prog+' / '+m.target+'</div></div>'
+      +'<div style="flex-shrink:0;text-align:right">'
+      +'<div style="font-size:.72rem;color:var(--gold);font-weight:700;margin-bottom:.25rem">+'+m.reward+' CQ</div>'
+      +(claimed?'<span style="color:var(--ok);font-weight:700;font-size:.8rem">✓</span>'
+        :done?'<button onclick="claimMission(\''+m.id+'\')" style="background:var(--ok);border:none;border-radius:7px;padding:.35rem .7rem;color:#fff;font-size:.75rem;font-family:\'DM Sans\',sans-serif;cursor:pointer;font-weight:700">Klaim!</button>'
+        :'<span style="color:var(--tx2);font-size:.72rem">Belum</span>')
+      +'</div></div>';
+  }).join('');
+}
+async function claimMission(id){
+  const isW=WEEKLY_MISSIONS.some(x=>x.id===id), bucket=isW?'weekly':'daily';
+  if(_mClaim[bucket][id]){ toast('Sudah diklaim!','warn'); return; }
+  const m=[...DAILY_MISSIONS,...WEEKLY_MISSIONS].find(x=>x.id===id);
+  if(!m) return;
+  if((_mProg[bucket][m.id]||0)<m.target){ toast('Misi belum selesai!','warn'); return; }
+  _mClaim[bucket][id]=true;
+  await fbSet('missions/'+_eKey(D.email)+'/claim',{date:_today(),week:_weekKey(),daily:_mClaim.daily,weekly:_mClaim.weekly});
+  await _addCoin(m.reward,'mission:'+id);
+  toast('🎉 "'+m.title+'" selesai! +'+m.reward+' CQ','success');
+  renderMissionPreview(); renderMissionList();
+}
+
+// ─── 🔔 PRICE ALERT ───────────────────────────────────────
+let _paList=[], _paChecker=null;
+
+function togglePriceAlertForm(){
+  const f=document.getElementById('paForm'); if(f)f.style.display=f.style.display==='none'?'block':'none';
+}
+async function loadPriceAlerts(){
+  if(!D.email) return;
+  try{ const s=await fbGet('priceAlerts/'+_eKey(D.email)); _paList=s.val()?Object.values(s.val()):[]; }
+  catch(e){ _paList=[]; }
+  renderPriceAlerts();
+  clearInterval(_paChecker);
+  _paChecker=setInterval(_checkPriceAlerts,15000);
+}
+function renderPriceAlerts(){
+  const el=document.getElementById('paList'); if(!el) return;
+  if(!_paList.length){ el.innerHTML='<div style="font-size:.76rem;color:var(--tx2)">Belum ada alert. Tambah di bawah.</div>'; return; }
+  el.innerHTML=_paList.map((a,i)=>{
+    const s=typeof STOCKS_PRESET!=='undefined'?STOCKS_PRESET.find(x=>x.id===a.stockId):null;
+    const icon=a.dir==='above'?'📈':'📉';
+    return '<div style="display:flex;align-items:center;gap:.4rem;background:var(--s2);border:1px solid var(--b1);border-radius:7px;padding:.4rem .65rem;margin-bottom:.35rem">'
+      +'<span>'+(s?s.emoji:'📊')+'</span>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:.78rem;font-weight:700">'+(s?s.name:a.stockId)+'</div>'
+      +'<div style="font-size:.7rem;color:var(--tx2)">'+icon+' '+(a.dir==='above'?'≥':'≤')+' '+a.price+' CQ</div></div>'
+      +'<button onclick="removePriceAlert('+i+')" style="background:none;border:none;color:var(--tx2);cursor:pointer;padding:2px 4px;font-size:.8rem">✕</button></div>';
+  }).join('');
+}
+async function addPriceAlert(){
+  if(!D.email) return;
+  if(_paList.length>=5){ toast('Maksimal 5 alert aktif','warn'); return; }
+  const stockId=document.getElementById('paStock').value;
+  const dir=document.getElementById('paDir').value;
+  const price=parseInt(document.getElementById('paPrice').value);
+  if(!price||price<1){ toast('Masukkan harga target','warn'); return; }
+  const a={stockId,dir,price,id:'pa_'+Date.now(),ts:Date.now()};
+  _paList.push(a);
+  document.getElementById('paPrice').value='';
+  await fbSet('priceAlerts/'+_eKey(D.email)+'/'+a.id,a);
+  renderPriceAlerts();
+  toast('Price alert ditambahkan! 🔔','success');
+}
+async function removePriceAlert(idx){
+  const a=_paList[idx]; if(!a) return;
+  _paList.splice(idx,1);
+  await fbSet('priceAlerts/'+_eKey(D.email)+'/'+a.id,null);
+  renderPriceAlerts();
+}
+function _checkPriceAlerts(){
+  if(!window._stockPrices) return;
+  _paList.forEach((a,i)=>{
+    const cur=Math.ceil((_stockPrices[a.stockId]||0)/100);
+    const hit=a.dir==='above'?cur>=a.price:cur<=a.price;
+    if(hit){
+      const s=typeof STOCKS_PRESET!=='undefined'?STOCKS_PRESET.find(x=>x.id===a.stockId):null;
+      const icon=a.dir==='above'?'📈':'📉';
+      toast(icon+' '+(s?s.name:a.stockId)+' sudah di '+cur+' CQ! Target '+a.price+' CQ tercapai 🎯','success');
+      // Notify in chat
+      try{FB.push(fbRef('chat'),{ts:Date.now(),name:'🔔 Price Alert',bot:true,text:'🎯 @'+D.user+' — '+(s?s.name:a.stockId)+' sudah '+icon+' '+cur+' CQ (target: '+a.price+' CQ)',role:'admin'});}catch(e){}
+      removePriceAlert(i);
+    }
+  });
+}
+
+// ─── 🎡 LUCKY WHEEL ───────────────────────────────────────
+const LW_SEGS=[
+  {label:'10 CQ',       reward:10,   type:'coin',  color:'#1a1535', accent:'#7c3aed', prob:.30},
+  {label:'50 CQ',       reward:50,   type:'coin',  color:'#0f2027', accent:'#1ec99a', prob:.25},
+  {label:'100 CQ',      reward:100,  type:'coin',  color:'#0f1a2e', accent:'#3b82f6', prob:.18},
+  {label:'500 CQ',      reward:500,  type:'coin',  color:'#1a0f2e', accent:'#a78bfa', prob:.10},
+  {label:'Voucher 5%',  reward:5,    type:'vchr',  color:'#1a1500', accent:'#e8b84b', prob:.05},
+  {label:'Item Langka', reward:0,    type:'item',  color:'#0a1a0f', accent:'#1ec99a', prob:.06},
+  {label:'Asuransi 1hr',reward:1,    type:'ins',   color:'#0f1520', accent:'#06b6d4', prob:.04},
+  {label:'JACKPOT! 🎊', reward:2000, type:'jack',  color:'#2a1000', accent:'#f97316', prob:.02},
+];
+const LW_KEY='c_lw_last';
+let _lwSpin=false, _lwAngle=0, _lwCtx=null, _lwCanvas=null;
+
+function openLuckyWheel(){
+  document.getElementById('lwBg').style.display='block';
+  document.getElementById('lwModal').style.display='block';
+  if(!_lwCanvas){ _lwCanvas=document.getElementById('lwCanvas'); _lwCtx=_lwCanvas?.getContext('2d'); }
+  _drawWheel(_lwAngle);
+  const last=localStorage.getItem(LW_KEY);
+  const ok=!last||(Date.now()-parseInt(last))>20*3600*1000;
+  const btn=document.getElementById('lwSpinBtn');
+  if(btn){ btn.disabled=!ok; btn.style.opacity=ok?'1':'.45'; btn.textContent=ok?'🎡 SPIN!':'Sudah spin hari ini'; }
+  const nx=document.getElementById('lwNext');
+  if(nx){
+    if(ok){ nx.textContent='1 spin gratis tersedia! ✨'; }
+    else{ const rem=20*3600*1000-(Date.now()-parseInt(last)); const h=Math.floor(rem/3600000),m2=Math.floor((rem%3600000)/60000); nx.textContent='Spin berikutnya dalam '+h+'j '+m2+'m'; }
+  }
+  document.getElementById('lwResult').textContent='';
+}
+function closeLuckyWheel(){ document.getElementById('lwBg').style.display='none'; document.getElementById('lwModal').style.display='none'; }
+
+function _drawWheel(angle){
+  if(!_lwCtx) return;
+  const ctx=_lwCtx,cx=130,cy=130,r=122,n=LW_SEGS.length,arc=(2*Math.PI)/n;
+  ctx.clearRect(0,0,260,260);
+  LW_SEGS.forEach((seg,i)=>{
+    const s=angle+i*arc, e=s+arc;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,s,e); ctx.closePath();
+    ctx.fillStyle=seg.color; ctx.fill();
+    ctx.strokeStyle=seg.accent; ctx.lineWidth=2; ctx.stroke();
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(s+arc/2);
+    ctx.textAlign='right'; ctx.fillStyle=seg.accent;
+    ctx.font='bold 9.5px DM Sans,sans-serif'; ctx.fillText(seg.label,r-6,3.5);
+    ctx.restore();
+  });
+  ctx.beginPath(); ctx.arc(cx,cy,16,0,2*Math.PI);
+  ctx.fillStyle='#0a0a1a'; ctx.fill();
+  ctx.strokeStyle='#7c3aed'; ctx.lineWidth=2.5; ctx.stroke();
+  ctx.fillStyle='#fff'; ctx.font='bold 12px sans-serif'; ctx.textAlign='center'; ctx.fillText('⚡',cx,cy+4);
+}
+
+function _pickSeg(){
+  let r=Math.random(), c=0;
+  for(const seg of LW_SEGS){ c+=seg.prob; if(r<=c) return seg; }
+  return LW_SEGS[0];
+}
+
+async function spinWheel(){
+  const last=localStorage.getItem(LW_KEY);
+  if(last&&(Date.now()-parseInt(last))<=20*3600*1000){ toast('Sudah spin hari ini! 🎡','warn'); return; }
+  if(_lwSpin) return;
+  _lwSpin=true;
+  const btn=document.getElementById('lwSpinBtn');
+  if(btn){ btn.disabled=true; btn.textContent='⏳ Berputar...'; }
+  document.getElementById('lwResult').textContent='';
+
+  const winner=_pickSeg(), winIdx=LW_SEGS.indexOf(winner);
+  const arc=(2*Math.PI)/LW_SEGS.length;
+  const target=-Math.PI/2-(winIdx*arc+arc/2);
+  const total=10*Math.PI+((target-_lwAngle)%(2*Math.PI));
+  const dur=4200, start=Date.now(), startA=_lwAngle;
+
+  function anim(){
+    const prog=Math.min(1,(Date.now()-start)/dur);
+    const ease=1-Math.pow(1-prog,3);
+    _lwAngle=startA+total*ease;
+    _drawWheel(_lwAngle);
+    if(prog<1){ requestAnimationFrame(anim); return; }
+    _lwSpin=false;
+    _onWheelWin(winner);
+  }
+  requestAnimationFrame(anim);
+}
+
+async function _onWheelWin(seg){
+  localStorage.setItem(LW_KEY,Date.now().toString());
+  const res=document.getElementById('lwResult');
+  const dot=document.getElementById('lwAvailDot'); if(dot)dot.style.background='#e8546a';
+  const nx=document.getElementById('lwNext'); if(nx)nx.textContent='Spin berikutnya besok!';
+
+  if(seg.type==='coin'||seg.type==='jack'){
+    await _addCoin(seg.reward,'lucky_wheel');
+    if(res)res.textContent='🎉 '+seg.label+'!';
+    toast((seg.type==='jack'?'🎊 JACKPOT!! ':'🎡 ')+'+'+seg.reward+' CQ Coin!','success');
+    if(seg.type==='jack'){
+      try{FB.push(fbRef('chat'),{ts:Date.now(),name:'🎡 Lucky Wheel',bot:true,text:'🎊 @'+D.user+' mendapat JACKPOT 2000 CQ dari Lucky Wheel!!',role:'admin'});}catch(e){}
+    }
+  } else if(seg.type==='vchr'){
+    const code='WHEEL'+Date.now().toString(36).toUpperCase();
+    await fbSet('vouchers/'+code,{title:'Lucky Wheel Voucher',code,discount:5,expiryTs:Date.now()+86400000,createdBy:'system',targetEmail:D.email});
+    if(res)res.textContent='🎟️ Voucher diskon 5%! Cek tab Voucher.';
+    toast('🎡 Voucher 5% dari Lucky Wheel! 🎟️','success');
+    if(typeof loadMyVouchers==='function') loadMyVouchers();
+  } else if(seg.type==='ins'){
+    if(res)res.textContent='🛡️ Asuransi Saham 1 Hari aktif!';
+    toast('🎡 Asuransi saham 1 hari! 🛡️','success');
+  } else {
+    if(res)res.textContent='🎁 Item Langka! Segera hadir di CQ Store.';
+    toast('🎡 Item Langka! Akan tersedia di CQ Store 🎁','success');
+  }
+}
+
+// ─── ✅ ATTENDANCE / ABSENSI ──────────────────────────────
+let _attendTimer=null;
+
+async function openAttendanceSession(){
+  const name=(document.getElementById('attendanceEventName')?.value||'').trim();
+  if(!name){ toast('Masukkan nama event','warn'); return; }
+  const dur=parseInt(document.getElementById('attendanceDur')?.value||10);
+  const endsAt=Date.now()+dur*60000;
+  const session={name,dur,endsAt,startedBy:D.user,active:true,attendees:{}};
+  await fbSet('attendanceSession',session);
+  document.getElementById('attendanceEventName').value='';
+  toast('Sesi absensi "'+name+'" dibuka selama '+dur+' menit!','success');
+}
+async function closeAttendanceSession(){
+  await fbSet('attendanceSession/active',false);
+  toast('Sesi absensi ditutup','warn');
+}
+function setupAttendanceListener(){
+  fbOn('attendanceSession', sess=>{
+    const la=document.getElementById('attendanceLeaderActive');
+    const lf=document.getElementById('attendanceOpenForm');
+    const ls=document.getElementById('attendanceLeaderStatus');
+    // Member attendance button
+    let mBtn=document.getElementById('attendanceMemberBtn');
+    if(!sess||!sess.active||sess.endsAt<Date.now()){
+      if(la)la.style.display='none'; if(lf)lf.style.display='flex'; if(ls)ls.textContent='Tidak ada sesi';
+      if(mBtn)mBtn.remove(); clearInterval(_attendTimer); return;
+    }
+    if(la)la.style.display='block'; if(lf)lf.style.display='none'; if(ls)ls.textContent='🟢 Sesi aktif';
+    const sn=document.getElementById('attendanceSessionName'); if(sn)sn.textContent=sess.name;
+    const attendees=sess.attendees?Object.values(sess.attendees):[];
+    const ar=document.getElementById('attendanceResultList');
+    if(ar)ar.innerHTML=attendees.map(a=>'<div>✅ '+a.name+(a.late?' <span style="color:var(--warn);font-size:.65rem">(Telat)</span>':'')+' <span style="color:var(--tx2);font-size:.65rem">'+new Date(a.ts).toLocaleTimeString('id-ID')+'</span></div>').join('');
+    // Countdown
+    clearInterval(_attendTimer);
+    function tick(){
+      const rem=sess.endsAt-Date.now();
+      if(rem<=0){ closeAttendanceSession(); return; }
+      const m=Math.floor(rem/60000),s=Math.floor((rem%60000)/1000);
+      const el=document.getElementById('attendanceSessionTimer'); if(el)el.textContent='Tutup dalam '+m+'m '+String(s).padStart(2,'0')+'s';
+    }
+    tick(); _attendTimer=setInterval(tick,1000);
+    // Member button
+    if(D.role==='member'||D.role==='guest'){
+      if(!mBtn){
+        mBtn=document.createElement('div');
+        mBtn.id='attendanceMemberBtn';
+        mBtn.style.cssText='position:fixed;bottom:80px;right:15px;z-index:500;background:var(--ok);border-radius:12px;padding:.6rem 1rem;color:#fff;font-family:\'DM Sans\',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(30,201,154,.4);animation:pulse 2s infinite';
+        mBtn.innerHTML='✅ Absen: '+sess.name;
+        mBtn.onclick=()=>doAttendance(sess);
+        document.body.appendChild(mBtn);
+      }
+    }
+  });
+}
+async function doAttendance(sess){
+  if(!D.email||!D.user) return;
+  const key=_eKey(D.email);
+  const late=Date.now()>sess.endsAt-Math.floor(sess.dur*60000*0.5);
+  await fbSet('attendanceSession/attendees/'+key,{name:D.user,email:D.email,ts:Date.now(),late});
+  const btn=document.getElementById('attendanceMemberBtn');
+  if(btn){ btn.style.background='#374151'; btn.textContent='✓ Sudah absen '+sess.name; btn.onclick=null; }
+  toast('✅ Absensi tercatat'+(late?' (telat)':'')+'!','success');
+}
+
+// ─── 🎂 BIRTHDAY SYSTEM ───────────────────────────────────
+async function checkBirthdays(){
+  if(!D.email) return;
+  const now=new Date(), todayMMDD=String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  try{
+    const snap=await fbGet('members');
+    const members=snap.val(); if(!Array.isArray(members)) return;
+    for(const m of members){
+      if(!m||!m.birthday) continue;
+      const bday=m.birthday.slice(5); // mm-dd from yyyy-mm-dd
+      if(bday===todayMMDD){
+        const lastKey='c_bday_sent_'+m.name+'_'+now.getFullYear();
+        if(localStorage.getItem(lastKey)) continue;
+        localStorage.setItem(lastKey,'1');
+        // Post to chat
+        try{FB.push(fbRef('chat'),{ts:Date.now(),name:'🎂 Cuanie Bot',bot:true,text:'🎉🎂 Selamat Ulang Tahun, @'+m.name+'! Semoga sukses dan sehat selalu! 🎊🎁',role:'admin'});}catch(e){}
+        // Give reward if it's me
+        if(m.email===D.email){ await _addCoin(500,'birthday'); toast('🎂 Selamat Ulang Tahun! +500 CQ Coin dari Cuanie Team! 🎉','success'); }
+      }
+    }
+  }catch(e){}
+}
+
+// ─── 🏅 ACHIEVEMENT SYSTEM ───────────────────────────────
+const ACHIEVEMENTS=[
+  {id:'first_trade',  emoji:'💹', title:'Pedagang Pertama',  desc:'Beli saham pertama kali',     rarity:'Common'},
+  {id:'coin_1k',      emoji:'🪙', title:'Kolektor Coin',     desc:'Miliki 1000 CQ Coin',         rarity:'Common'},
+  {id:'coin_100k',    emoji:'💰', title:'Jutawan CQ',        desc:'Miliki 100.000 CQ Coin',      rarity:'Rare'},
+  {id:'streak_7',     emoji:'🔥', title:'7 Hari Berturut',   desc:'Check-in 7 hari',             rarity:'Common'},
+  {id:'streak_30',    emoji:'🌟', title:'Dedikasi Tinggi',   desc:'Check-in 30 hari',            rarity:'Rare'},
+  {id:'streak_100',   emoji:'👑', title:'Legenda Check-in',  desc:'Check-in 100 hari',           rarity:'Legendary'},
+  {id:'chat_100',     emoji:'🗣️', title:'Cerewet',          desc:'Kirim 100 pesan chat',        rarity:'Common'},
+  {id:'chat_500',     emoji:'📢', title:'Social Butterfly',  desc:'Kirim 500 pesan chat',        rarity:'Rare'},
+  {id:'ciuntik_10',   emoji:'📱', title:'Content Creator',  desc:'Post 10 CiunTik',             rarity:'Rare'},
+  {id:'deposit_1',    emoji:'🏦', title:'Nasabah Pertama',   desc:'Deposit pertama ke Cbank',    rarity:'Common'},
+  {id:'loyal_30',     emoji:'🎖️', title:'Loyal Member',     desc:'Member selama 30 hari',       rarity:'Rare'},
+  {id:'lucky_jack',   emoji:'🎰', title:'Penjudi Beruntung', desc:'Menang Jackpot Lucky Wheel',  rarity:'Legendary'},
+];
+let _myAchievements={};
+
+async function loadAchievements(){
+  if(!D.email) return;
+  try{ const s=await fbGet('achievements/'+_eKey(D.email)); _myAchievements=s.val()||{}; }
+  catch(e){ _myAchievements={}; }
+}
+async function unlockAchievement(id){
+  if(_myAchievements[id]) return; // already unlocked
+  const a=ACHIEVEMENTS.find(x=>x.id===id); if(!a) return;
+  _myAchievements[id]={unlockedAt:Date.now()};
+  await fbSet('achievements/'+_eKey(D.email)+'/'+id,{unlockedAt:Date.now()});
+  const rarityColor={Common:'var(--tx2)',Rare:'#3b82f6',Epic:'#a78bfa',Legendary:'var(--gold)'};
+  toast('🏅 Achievement Unlocked: '+a.emoji+' "'+a.title+'" ('+a.rarity+')','success');
+}
+function checkAchievements(){
+  // Check streak-based
+  const streak=_ciData?.streak||0;
+  if(streak>=7)  unlockAchievement('streak_7');
+  if(streak>=30) unlockAchievement('streak_30');
+  if(streak>=100)unlockAchievement('streak_100');
+}
+
+// ─── 🎨 CUSTOM THEMES ────────────────────────────────────
+const THEME_PRESETS={
+  purple: {ac:'#7c3aed',ac2:'#a78bfa',name:'Dark Purple (Default)'},
+  blue:   {ac:'#1d4ed8',ac2:'#60a5fa',name:'Midnight Blue'},
+  green:  {ac:'#065f46',ac2:'#34d399',name:'Forest Green'},
+  red:    {ac:'#991b1b',ac2:'#f87171',name:'Crimson Red'},
+  gold:   {ac:'#92400e',ac2:'#f59e0b',name:'Gold Rush'},
+};
+function applyTheme(key){
+  const t=THEME_PRESETS[key]; if(!t) return;
+  document.documentElement.style.setProperty('--ac',t.ac);
+  document.documentElement.style.setProperty('--ac2',t.ac2);
+  localStorage.setItem('c_theme',key);
+  toast('🎨 Tema "'+t.name+'" diterapkan!','success');
+}
+function loadSavedTheme(){
+  const k=localStorage.getItem('c_theme');
+  if(k&&THEME_PRESETS[k]) applyTheme(k);
+}
+loadSavedTheme();
+
+// ─── 🔗 REFERRAL PROGRAM ─────────────────────────────────
+function getReferralLink(){
+  if(!D.email) return '';
+  const code=btoa(D.email).replace(/=/g,'').slice(0,12).toUpperCase();
+  return window.location.href.split('?')[0]+'?ref='+code;
+}
+async function checkReferral(){
+  const params=new URLSearchParams(window.location.search);
+  const ref=params.get('ref'); if(!ref||!D.email) return;
+  const myCode=btoa(D.email).replace(/=/g,'').slice(0,12).toUpperCase();
+  if(ref===myCode) return; // self-referral
+  const key='c_ref_claimed';
+  if(localStorage.getItem(key)) return;
+  localStorage.setItem(key,'1');
+  await _addCoin(100,'referral_bonus');
+  // Give referrer bonus via Firebase log (leader resolves manually for now)
+  await fbSet('referrals/'+_eKey(D.email),{ref,email:D.email,name:D.user,ts:Date.now()});
+  toast('🔗 Kamu diundang! +100 CQ Coin bonus referral! 🎉','success');
+}
+
+// ─── INIT HOOK ────────────────────────────────────────────
+function _initAllFeatures(){
+  if(!D.email) return;
+  loadCheckIn();
+  loadMissions();
+  loadPriceAlerts();
+  loadAchievements();
+  setupFlashListener();
+  setupAttendanceListener();
+  checkBirthdays();
+  checkReferral();
+  // Check lucky wheel dot
+  const last=localStorage.getItem(LW_KEY);
+  const ok=!last||(Date.now()-parseInt(last))>20*3600*1000;
+  const dot=document.getElementById('lwAvailDot'); if(dot)dot.style.background=ok?'#1ec99a':'#e8546a';
+  // Achievement check after 3s
+  setTimeout(checkAchievements,3000);
+}
+
+// Hook into restoreSession
+(function(){
+  const _orig=window.restoreSession;
+  if(typeof _orig==='function'){
+    window.restoreSession=async function(){
+      const r=await _orig();
+      if(D.role==='member'||D.role==='guest') setTimeout(_initAllFeatures,900);
+      return r;
+    };
+  }
+})();
+
+// Hook into mission progress from chat messages
+(function(){
+  const _oc=window.sendChatMsg||null;
+  // We hook the Firebase push in chat instead - track via counter
+  const _origPush=typeof FB!=='undefined'?FB.push:null;
 })();
 </script>
 </body>
