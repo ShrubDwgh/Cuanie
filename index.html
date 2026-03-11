@@ -904,8 +904,30 @@ h1,h2,h3,h4,.sec-tag,.eyebrow span{
 .chat-audio-rec-btn{width:36px;height:36px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);color:var(--tx2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;flex-shrink:0}
 .chat-audio-rec-btn:hover{background:var(--b1)}
 .chat-audio-rec-btn.recording{background:var(--err);border-color:var(--err);color:#fff;animation:pulse 1s infinite}
-.tab-pill{background:var(--s2);border:1px solid var(--b2);border-radius:20px;padding:.32rem .85rem;font-size:.78rem;font-family:'DM Sans',sans-serif;color:var(--tx2);cursor:pointer;transition:all .2s;font-weight:600}
+.tab-pill{background:var(--s2);border:1px solid var(--b2);border-radius:20px;padding:.32rem .85rem;font-size:.78rem;font-family:'DM Sans',sans-serif;color:var(--tx2);cursor:pointer;transition:all .2s;font-weight:600;white-space:nowrap}
 .tab-pill.active{background:var(--ac2);border-color:var(--ac2);color:#fff}
+/* Store item card */
+.store-card{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:.9rem;display:flex;flex-direction:column;gap:.4rem;cursor:pointer;transition:border-color .2s}
+.store-card:hover,.store-card:active{border-color:var(--ac2)}
+.store-card-icon{font-size:2rem;text-align:center;padding:.5rem 0}
+.store-card-name{font-weight:700;font-size:.86rem;color:var(--tx);text-align:center}
+.store-card-price{font-size:.8rem;font-weight:700;color:var(--gold);text-align:center}
+.store-card-desc{font-size:.72rem;color:var(--tx2);text-align:center;line-height:1.4}
+/* Forum thread card */
+.forum-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:.85rem 1rem;cursor:pointer;transition:border-color .2s}
+.forum-card:hover{border-color:var(--ac2)}
+.forum-card-title{font-weight:700;font-size:.9rem;color:var(--tx);margin-bottom:.3rem;line-height:1.4}
+.forum-card-meta{font-size:.72rem;color:var(--tx2);display:flex;gap:.75rem;align-items:center}
+.forum-cat-tag{font-size:.65rem;font-weight:700;background:rgba(108,78,242,.15);border:1px solid rgba(108,78,242,.25);color:var(--ac2);border-radius:4px;padding:1px 6px}
+/* Wall sticky notes */
+.wall-note{border-radius:12px;padding:.85rem;display:flex;flex-direction:column;gap:.4rem;min-height:90px;position:relative}
+.wall-note-text{font-size:.84rem;line-height:1.5;color:#fff;font-weight:500;word-break:break-word}
+.wall-note-author{font-size:.68rem;color:rgba(255,255,255,.7);margin-top:auto}
+/* Season pass reward row */
+.season-reward-row{display:flex;align-items:center;gap:.75rem;padding:.7rem .9rem;background:var(--s1);border:1px solid var(--b1);border-radius:12px;position:relative}
+.season-reward-level{width:36px;height:36px;border-radius:50%;background:var(--s2);border:2px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:var(--tx2);flex-shrink:0}
+.season-reward-level.unlocked{background:rgba(108,78,242,.2);border-color:var(--ac);color:var(--ac2)}
+.season-reward-level.current{background:var(--ac);border-color:var(--ac);color:#fff;box-shadow:0 0 12px rgba(108,78,242,.5)}
 /* DM Hub rows (Telegram style) */
 .dmhub-row{width:100%;display:flex;align-items:center;gap:12px;padding:.72rem 1.2rem;background:none;border:none;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;text-align:left;transition:background .15s;-webkit-tap-highlight-color:transparent}
 .dmhub-row:active{background:var(--s2)}
@@ -1832,6 +1854,17 @@ canvas{-webkit-user-select:none;user-select:none}
       <div class="stat"><div class="v" id="mGametag" style="font-size:1rem;color:var(--ac2)">—</div><div class="l">Gamertag</div></div>
       <div class="stat"><div class="v" style="color:var(--ok)">Aktif</div><div class="l">Status</div></div>
     </div>
+    <!-- RANK CARD -->
+    <div class="panel" style="background:linear-gradient(135deg,rgba(108,78,242,.08),rgba(255,107,157,.05));border:1px solid rgba(108,78,242,.2);cursor:pointer" onclick="showRankLeaderboard()">
+      <div class="panel-h">
+        <span style="font-size:1rem">🏅</span>
+        <h3>Rank Saya</h3>
+        <span style="margin-left:auto;font-size:.68rem;color:var(--tx2)">Tap → Leaderboard</span>
+      </div>
+      <div id="memberRankCard">
+        <div style="color:var(--tx2);font-size:.82rem">Memuat rank...</div>
+      </div>
+    </div>
     <div class="panel">
       <div class="panel-h"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><h3>Informasi Tim</h3></div>
       <p style="color:var(--tx2);font-size:.86rem;line-height:1.75;margin-bottom:1.3rem;">Selamat bergabung di Cuanie. Bergabunglah ke Discord untuk info event, jadwal latihan, dan pengumuman terbaru.</p>
@@ -1862,6 +1895,59 @@ canvas{-webkit-user-select:none;user-select:none}
     </div>
     <!-- MISSION PREVIEW -->
     <div class="panel" id="missionPreviewPanel">
+    <!-- QUICK NAV: Forum + Wall -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:1rem" id="quickNavCommunity">
+      <button onclick="showPg('forum');loadForum()" style="display:flex;flex-direction:column;align-items:center;gap:.4rem;background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem .5rem;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--ac2)'" onmouseout="this.style.borderColor='var(--b1)'">
+        <span style="font-size:1.4rem">💬</span>
+        <span style="font-size:.78rem;font-weight:700;color:var(--tx)">Forum</span>
+        <span style="font-size:.68rem;color:var(--tx2)">Diskusi tim</span>
+      </button>
+      <button onclick="showPg('wall');loadWall()" style="display:flex;flex-direction:column;align-items:center;gap:.4rem;background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem .5rem;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--ac2)'" onmouseout="this.style.borderColor='var(--b1)'">
+        <span style="font-size:1.4rem">📌</span>
+        <span style="font-size:.78rem;font-weight:700;color:var(--tx)">Team Wall</span>
+        <span style="font-size:.68rem;color:var(--tx2)">Papan pengumuman</span>
+      </button>
+      <button onclick="showPg('tournament');loadTournaments()" style="display:flex;flex-direction:column;align-items:center;gap:.4rem;background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem .5rem;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--ac2)'" onmouseout="this.style.borderColor='var(--b1)'">
+        <span style="font-size:1.4rem">🏆</span>
+        <span style="font-size:.78rem;font-weight:700;color:var(--tx)">Tournament</span>
+        <span style="font-size:.68rem;color:var(--tx2)">Bracket & turnamen</span>
+      </button>
+      <button onclick="showPg('scrim');loadScrims()" style="display:flex;flex-direction:column;align-items:center;gap:.4rem;background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem .5rem;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--ac2)'" onmouseout="this.style.borderColor='var(--b1)'">
+        <span style="font-size:1.4rem">📅</span>
+        <span style="font-size:.78rem;font-weight:700;color:var(--tx)">Scrim</span>
+        <span style="font-size:.68rem;color:var(--tx2)">Jadwal latihan</span>
+      </button>
+      <button onclick="showPg('minigames');initMiniGames()" style="display:flex;flex-direction:column;align-items:center;gap:.4rem;background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem .5rem;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--ac2)'" onmouseout="this.style.borderColor='var(--b1)'">
+        <span style="font-size:1.4rem">🎮</span>
+        <span style="font-size:.78rem;font-weight:700;color:var(--tx)">Mini Games</span>
+        <span style="font-size:.68rem;color:var(--tx2)">Earn CQ coin</span>
+      </button>
+      <button onclick="showPg('notif');loadNotifCenter()" style="display:flex;flex-direction:column;align-items:center;gap:.4rem;background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem .5rem;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--ac2)'" onmouseout="this.style.borderColor='var(--b1)'">
+        <span style="font-size:1.4rem">🔔</span>
+        <span style="font-size:.78rem;font-weight:700;color:var(--tx)">Notifikasi</span>
+        <span style="font-size:.68rem;color:var(--tx2)">Semua notif</span>
+      </button>
+      <button onclick="showPg('stats');loadTeamStats()" style="display:flex;flex-direction:column;align-items:center;gap:.4rem;background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem .5rem;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--ac2)'" onmouseout="this.style.borderColor='var(--b1)'">
+        <span style="font-size:1.4rem">📊</span>
+        <span style="font-size:.78rem;font-weight:700;color:var(--tx)">Statistik</span>
+        <span style="font-size:.68rem;color:var(--tx2)">Win rate tim</span>
+      </button>
+      <button onclick="showPg('radio');loadRadio()" style="display:flex;flex-direction:column;align-items:center;gap:.4rem;background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem .5rem;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--ac2)'" onmouseout="this.style.borderColor='var(--b1)'">
+        <span style="font-size:1.4rem">📻</span>
+        <span style="font-size:.78rem;font-weight:700;color:var(--tx)">Radio</span>
+        <span style="font-size:.68rem;color:var(--tx2)">Musik bersama</span>
+      </button>
+      <button onclick="showPg('cards');loadMyCard()" style="display:flex;flex-direction:column;align-items:center;gap:.4rem;background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem .5rem;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--ac2)'" onmouseout="this.style.borderColor='var(--b1)'">
+        <span style="font-size:1.4rem">🃏</span>
+        <span style="font-size:.78rem;font-weight:700;color:var(--tx)">CQ Cards</span>
+        <span style="font-size:.68rem;color:var(--tx2)">Kartu player</span>
+      </button>
+      <button onclick="showPg('mood');loadMoodTracker()" style="display:flex;flex-direction:column;align-items:center;gap:.4rem;background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem .5rem;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--ac2)'" onmouseout="this.style.borderColor='var(--b1)'">
+        <span style="font-size:1.4rem">😊</span>
+        <span style="font-size:.78rem;font-weight:700;color:var(--tx)">Mood</span>
+        <span style="font-size:.68rem;color:var(--tx2)">Mood tracker</span>
+      </button>
+    </div>
       <div class="panel-h">
         <span style="font-size:1rem">📋</span>
         <h3>Misi Harian</h3>
@@ -2127,6 +2213,17 @@ canvas{-webkit-user-select:none;user-select:none}
       <div class="stat"><div class="v" id="lTot">0</div><div class="l">Total Kode</div></div>
       <div class="stat"><div class="v" id="lPending">0</div><div class="l">Pending</div></div>
       <div class="stat"><div class="v" id="lActive">0</div><div class="l">Member Aktif</div></div>
+    </div>
+    <!-- COMMAND CENTER QUICK ACCESS -->
+    <div class="panel" style="background:linear-gradient(135deg,rgba(108,78,242,.12),rgba(30,201,154,.06));border:1px solid rgba(108,78,242,.25);padding:1rem;cursor:pointer" onclick="showPg('commandcenter');loadCommandCenter()">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:42px;height:42px;background:linear-gradient(135deg,#6c4ef2,#1ec99a);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">⚡</div>
+        <div style="flex:1">
+          <div style="font-weight:800;font-size:.9rem;color:var(--tx)">Command Center</div>
+          <div style="font-size:.74rem;color:var(--tx2)">Health score, alert, statistik tim real-time</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
+      </div>
     </div>
     <!-- CHAT QUICK ACCESS -->
     <div class="panel" style="padding:1.2rem">
@@ -3138,26 +3235,42 @@ function updateNav() {
 
 // ══ BOTTOM NAV LOGIC ══
 const BN_PAGE_MAP = {
-  // page id → which tab is active
-  'home':        'home',
-  'auth':        'home',
-  'info-members':'home',
-  'info-events': 'home',
-  'info-rules':  'home',
-  'form':        'home',
-  'member':      'home',
-  'guest':       'home',
-  'guest-form':  'home',
-  'leader':      'home',
-  'admin':       'home',
-  'missions':    'home',
-  'analytics':   'bank',
-  'chathub':     'chat',
-  'chat':        'chat',
-  'dm':          'chat',
-  'ciuntik':     'ciuntik',
-  'bank':        'bank',
-  'stocks':      'bank',
+  'home':               'home',
+  'auth':               'home',
+  'info-members':       'home',
+  'info-events':        'home',
+  'info-rules':         'home',
+  'form':               'home',
+  'member':             'home',
+  'guest':              'home',
+  'guest-form':         'home',
+  'leader':             'home',
+  'admin':              'home',
+  'missions':           'home',
+  'forum':              'home',
+  'forum-detail':       'home',
+  'wall':               'home',
+  'tournament':         'home',
+  'tournament-detail':  'home',
+  'scrim':              'home',
+  'notif':              'home',
+  'commandcenter':      'home',
+  'audit':              'home',
+  'minigames':          'home',
+  'stats':              'home',
+  'mood':               'home',
+  'cards':              'home',
+  'radio':              'home',
+  'chathub':            'chat',
+  'chat':               'chat',
+  'dm':                 'chat',
+  'ciuntik':            'ciuntik',
+  'bank':               'bank',
+  'stocks':             'bank',
+  'store':              'bank',
+  'portfolio':          'bank',
+  'season':             'bank',
+  'analytics':          'bank',
 };
 
 const BN_LOGGED_IN_PAGES = new Set(['home','chat','ciuntik','bank','profil']);
@@ -3210,6 +3323,8 @@ function bnNav(tab) {
 
 // Sync active tab when showPg is called — patched below
 function bnSyncPage(pageId) {
+  // Onboarding tracking
+  if (typeof _onboardingPageHook === 'function') _onboardingPageHook(pageId);
   // Hide bottom nav entirely when inside chat or DM (like Telegram)
   const hideInPages = new Set(['chat','dm']);
   if (hideInPages.has(pageId)) {
@@ -4897,6 +5012,11 @@ function sendChatMsg() {
     _missionProgress_('dm_chat', 1);
     _missionProgress_('wm_chat20', 1);
   }
+  // Rank points for chatting (once per session cooldown)
+  if (!sendChatMsg._lastRankPts || Date.now() - sendChatMsg._lastRankPts > 60000) {
+    sendChatMsg._lastRankPts = Date.now();
+    addRankPts('chat');
+  }
 }
 
 /* Bot command — search image */
@@ -5706,22 +5826,25 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
 </div>
 
 <!-- DM / PRIVATE CHAT PAGE -->
-<div class="page" id="page-dm">
+<div class="page" id="page-dm" style="height:100dvh;overflow:hidden">
   <div class="chat-page-wrap">
     <div class="chat-wrap">
-      <div class="chat-header">
-        <div style="display:flex;align-items:center;gap:10px;overflow:visible;flex:1;min-width:0">
-          <button onclick="closeDM()" style="background:none;border:none;color:var(--tx2);cursor:pointer;display:flex;align-items:center;gap:5px;font-size:.82rem;padding:0">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15,18 9,12 15,6"/></svg>
+      <div class="chat-header" style="padding:.6rem 1rem">
+        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+          <!-- Back button -->
+          <button onclick="closeDM()" style="background:none;border:none;color:var(--tx2);cursor:pointer;display:flex;align-items:center;padding:4px;border-radius:6px;flex-shrink:0" title="Kembali">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15,18 9,12 15,6"/></svg>
           </button>
-          <div class="dm-av" id="dmHeaderAv"></div>
-          <div>
-            <div class="chat-header h3" id="dmHeaderName" style="font-family:Syne,sans-serif;font-size:.9rem;font-weight:700;white-space:nowrap;overflow:visible;max-width:200px;text-overflow:ellipsis"></div>
-            <div style="font-size:.67rem;color:var(--tx2)" id="dmHeaderSub">Pesan Pribadi</div>
+          <!-- Avatar -->
+          <div class="dm-av" id="dmHeaderAv" style="width:36px;height:36px;border-radius:50%;flex-shrink:0"></div>
+          <!-- Name + subtitle -->
+          <div style="flex:1;min-width:0">
+            <div id="dmHeaderName" style="font-family:'Syne',sans-serif;font-size:.92rem;font-weight:700;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+            <div id="dmHeaderSub" style="font-size:.68rem;color:var(--tx2)">Pesan Pribadi</div>
           </div>
         </div>
       </div>
-      <div class="chat-msgs" id="dmMsgs" style="-webkit-user-select:text;user-select:text;overflow-y:auto;flex:1;min-height:0"></div>
+      <div class="chat-msgs" id="dmMsgs" style="-webkit-user-select:text;user-select:text;overflow-y:auto;flex:1;min-height:0;-webkit-overflow-scrolling:touch;overscroll-behavior:contain"></div>
       <div class="chat-input-area" id="dmInputArea" style="display:none;flex-shrink:0">
         <!-- DM audio preview -->
         <div id="dmAudioPreviewStrip" style="display:none;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:6px 10px;margin-bottom:6px">
@@ -6217,6 +6340,464 @@ window.addEventListener('offline', () => updateOnlineStatus(false));
       Upload Stiker Custom
     </button>
     <input type="file" id="stickerUploadInput" accept="image/*" style="display:none" onchange="handleStickerUpload(this)"/>
+  </div>
+</div>
+
+<!-- ════════ CQ STORE PAGE ════════ -->
+<div class="page" id="page-store">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Toko</div><h2>🛒 CQ Store</h2></div>
+      <button onclick="showPg(getDashPage())" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <div id="storeCoinBal" style="background:linear-gradient(135deg,rgba(232,184,75,.15),rgba(245,200,66,.05));border:1px solid rgba(232,184,75,.3);border-radius:12px;padding:.75rem 1rem;display:flex;align-items:center;gap:10px;margin-bottom:1rem">
+      <span style="font-size:1.3rem">🪙</span>
+      <div><div style="font-size:.72rem;color:var(--tx2)">CQ Coin kamu</div><div id="storeCoinVal" style="font-size:1.1rem;font-weight:800;color:var(--gold)">—</div></div>
+    </div>
+    <!-- Tabs -->
+    <div style="display:flex;gap:.5rem;margin-bottom:1rem;overflow-x:auto;padding-bottom:2px">
+      <button class="tab-pill active" id="storeTab-all" onclick="switchStoreTab('all',this)">Semua</button>
+      <button class="tab-pill" id="storeTab-avatar" onclick="switchStoreTab('avatar',this)">🖼️ Avatar</button>
+      <button class="tab-pill" id="storeTab-badge" onclick="switchStoreTab('badge',this)">🏷️ Badge</button>
+      <button class="tab-pill" id="storeTab-real" onclick="switchStoreTab('real',this)">🎁 Hadiah</button>
+    </div>
+    <div id="storeItemGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem"></div>
+    <!-- Admin: add item -->
+    <div id="storeAdminPanel" style="display:none;margin-top:1.5rem;padding:1rem;background:var(--s2);border-radius:12px;border:1px solid var(--b1)">
+      <div style="font-size:.72rem;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:1px;margin-bottom:.75rem">➕ Tambah Item (Leader/Admin)</div>
+      <input id="storeItName" placeholder="Nama item" style="width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:8px;padding:.5rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;margin-bottom:.5rem;box-sizing:border-box"/>
+      <textarea id="storeItDesc" placeholder="Deskripsi" rows="2" style="width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:8px;padding:.5rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;margin-bottom:.5rem;box-sizing:border-box;resize:none"></textarea>
+      <div style="display:flex;gap:.5rem;margin-bottom:.5rem">
+        <input id="storeItPrice" type="number" placeholder="Harga (CQ)" style="flex:1;background:var(--s1);border:1px solid var(--b2);border-radius:8px;padding:.5rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem"/>
+        <select id="storeItCat" style="flex:1;background:var(--s1);border:1px solid var(--b2);border-radius:8px;padding:.5rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem">
+          <option value="avatar">Avatar Frame</option>
+          <option value="badge">Badge</option>
+          <option value="real">Hadiah Nyata</option>
+        </select>
+      </div>
+      <input id="storeItEmoji" placeholder="Emoji / icon (contoh: 🌟)" style="width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:8px;padding:.5rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;margin-bottom:.5rem;box-sizing:border-box"/>
+      <button onclick="addStoreItem()" style="width:100%;background:var(--ac);color:#fff;border:none;border-radius:9px;padding:.6rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer">Tambah Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ PORTFOLIO TRACKER PAGE ════════ -->
+<div class="page" id="page-portfolio">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Investasi</div><h2>📊 Portfolio Tracker</h2></div>
+      <button onclick="showPg('stocks')" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <!-- Total value card -->
+    <div id="portTotalCard" style="background:linear-gradient(135deg,rgba(108,78,242,.15),rgba(30,201,154,.05));border:1px solid rgba(108,78,242,.25);border-radius:14px;padding:1.1rem 1.2rem;margin-bottom:1rem">
+      <div style="font-size:.72rem;color:var(--tx2);margin-bottom:.25rem">Total Nilai Portofolio</div>
+      <div id="portTotalVal" style="font-size:1.6rem;font-weight:800;font-family:'Syne',sans-serif">— CQ</div>
+      <div id="portPnl" style="font-size:.82rem;margin-top:.3rem">—</div>
+    </div>
+    <!-- Holdings list -->
+    <div style="font-size:.7rem;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.5rem">Kepemilikan Saham</div>
+    <div id="portHoldingsList" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem"></div>
+    <!-- Dividend info -->
+    <div style="background:rgba(232,184,75,.08);border:1px solid rgba(232,184,75,.2);border-radius:12px;padding:.9rem 1rem">
+      <div style="font-size:.72rem;font-weight:700;color:var(--gold);margin-bottom:.4rem">💰 Dividen Minggu Ini</div>
+      <div id="portDivInfo" style="font-size:.82rem;color:var(--tx2)">Memuat...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ FORUM THREAD PAGE ════════ -->
+<div class="page" id="page-forum">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Diskusi</div><h2>💬 Forum</h2></div>
+      <button onclick="showPg(getDashPage())" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <!-- Category tabs -->
+    <div style="display:flex;gap:.4rem;overflow-x:auto;margin-bottom:.8rem;padding-bottom:2px">
+      <button class="tab-pill active" onclick="switchForumCat('all',this)">Semua</button>
+      <button class="tab-pill" onclick="switchForumCat('game',this)">🎮 Game</button>
+      <button class="tab-pill" onclick="switchForumCat('market',this)">📈 Market</button>
+      <button class="tab-pill" onclick="switchForumCat('random',this)">💭 Random</button>
+      <button class="tab-pill" onclick="switchForumCat('tips',this)">💡 Tips</button>
+    </div>
+    <!-- New thread button -->
+    <button onclick="openNewThread()" style="width:100%;display:flex;align-items:center;gap:8px;justify-content:center;background:var(--ac);color:#fff;border:none;border-radius:10px;padding:.65rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.86rem;cursor:pointer;margin-bottom:1rem">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Buat Thread Baru
+    </button>
+    <div id="forumThreadList" style="display:flex;flex-direction:column;gap:.6rem"></div>
+  </div>
+</div>
+
+<!-- ════════ FORUM THREAD DETAIL PAGE ════════ -->
+<div class="page" id="page-forum-detail" style="height:100dvh;overflow:hidden">
+  <div style="display:flex;flex-direction:column;height:100%">
+    <div style="padding:calc(var(--nav-h,56px) + .6rem) 1.2rem .6rem;background:var(--s1);border-bottom:1px solid var(--b1);flex-shrink:0">
+      <button onclick="showPg('forum')" style="background:none;border:none;color:var(--tx2);cursor:pointer;display:flex;align-items:center;gap:5px;font-size:.82rem;padding:0;margin-bottom:.5rem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg> Kembali ke Forum
+      </button>
+      <h3 id="forumDetailTitle" style="font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;line-height:1.4"></h3>
+      <div id="forumDetailMeta" style="font-size:.72rem;color:var(--tx2);margin-top:.25rem"></div>
+    </div>
+    <div id="forumDetailReplies" style="flex:1;overflow-y:auto;padding:1rem;-webkit-overflow-scrolling:touch"></div>
+    <div style="flex-shrink:0;padding:.75rem 1rem;background:var(--s1);border-top:1px solid var(--b1);display:flex;gap:.5rem">
+      <textarea id="forumReplyInput" placeholder="Tulis balasan..." rows="2" style="flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:10px;padding:.5rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;resize:none;outline:none"></textarea>
+      <button onclick="submitForumReply()" style="background:var(--ac);color:#fff;border:none;border-radius:10px;padding:.5rem .9rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer;flex-shrink:0">Kirim</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ TEAM WALL PAGE ════════ -->
+<div class="page" id="page-wall">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Komunitas</div><h2>📌 Team Wall</h2></div>
+      <button onclick="showPg(getDashPage())" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <!-- Post note input -->
+    <div id="wallPostInput" style="background:var(--s2);border:1px solid var(--b1);border-radius:14px;padding:1rem;margin-bottom:1rem">
+      <textarea id="wallNoteText" placeholder="Tempel pesan di wall tim... (maks 200 karakter)" maxlength="200" rows="3" style="width:100%;background:none;border:none;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.86rem;resize:none;outline:none;box-sizing:border-box"></textarea>
+      <div style="display:flex;align-items:center;gap:.5rem;margin-top:.5rem">
+        <div style="display:flex;gap:.4rem">
+          <button onclick="selectWallColor('#6c4ef2')" class="wall-color-btn" style="width:22px;height:22px;border-radius:50%;background:#6c4ef2;border:2px solid transparent"></button>
+          <button onclick="selectWallColor('#1ec99a')" class="wall-color-btn" style="width:22px;height:22px;border-radius:50%;background:#1ec99a;border:2px solid transparent"></button>
+          <button onclick="selectWallColor('#e8b84b')" class="wall-color-btn" style="width:22px;height:22px;border-radius:50%;background:#e8b84b;border:2px solid transparent"></button>
+          <button onclick="selectWallColor('#e8546a')" class="wall-color-btn" style="width:22px;height:22px;border-radius:50%;background:#e8546a;border:2px solid transparent"></button>
+          <button onclick="selectWallColor('#3b82f6')" class="wall-color-btn" style="width:22px;height:22px;border-radius:50%;background:#3b82f6;border:2px solid transparent"></button>
+        </div>
+        <div id="wallCharCount" style="font-size:.7rem;color:var(--tx2);margin-left:auto">0/200</div>
+        <button onclick="postWallNote()" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:.4rem .9rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer">Tempel</button>
+      </div>
+    </div>
+    <div id="wallNoteGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem;padding-bottom:5rem"></div>
+  </div>
+</div>
+
+<!-- ════════ SEASON PASS PAGE ════════ -->
+<div class="page" id="page-season">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Season</div><h2>🎫 Season Pass</h2></div>
+      <button onclick="showPg(getDashPage())" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <!-- Season info -->
+    <div id="seasonHeader" style="background:linear-gradient(135deg,#6c4ef2,#a78bfa);border-radius:16px;padding:1.2rem;margin-bottom:1rem;color:#fff">
+      <div style="font-size:.72rem;opacity:.8;margin-bottom:.25rem">SEASON AKTIF</div>
+      <div id="seasonName" style="font-size:1.2rem;font-weight:800;font-family:'Syne',sans-serif;margin-bottom:.5rem">Season 1 — Rise of Cuanie</div>
+      <div id="seasonTimer" style="font-size:.78rem;opacity:.8"></div>
+      <div style="margin-top:.75rem;background:rgba(255,255,255,.2);border-radius:99px;height:8px">
+        <div id="seasonXpBar" style="height:100%;background:#fff;border-radius:99px;width:0%;transition:width .5s"></div>
+      </div>
+      <div id="seasonXpText" style="font-size:.72rem;opacity:.8;margin-top:.3rem">0 / 100 XP — Level 1</div>
+    </div>
+    <!-- Track tabs -->
+    <div style="display:flex;gap:.5rem;margin-bottom:.8rem">
+      <button class="tab-pill active" id="seasonTrack-free" onclick="switchSeasonTrack('free',this)" style="flex:1">🎯 Free Track</button>
+      <button class="tab-pill" id="seasonTrack-premium" onclick="switchSeasonTrack('premium',this)" style="flex:1">👑 Premium Track</button>
+    </div>
+    <div id="seasonRewardTrack" style="display:flex;flex-direction:column;gap:.5rem;padding-bottom:5rem"></div>
+  </div>
+</div>
+
+<!-- ════ TOURNAMENT BRACKET PAGE ════ -->
+<div class="page" id="page-tournament">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Kompetisi</div><h2>🏆 Tournament</h2></div>
+      <button onclick="showPg(getDashPage())" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <div style="display:flex;gap:.5rem;margin-bottom:.8rem">
+      <button class="tab-pill active" id="tTab-list" onclick="switchTournTab('list',this)">📋 Semua</button>
+      <button class="tab-pill" id="tTab-active" onclick="switchTournTab('active',this)">🔥 Aktif</button>
+      <button class="tab-pill" id="tTab-history" onclick="switchTournTab('history',this)">📚 Riwayat</button>
+    </div>
+    <div id="tournamentList" style="display:flex;flex-direction:column;gap:.65rem"></div>
+    <div id="tournAdminBtn" style="display:none;margin-top:.75rem">
+      <button onclick="openCreateTournament()" style="width:100%;background:var(--ac);color:#fff;border:none;border-radius:10px;padding:.65rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer">➕ Buat Turnamen Baru</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ TOURNAMENT DETAIL ════ -->
+<div class="page" id="page-tournament-detail">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Tournament</div><h2 id="tournDetailName">—</h2></div>
+      <button onclick="showPg('tournament');loadTournaments()" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <div id="tournDetailInfo" style="background:var(--s2);border-radius:12px;padding:1rem;margin-bottom:1rem;font-size:.84rem;color:var(--tx2);line-height:1.8"></div>
+    <div id="tournBracketWrap" style="overflow-x:auto;padding-bottom:.5rem"></div>
+    <div id="tournParticipants" style="margin-top:1rem"></div>
+    <div id="tournAdminActions" style="display:none;margin-top:1rem"></div>
+  </div>
+</div>
+
+<!-- ════ SCRIM SCHEDULER PAGE ════ -->
+<div class="page" id="page-scrim">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Jadwal</div><h2>📅 Scrim Scheduler</h2></div>
+      <button onclick="showPg(getDashPage())" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <button onclick="openCreateScrim()" style="width:100%;background:var(--ac);color:#fff;border:none;border-radius:10px;padding:.65rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.86rem;cursor:pointer;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;gap:6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Buat Jadwal Baru
+    </button>
+    <div id="scrimList" style="display:flex;flex-direction:column;gap:.65rem;padding-bottom:5rem"></div>
+  </div>
+</div>
+
+<!-- ════ MINI GAMES PAGE ════ -->
+<div class="page" id="page-minigames">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Hiburan</div><h2>🎮 Mini Games</h2></div>
+      <button onclick="showPg(getDashPage())" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <div style="background:linear-gradient(135deg,rgba(232,184,75,.15),rgba(245,200,66,.05));border:1px solid rgba(232,184,75,.3);border-radius:12px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.82rem;color:var(--tx2)">
+      🪙 Main game untuk earn bonus CQ Coin! Setiap game ada batas main per hari.
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+      <div class="store-card" onclick="playGame('stocks-guess')">
+        <div class="store-card-icon">📈</div>
+        <div class="store-card-name">Tebak Saham</div>
+        <div class="store-card-desc">Naik atau turun? +50 CQ jika benar</div>
+        <div id="mgBadge-stocks-guess" class="store-card-price" style="color:var(--ac2)">Main</div>
+      </div>
+      <div class="store-card" onclick="playGame('trivia')">
+        <div class="store-card-icon">🧠</div>
+        <div class="store-card-name">Cuanie Trivia</div>
+        <div class="store-card-desc">Kuis tentang tim +30 CQ per jawaban benar</div>
+        <div id="mgBadge-trivia" class="store-card-price" style="color:var(--ac2)">Main</div>
+      </div>
+      <div class="store-card" onclick="playGame('scramble')">
+        <div class="store-card-icon">🔤</div>
+        <div class="store-card-name">Word Scramble</div>
+        <div class="store-card-desc">Susun kata gaming +20 CQ per kata</div>
+        <div id="mgBadge-scramble" class="store-card-price" style="color:var(--ac2)">Main</div>
+      </div>
+      <div class="store-card" onclick="playGame('memory')">
+        <div class="store-card-icon">🃏</div>
+        <div class="store-card-name">Memory Card</div>
+        <div class="store-card-desc">Cocokkan kartu member +10 CQ</div>
+        <div id="mgBadge-memory" class="store-card-price" style="color:var(--ac2)">Main</div>
+      </div>
+    </div>
+    <div id="mgGameArea" style="margin-top:1rem"></div>
+  </div>
+</div>
+
+<!-- ════ NOTIFICATION CENTER PAGE ════ -->
+<div class="page" id="page-notif">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Notifikasi</div><h2>🔔 Notifikasi</h2></div>
+      <button onclick="showPg(getDashPage())" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+      <div style="display:flex;gap:.4rem;overflow-x:auto">
+        <button class="tab-pill active" onclick="switchNotifTab('all',this)">Semua</button>
+        <button class="tab-pill" onclick="switchNotifTab('tx',this)">💳 Transaksi</button>
+        <button class="tab-pill" onclick="switchNotifTab('event',this)">📣 Event</button>
+        <button class="tab-pill" onclick="switchNotifTab('social',this)">👥 Sosial</button>
+      </div>
+      <button onclick="markAllNotifsRead()" style="background:none;border:none;color:var(--ac2);font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700;flex-shrink:0;padding-left:.5rem">Baca Semua</button>
+    </div>
+    <div id="notifList" style="display:flex;flex-direction:column;gap:.4rem;padding-bottom:5rem"></div>
+  </div>
+</div>
+
+<!-- ════ LEADER COMMAND CENTER ════ -->
+<div class="page" id="page-commandcenter">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Leader</div><h2>⚡ Command Center</h2></div>
+      <button onclick="showPg('leader')" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <!-- Health Score -->
+    <div id="ccHealthCard" style="background:linear-gradient(135deg,#6c4ef2,#1ec99a);border-radius:16px;padding:1.2rem;margin-bottom:1rem;color:#fff">
+      <div style="font-size:.72rem;opacity:.8;margin-bottom:.2rem">TEAM HEALTH SCORE</div>
+      <div id="ccHealthScore" style="font-size:2.5rem;font-weight:900;font-family:'Syne',sans-serif">—</div>
+      <div id="ccHealthLabel" style="font-size:.78rem;opacity:.8">/100 — Memuat...</div>
+    </div>
+    <!-- Real-time counters -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1rem">
+      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.75rem;text-align:center">
+        <div id="ccOnlineCount" style="font-size:1.4rem;font-weight:800;color:var(--ok)">—</div>
+        <div style="font-size:.7rem;color:var(--tx2)">Online</div>
+      </div>
+      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.75rem;text-align:center">
+        <div id="ccPendingCount" style="font-size:1.4rem;font-weight:800;color:var(--gold)">—</div>
+        <div style="font-size:.7rem;color:var(--tx2)">Pending Tx</div>
+      </div>
+      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.75rem;text-align:center">
+        <div id="ccMemberCount" style="font-size:1.4rem;font-weight:800;color:var(--ac2)">—</div>
+        <div style="font-size:.7rem;color:var(--tx2)">Anggota</div>
+      </div>
+    </div>
+    <!-- Alert cards -->
+    <div id="ccAlerts" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem"></div>
+    <!-- Quick actions -->
+    <div style="font-size:.7rem;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.5rem">Quick Actions</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1rem">
+      <button onclick="showPg('leader')" style="background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:.7rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">👥 Kelola Member</button>
+      <button onclick="openFlashModal()" style="background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:.7rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">⚡ Flash Event</button>
+      <button onclick="openCreateTournament()" style="background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:.7rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">🏆 Buat Turnamen</button>
+      <button onclick="showPg('page-audit');loadAuditLog()" style="background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:.7rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">📋 Audit Log</button>
+    </div>
+    <!-- Activity chart placeholder -->
+    <div style="font-size:.7rem;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.5rem">Aktivitas 7 Hari</div>
+    <div id="ccActivityChart" style="background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:1rem;height:120px;display:flex;align-items:flex-end;gap:4px"></div>
+    <!-- Inactive members -->
+    <div style="font-size:.7rem;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:1.5px;margin:.75rem 0 .5rem">Member Tidak Aktif >7 Hari</div>
+    <div id="ccInactiveList" style="display:flex;flex-direction:column;gap:.4rem;padding-bottom:5rem"></div>
+  </div>
+</div>
+
+<!-- ════ FINANCE AUDIT LOG PAGE ════ -->
+<div class="page" id="page-audit">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Keuangan</div><h2>📋 Audit Log</h2></div>
+      <button onclick="showPg('commandcenter');loadCommandCenter()" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <div style="display:flex;gap:.5rem;margin-bottom:.75rem;overflow-x:auto">
+      <button class="tab-pill active" onclick="filterAuditLog('all',this)">Semua</button>
+      <button class="tab-pill" onclick="filterAuditLog('bank',this)">🏦 Bank</button>
+      <button class="tab-pill" onclick="filterAuditLog('coin',this)">🪙 Coin</button>
+      <button class="tab-pill" onclick="filterAuditLog('stock',this)">📈 Saham</button>
+      <button class="tab-pill" onclick="filterAuditLog('store',this)">🛒 Store</button>
+    </div>
+    <div id="auditLogList" style="display:flex;flex-direction:column;gap:.4rem;padding-bottom:5rem"></div>
+  </div>
+</div>
+
+<!-- ════ MEMBER STATUS / ONBOARDING (modals, not pages) ════ -->
+
+<!-- ════ TEAM STATISTICS DASHBOARD ════ -->
+<div class="page" id="page-stats">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Statistik</div><h2>📊 Team Statistics</h2></div>
+      <button onclick="showPg(getDashPage())" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <!-- Team overview -->
+    <div id="statsOverview" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1rem"></div>
+    <!-- Win rate chart -->
+    <div class="panel" style="margin-bottom:.75rem">
+      <div class="panel-h"><span style="font-size:1rem">🏆</span><h3>Win Rate Tim</h3></div>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:.5rem">
+        <div style="position:relative;width:80px;height:80px;flex-shrink:0">
+          <svg viewBox="0 0 36 36" width="80" height="80" style="transform:rotate(-90deg)">
+            <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--b2)" stroke-width="3"/>
+            <circle id="statsWinArc" cx="18" cy="18" r="15.9" fill="none" stroke="var(--ok)" stroke-width="3" stroke-dasharray="0 100" stroke-linecap="round"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.9rem;color:var(--ok)" id="statsWinPct">0%</div>
+        </div>
+        <div id="statsWinDetails" style="flex:1;font-size:.82rem;color:var(--tx2);line-height:1.8"></div>
+      </div>
+    </div>
+    <!-- MVP Tracker -->
+    <div class="panel" style="margin-bottom:.75rem">
+      <div class="panel-h"><span style="font-size:1rem">⭐</span><h3>MVP Tracker</h3></div>
+      <div id="statsMvpList" style="display:flex;flex-direction:column;gap:.35rem"></div>
+    </div>
+    <!-- Role distribution -->
+    <div class="panel" style="margin-bottom:.75rem">
+      <div class="panel-h"><span style="font-size:1rem">🎯</span><h3>Distribusi Role</h3></div>
+      <div id="statsRoleList" style="display:flex;flex-direction:column;gap:.35rem"></div>
+    </div>
+    <!-- Log match input (for members/leaders) -->
+    <div id="statsLogBtn" style="display:none">
+      <button onclick="openLogMatch()" style="width:100%;background:var(--ac);color:#fff;border:none;border-radius:10px;padding:.65rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer">➕ Log Hasil Match</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ CUANIE RADIO PAGE ════ -->
+<div class="page" id="page-radio">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Radio</div><h2>📻 Cuanie Radio</h2></div>
+      <button onclick="showPg(getDashPage())" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <!-- Now playing -->
+    <div id="radioNowPlaying" style="background:linear-gradient(135deg,rgba(108,78,242,.2),rgba(30,201,154,.1));border:1px solid rgba(108,78,242,.3);border-radius:16px;padding:1.2rem;margin-bottom:1rem;text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:.5rem" id="radioNowEmoji">🎵</div>
+      <div id="radioNowTitle" style="font-weight:800;font-family:'Syne',sans-serif;font-size:1rem;color:var(--tx)">Tidak ada yang diputar</div>
+      <div id="radioNowBy" style="font-size:.75rem;color:var(--tx2);margin-top:.2rem"></div>
+      <!-- Controls -->
+      <div id="radioControls" style="display:flex;justify-content:center;gap:.75rem;margin-top:.9rem">
+        <button onclick="voteSkipRadio()" id="radioSkipBtn" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:.4rem .9rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">⏭ Skip (<span id="radioSkipCount">0</span>)</button>
+        <button onclick="setDJMode()" id="radioDJBtn" style="display:none;background:var(--ac);border:none;border-radius:20px;padding:.4rem .9rem;color:#fff;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">🎧 Jadi DJ</button>
+      </div>
+    </div>
+    <!-- Queue -->
+    <div style="font-size:.7rem;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.5rem">Antrian Lagu</div>
+    <div id="radioQueue" style="display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem"></div>
+    <!-- Add to queue -->
+    <div style="background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem">
+      <div style="font-size:.78rem;font-weight:700;color:var(--tx2);margin-bottom:.5rem">➕ Tambah ke Antrian</div>
+      <input id="radioAddTitle" placeholder="Judul lagu" style="width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:8px;padding:.5rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;margin-bottom:.4rem;box-sizing:border-box;outline:none"/>
+      <input id="radioAddArtist" placeholder="Artis / Vibe (opsional)" style="width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:8px;padding:.5rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;margin-bottom:.4rem;box-sizing:border-box;outline:none"/>
+      <button onclick="addToRadioQueue()" style="width:100%;background:var(--ac2);color:#fff;border:none;border-radius:8px;padding:.5rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer;font-size:.84rem">Tambah</button>
+    </div>
+    <!-- History -->
+    <div style="font-size:.7rem;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:1.5px;margin:.75rem 0 .5rem">Riwayat Diputar</div>
+    <div id="radioHistory" style="display:flex;flex-direction:column;gap:.3rem;padding-bottom:5rem"></div>
+  </div>
+</div>
+
+<!-- ════ CQ NFT CARDS PAGE ════ -->
+<div class="page" id="page-cards">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Koleksi</div><h2>🃏 CQ Cards</h2></div>
+      <button onclick="showPg(getDashPage())" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <!-- My card -->
+    <div style="font-size:.7rem;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.5rem">Kartu Saya</div>
+    <div id="myCardWrap" style="display:flex;justify-content:center;margin-bottom:1rem"></div>
+    <div style="display:flex;gap:.5rem;margin-bottom:1.2rem">
+      <button onclick="shareMyCard()" style="flex:1;background:var(--ac);color:#fff;border:none;border-radius:10px;padding:.6rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer;font-size:.84rem">📤 Share Kartu</button>
+      <button onclick="loadAllCards()" style="flex:1;background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:.6rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer;font-size:.84rem;color:var(--tx)">👥 Lihat Semua</button>
+    </div>
+    <!-- Collection grid -->
+    <div style="font-size:.7rem;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.5rem">Koleksi Tim</div>
+    <div id="allCardsGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;padding-bottom:5rem"></div>
+  </div>
+</div>
+
+<!-- ════ MOOD TRACKER PAGE ════ -->
+<div class="page" id="page-mood">
+  <div class="dash">
+    <div class="dash-top">
+      <div><div class="sec-tag">// Mood</div><h2>😊 Mood Tracker</h2></div>
+      <button onclick="showPg(getDashPage())" class="act-btn" style="font-size:.78rem;padding:.4rem .9rem">← Kembali</button>
+    </div>
+    <!-- Today's mood input -->
+    <div id="moodInputCard" style="background:linear-gradient(135deg,rgba(108,78,242,.1),rgba(30,201,154,.05));border:1px solid rgba(108,78,242,.2);border-radius:16px;padding:1.2rem;margin-bottom:1rem;text-align:center">
+      <div style="font-weight:800;font-family:'Syne',sans-serif;font-size:.95rem;margin-bottom:.75rem">Gimana mood kamu hari ini?</div>
+      <div style="display:flex;justify-content:center;gap:.5rem;margin-bottom:.75rem">
+        <button onclick="selectMood('great')" class="mood-btn" data-mood="great" style="font-size:1.8rem;background:none;border:2px solid transparent;border-radius:12px;padding:.3rem .4rem;cursor:pointer;transition:all .2s">😄</button>
+        <button onclick="selectMood('good')" class="mood-btn" data-mood="good" style="font-size:1.8rem;background:none;border:2px solid transparent;border-radius:12px;padding:.3rem .4rem;cursor:pointer;transition:all .2s">🙂</button>
+        <button onclick="selectMood('okay')" class="mood-btn" data-mood="okay" style="font-size:1.8rem;background:none;border:2px solid transparent;border-radius:12px;padding:.3rem .4rem;cursor:pointer;transition:all .2s">😐</button>
+        <button onclick="selectMood('bad')" class="mood-btn" data-mood="bad" style="font-size:1.8rem;background:none;border:2px solid transparent;border-radius:12px;padding:.3rem .4rem;cursor:pointer;transition:all .2s">😕</button>
+        <button onclick="selectMood('awful')" class="mood-btn" data-mood="awful" style="font-size:1.8rem;background:none;border:2px solid transparent;border-radius:12px;padding:.3rem .4rem;cursor:pointer;transition:all .2s">😤</button>
+      </div>
+      <textarea id="moodNote" placeholder="Catatan opsional... (tidak dibagikan ke member lain)" rows="2" style="width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:9px;padding:.5rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;resize:none;outline:none;box-sizing:border-box;margin-bottom:.5rem"></textarea>
+      <button onclick="submitMood()" style="background:var(--ac2);color:#fff;border:none;border-radius:10px;padding:.55rem 1.5rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer">Simpan Mood</button>
+      <div id="moodTodayStatus" style="font-size:.75rem;color:var(--ok);margin-top:.4rem"></div>
+    </div>
+    <!-- My streak -->
+    <div id="moodStreakCard" style="background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.85rem 1rem;margin-bottom:1rem">
+      <div style="font-size:.72rem;color:var(--tx2);margin-bottom:.3rem">Streak Mood Log</div>
+      <div id="moodStreakVal" style="font-size:1.3rem;font-weight:800;color:var(--gold)">🔥 0 hari</div>
+    </div>
+    <!-- Leader view: team mood chart -->
+    <div id="moodLeaderView" style="display:none">
+      <div style="font-size:.7rem;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.5rem">Mood Tim (Agregat, Anonim)</div>
+      <div id="moodTeamChart" style="background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:1rem"></div>
+    </div>
   </div>
 </div>
 
@@ -7926,7 +8507,7 @@ function openPM(targetName, targetEmail) {
 
   // Show input for logged-in members
   const dmInputArea = document.getElementById('dmInputArea');
-  if (dmInputArea) dmInputArea.style.display = (D.role && D.role !== 'guest') ? 'block' : 'none';
+  if (dmInputArea) dmInputArea.style.display = (D.role && D.role !== 'guest') ? 'flex' : 'none';
 
   // Detach old listener
   if (DM_STATE.listener) { try { DM_STATE.listener(); } catch(e) {} DM_STATE.listener = null; }
@@ -11429,6 +12010,8 @@ function _initAllFeatures(){
   setupAttendanceListener();
   checkBirthdays();
   checkReferral();
+  loadRank();
+  checkDividend();
   // Check lucky wheel dot
   const last=localStorage.getItem(LW_KEY);
   const ok=!last||(Date.now()-parseInt(last))>20*3600*1000;
@@ -11549,31 +12132,8 @@ function _dmHubTime(ts) {
 }
 
 function openDMByRoom(name, email) {
-  // Open DM directly — uses existing DM system
-  if (typeof openPMDirect === 'function') {
-    openPMDirect(name, email);
-  } else {
-    // Fallback: use existing DM open flow
-    const key1 = _eKey(D.email), key2 = _eKey(email||name);
-    const roomKey = [key1,key2].sort().join('__');
-    DM_STATE.targetUser = name;
-    DM_STATE.targetEmail = email;
-    DM_STATE.roomKey = roomKey;
-    showPg('dm');
-    hideBN();
-    // Setup DM header
-    const hn = document.getElementById('dmHeaderName'); if(hn) hn.textContent = name;
-    const hi = document.getElementById('dmInputArea'); if(hi) hi.style.display='flex';
-    const hav = document.getElementById('dmHeaderAv');
-    if (hav) {
-      const prof = getProfile(email||name);
-      const initials = name.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
-      hav.innerHTML = prof.avatar ? `<img src="${prof.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>` : initials;
-      if (!prof.avatar) hav.style.background = 'linear-gradient(135deg,var(--ac),var(--ac2))';
-    }
-    // Load messages
-    if (typeof setupDMListener === 'function') setupDMListener(roomKey);
-  }
+  // Delegate to the main openPM function — avoids duplication
+  openPM(name, email);
 }
 
 function filterDmHub(q) {
@@ -11639,6 +12199,27 @@ function openBankSubMenu() {
             <div><div style="font-weight:700;font-size:.92rem;color:var(--tx)">Pasar Saham</div><div style="font-size:.75rem;color:var(--tx2)">Beli & jual saham CQ</div></div>
             <svg style="margin-left:auto" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
           </button>
+          <button onclick="closeBankSubMenu();showPg('portfolio');loadPortfolio()" style="display:flex;align-items:center;gap:14px;background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem 1.1rem;cursor:pointer;transition:background .18s;text-align:left" onmouseover="this.style.background='var(--s3)'" onmouseout="this.style.background='var(--s2)'">
+            <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#0ea5e9,#38bdf8);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><polyline points="7,10 10,7 13,10 17,6"/></svg>
+            </div>
+            <div><div style="font-weight:700;font-size:.92rem;color:var(--tx)">Portfolio Tracker</div><div style="font-size:.75rem;color:var(--tx2)">Grafik & P&L investasi</div></div>
+            <svg style="margin-left:auto" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
+          </button>
+          <button onclick="closeBankSubMenu();showPg('store');loadStore()" style="display:flex;align-items:center;gap:14px;background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem 1.1rem;cursor:pointer;transition:background .18s;text-align:left" onmouseover="this.style.background='var(--s3)'" onmouseout="this.style.background='var(--s2)'">
+            <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#f97316,#fb923c);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </div>
+            <div><div style="font-weight:700;font-size:.92rem;color:var(--tx)">CQ Store</div><div style="font-size:.75rem;color:var(--tx2)">Tukar coin dengan item</div></div>
+            <svg style="margin-left:auto" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
+          </button>
+          <button onclick="closeBankSubMenu();showPg('season');loadSeason()" style="display:flex;align-items:center;gap:14px;background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem 1.1rem;cursor:pointer;transition:background .18s;text-align:left" onmouseover="this.style.background='var(--s3)'" onmouseout="this.style.background='var(--s2)'">
+            <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#6c4ef2,#a78bfa);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <div><div style="font-weight:700;font-size:.92rem;color:var(--tx)">Season Pass</div><div style="font-size:.75rem;color:var(--tx2)">Progress & reward bulanan</div></div>
+            <svg style="margin-left:auto" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--tx2)" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
+          </button>
           <button onclick="closeBankSubMenu();showPg('analytics')" style="display:flex;align-items:center;gap:14px;background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem 1.1rem;cursor:pointer;transition:background .18s;text-align:left" onmouseover="this.style.background='var(--s3)'" onmouseout="this.style.background='var(--s2)'">
             <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#e8b84b,#f5c842);display:flex;align-items:center;justify-content:center;flex-shrink:0">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
@@ -11662,14 +12243,2472 @@ function openBankSubMenu() {
     document.getElementById('bankSubPanel').style.transform = 'translateY(0)';
   }, 10);
 }
-function closeBankSubMenu() {
-  const panel = document.getElementById('bankSubPanel');
-  if (panel) panel.style.transform = 'translateY(100%)';
-  setTimeout(() => {
-    const sheet = document.getElementById('bankSubSheet');
-    if (sheet) sheet.remove();
-  }, 320);
+// ═══════════════════════════════════════════════════════
+// 🛒 CQ STORE
+// ═══════════════════════════════════════════════════════
+let _storeItems = [];
+let _storeCat = 'all';
+
+async function loadStore() {
+  const coinEl = document.getElementById('storeCoinVal');
+  if (coinEl && D.email) { loadUserCoin().then(c => coinEl.textContent = c + ' CQ'); }
+  // Show admin panel for leader/admin
+  const ap = document.getElementById('storeAdminPanel');
+  if (ap) ap.style.display = (D.role==='admin'||D.role==='leader') ? 'block' : 'none';
+  try {
+    const snap = await fbGet('store/items');
+    const val = snap.val();
+    _storeItems = val ? Object.entries(val).map(([k,v]) => ({...v, _key: k})) : _defaultStoreItems();
+  } catch(e) { _storeItems = _defaultStoreItems(); }
+  renderStore();
 }
+
+function _defaultStoreItems() {
+  return [
+    { _key:'frame1', name:'Neon Frame', desc:'Bingkai avatar neon ungu eksklusif', price:500, cat:'avatar', emoji:'🟣', limited:false },
+    { _key:'frame2', name:'Gold Frame', desc:'Bingkai avatar emas premium', price:1000, cat:'avatar', emoji:'🥇', limited:false },
+    { _key:'badge1', name:'Badge ⚡', desc:'Badge petir di chat', price:300, cat:'badge', emoji:'⚡', limited:false },
+    { _key:'badge2', name:'Badge 🔥', desc:'Badge api semangat di chat', price:300, cat:'badge', emoji:'🔥', limited:false },
+    { _key:'voucher1', name:'Voucher Game 10K', desc:'Voucher game senilai Rp10.000 (Leader proses manual)', price:2000, cat:'real', emoji:'🎮', limited:true },
+  ];
+}
+
+function switchStoreTab(cat, btn) {
+  _storeCat = cat;
+  document.querySelectorAll('#page-store .tab-pill').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderStore();
+}
+
+function renderStore() {
+  const grid = document.getElementById('storeItemGrid');
+  if (!grid) return;
+  const items = _storeCat === 'all' ? _storeItems : _storeItems.filter(i => i.cat === _storeCat);
+  if (!items.length) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--tx2);padding:2rem">Tidak ada item di kategori ini.</div>'; return; }
+  grid.innerHTML = items.map(item => `
+    <div class="store-card" onclick="buyStoreItem('${item._key}')">
+      <div class="store-card-icon">${item.emoji||'📦'}</div>
+      <div class="store-card-name">${item.name}</div>
+      <div class="store-card-desc">${item.desc}</div>
+      <div class="store-card-price">🪙 ${item.price} CQ</div>
+      ${item.limited ? '<div style="font-size:.65rem;color:var(--err);text-align:center;font-weight:700">LIMITED</div>' : ''}
+    </div>`).join('');
+}
+
+async function buyStoreItem(key) {
+  if (!D.email) { toast('Login dulu','warn'); return; }
+  const item = _storeItems.find(i => i._key === key);
+  if (!item) return;
+  if (!confirm(`Beli "${item.name}" seharga ${item.price} CQ?\n\n${item.desc}`)) return;
+  const coin = await loadUserCoin();
+  if (coin < item.price) { toast(`Coin tidak cukup! Kamu punya ${coin} CQ, butuh ${item.price} CQ`, 'error'); return; }
+  try {
+    await _addCoin(-item.price, `Beli ${item.name} di CQ Store`);
+    // Record purchase
+    await fbPush('store/purchases', { item: item.name, key: item._key, price: item.price, buyer: D.user, email: D.email, ts: Date.now() });
+    // Add rank points
+    addRankPts('deposit');
+    toast(`✅ Berhasil beli "${item.name}"! ${item.cat==='real' ? 'Leader akan proses dalam 1x24 jam.' : ''}`, 'success');
+    const coinEl = document.getElementById('storeCoinVal');
+    if (coinEl) loadUserCoin().then(c => coinEl.textContent = c + ' CQ');
+  } catch(e) { toast('Gagal beli item: ' + e.message, 'error'); }
+}
+
+async function addStoreItem() {
+  const name = document.getElementById('storeItName').value.trim();
+  const desc = document.getElementById('storeItDesc').value.trim();
+  const price = parseInt(document.getElementById('storeItPrice').value);
+  const cat = document.getElementById('storeItCat').value;
+  const emoji = document.getElementById('storeItEmoji').value.trim() || '📦';
+  if (!name || !price) { toast('Isi nama dan harga dulu','warn'); return; }
+  try {
+    await fbPush('store/items', { name, desc, price, cat, emoji, addedBy: D.user, ts: Date.now() });
+    toast('Item berhasil ditambahkan!','success');
+    loadStore();
+    ['storeItName','storeItDesc','storeItPrice','storeItEmoji'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  } catch(e) { toast('Gagal tambah item','error'); }
+}
+
+// ═══════════════════════════════════════════════════════
+// 📊 PORTFOLIO TRACKER
+// ═══════════════════════════════════════════════════════
+async function loadPortfolio() {
+  if (!D.email) return;
+  const key = _eKey(D.email);
+  try {
+    const [portSnap, pricesSnap] = await Promise.all([fbGet('portfolio/'+key), fbGet('stocks/prices')]);
+    const port = portSnap.val() || {};
+    const prices = pricesSnap.val() || {};
+    let totalCost = 0, totalVal = 0;
+    const holdings = [];
+    for (const [sid, pos] of Object.entries(port)) {
+      if (!pos.qty) continue;
+      const curPrice = prices[sid] || pos.avgBuy || 0;
+      const cost = pos.qty * (pos.avgBuy || 0);
+      const val = pos.qty * curPrice;
+      const pnl = val - cost;
+      const pnlPct = cost > 0 ? (pnl/cost*100).toFixed(1) : '0.0';
+      totalCost += cost; totalVal += val;
+      holdings.push({ sid, qty: pos.qty, avgBuy: pos.avgBuy||0, curPrice, cost, val, pnl, pnlPct });
+    }
+    // Render total card
+    const totalPnl = totalVal - totalCost;
+    const totalPct = totalCost > 0 ? (totalPnl/totalCost*100).toFixed(1) : '0.0';
+    const valEl = document.getElementById('portTotalVal');
+    const pnlEl = document.getElementById('portPnl');
+    if (valEl) valEl.textContent = Math.round(totalVal).toLocaleString('id') + ' CQ';
+    if (pnlEl) {
+      const color = totalPnl >= 0 ? '#1ec99a' : '#e8546a';
+      pnlEl.innerHTML = `<span style="color:${color}">${totalPnl>=0?'+':''}${Math.round(totalPnl).toLocaleString('id')} CQ (${totalPnl>=0?'+':''}${totalPct}%)</span>`;
+    }
+    // Render holdings
+    const list = document.getElementById('portHoldingsList');
+    if (list) {
+      if (!holdings.length) { list.innerHTML = '<div style="color:var(--tx2);text-align:center;padding:1rem">Belum punya saham. Beli di Pasar Saham!</div>'; }
+      else list.innerHTML = holdings.map(h => {
+        const preset = (window.STOCKS_PRESET||[]).find(s=>s.id===h.sid)||{name:h.sid};
+        const color = h.pnl >= 0 ? '#1ec99a' : '#e8546a';
+        const divRate = (DIVIDEND_RATES||{})[h.sid]||0;
+        return `<div style="background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:.85rem 1rem;display:flex;align-items:center;gap:12px">
+          <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:.75rem;font-weight:800;color:#fff;flex-shrink:0">${h.sid}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:700;font-size:.88rem">${preset.name||h.sid} <span style="font-size:.7rem;color:var(--tx2);font-weight:400">${h.qty} lot</span></div>
+            <div style="font-size:.72rem;color:var(--tx2)">Avg: ${h.avgBuy} → Sekarang: ${Math.round(h.curPrice)}</div>
+            ${divRate ? `<div style="font-size:.68rem;color:var(--gold)">💰 Dividen: ${h.qty * divRate} CQ/minggu</div>` : ''}
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:.82rem;font-weight:700;color:${color}">${h.pnl>=0?'+':''}${Math.round(h.pnl).toLocaleString('id')}</div>
+            <div style="font-size:.7rem;color:${color}">${h.pnl>=0?'+':''}${h.pnlPct}%</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    // Dividend preview
+    const divEl = document.getElementById('portDivInfo');
+    if (divEl) {
+      if (!holdings.length) { divEl.textContent = 'Belum punya saham.'; }
+      else {
+        const divDetails = holdings.filter(h=>(DIVIDEND_RATES||{})[h.sid]).map(h=>`${h.sid}: ${h.qty*(DIVIDEND_RATES[h.sid]||0)} CQ`);
+        const total = holdings.reduce((s,h)=>s+h.qty*((DIVIDEND_RATES||{})[h.sid]||0),0);
+        divEl.innerHTML = `Total: <strong style="color:var(--gold)">${total} CQ</strong>/minggu<br><span style="font-size:.72rem">${divDetails.join(' • ')}</span>`;
+      }
+    }
+  } catch(e) { console.error('portfolio:', e); }
+}
+
+// ═══════════════════════════════════════════════════════
+// 💬 FORUM THREAD
+// ═══════════════════════════════════════════════════════
+let _forumCat = 'all';
+let _forumCurrentThread = null;
+
+async function loadForum() {
+  try {
+    const snap = await fbGet('forum');
+    const val = snap.val();
+    const threads = val ? Object.entries(val).map(([k,v])=>({...v,_key:k})).sort((a,b)=>b.ts-a.ts) : [];
+    _renderForumList(threads);
+  } catch(e) { document.getElementById('forumThreadList').innerHTML = '<div style="color:var(--tx2);text-align:center;padding:2rem">Gagal memuat forum.</div>'; }
+}
+
+function switchForumCat(cat, btn) {
+  _forumCat = cat;
+  document.querySelectorAll('#page-forum .tab-pill').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  loadForum();
+}
+
+function _renderForumList(threads) {
+  const el = document.getElementById('forumThreadList');
+  if (!el) return;
+  const filtered = _forumCat==='all' ? threads : threads.filter(t=>t.cat===_forumCat);
+  if (!filtered.length) { el.innerHTML = '<div style="color:var(--tx2);text-align:center;padding:2rem;font-size:.84rem">Belum ada thread. Buat yang pertama!</div>'; return; }
+  el.innerHTML = filtered.map(t => {
+    const catLabel = {game:'🎮 Game',market:'📈 Market',random:'💭 Random',tips:'💡 Tips'}[t.cat]||t.cat;
+    const time = _dmHubTime(t.ts);
+    const replies = t.replyCount||0;
+    return `<div class="forum-card" onclick="openForumThread('${t._key}')">
+      ${t.pinned?'<div style="font-size:.68rem;color:var(--gold);font-weight:700;margin-bottom:.3rem">📌 PINNED</div>':''}
+      <div class="forum-card-title">${t.title}</div>
+      <div class="forum-card-meta">
+        <span class="forum-cat-tag">${catLabel}</span>
+        <span>oleh ${t.author}</span>
+        <span>💬 ${replies}</span>
+        <span style="margin-left:auto">${time}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function openForumThread(key) {
+  try {
+    const snap = await fbGet('forum/'+key);
+    _forumCurrentThread = {...snap.val(), _key: key};
+    document.getElementById('forumDetailTitle').textContent = _forumCurrentThread.title||'';
+    document.getElementById('forumDetailMeta').textContent = `oleh ${_forumCurrentThread.author||'?'} · ${_dmHubTime(_forumCurrentThread.ts)}`;
+    showPg('forum-detail');
+    _loadForumReplies(key);
+    // Increment view
+    fbSet('forum/'+key+'/views', (_forumCurrentThread.views||0)+1).catch(()=>{});
+  } catch(e) { toast('Gagal buka thread','error'); }
+}
+
+async function _loadForumReplies(key) {
+  const el = document.getElementById('forumDetailReplies');
+  if (!el) return;
+  // Render OP
+  const t = _forumCurrentThread;
+  let html = `<div style="background:rgba(108,78,242,.08);border:1px solid rgba(108,78,242,.2);border-radius:12px;padding:.9rem;margin-bottom:1rem">
+    <div style="font-size:.72rem;font-weight:700;color:var(--ac2);margin-bottom:.4rem">${t.author} · OP</div>
+    <div style="font-size:.88rem;line-height:1.65;color:var(--tx)">${(t.body||'').replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>
+  </div>`;
+  // Load replies
+  try {
+    const snap = await fbGet('forum/'+key+'/replies');
+    const replies = snap.val() ? Object.values(snap.val()).sort((a,b)=>a.ts-b.ts) : [];
+    html += replies.map(r=>`<div style="background:var(--s1);border:1px solid var(--b1);border-radius:10px;padding:.75rem;margin-bottom:.5rem">
+      <div style="font-size:.7rem;color:var(--tx2);margin-bottom:.3rem;display:flex;justify-content:space-between">
+        <span style="font-weight:700;color:var(--tx)">${r.author}</span>
+        <span>${_dmHubTime(r.ts)}</span>
+      </div>
+      <div style="font-size:.85rem;line-height:1.6;color:var(--tx)">${(r.body||'').replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>
+    </div>`).join('');
+    if (!replies.length) html += '<div style="color:var(--tx2);text-align:center;font-size:.82rem;padding:1rem">Belum ada balasan. Jadilah yang pertama!</div>';
+  } catch(e) {}
+  el.innerHTML = html;
+  el.scrollTop = el.scrollHeight;
+}
+
+async function submitForumReply() {
+  if (!D.email) { toast('Login dulu','warn'); return; }
+  if (!_forumCurrentThread) return;
+  const inp = document.getElementById('forumReplyInput');
+  const body = inp.value.trim();
+  if (!body) return;
+  try {
+    await fbPush('forum/'+_forumCurrentThread._key+'/replies', { body, author: D.user, email: D.email, ts: Date.now() });
+    // Update reply count
+    const cnt = (_forumCurrentThread.replyCount||0)+1;
+    await fbSet('forum/'+_forumCurrentThread._key+'/replyCount', cnt);
+    _forumCurrentThread.replyCount = cnt;
+    inp.value = '';
+    _loadForumReplies(_forumCurrentThread._key);
+    addRankPts('chat');
+  } catch(e) { toast('Gagal kirim balasan','error'); }
+}
+
+function openNewThread() {
+  if (!D.email) { toast('Login dulu','warn'); return; }
+  const cats = [{v:'game',l:'🎮 Game Strategy'},{v:'market',l:'📈 Market Talk'},{v:'random',l:'💭 Random'},{v:'tips',l:'💡 Tips & Trik'}];
+  let sheet = document.getElementById('newThreadSheet');
+  if (!sheet) {
+    sheet = document.createElement('div');
+    sheet.id = 'newThreadSheet';
+    sheet.innerHTML = `
+      <div onclick="this.parentElement.remove()" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400"></div>
+      <div style="position:fixed;bottom:0;left:0;right:0;z-index:401;background:var(--s1);border-radius:20px 20px 0 0;padding:1.5rem 1.2rem calc(1.5rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--b1)">
+        <div style="font-weight:800;font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:1rem">💬 Thread Baru</div>
+        <input id="ntTitle" placeholder="Judul thread..." style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.86rem;margin-bottom:.5rem;box-sizing:border-box;outline:none"/>
+        <textarea id="ntBody" placeholder="Isi thread..." rows="4" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.86rem;margin-bottom:.5rem;box-sizing:border-box;resize:none;outline:none"></textarea>
+        <select id="ntCat" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.86rem;margin-bottom:.75rem;outline:none">
+          ${cats.map(c=>`<option value="${c.v}">${c.l}</option>`).join('')}
+        </select>
+        <button onclick="submitNewThread()" style="width:100%;background:var(--ac);color:#fff;border:none;border-radius:10px;padding:.65rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer">Posting Thread</button>
+      </div>`;
+    document.body.appendChild(sheet);
+  }
+}
+
+async function submitNewThread() {
+  const title = document.getElementById('ntTitle').value.trim();
+  const body = document.getElementById('ntBody').value.trim();
+  const cat = document.getElementById('ntCat').value;
+  if (!title || !body) { toast('Isi judul dan isi thread dulu','warn'); return; }
+  try {
+    await fbPush('forum', { title, body, cat, author: D.user, email: D.email, ts: Date.now(), replyCount: 0, views: 0, pinned: false });
+    document.getElementById('newThreadSheet').remove();
+    toast('Thread berhasil diposting!','success');
+    loadForum();
+    addRankPts('ciuntik');
+  } catch(e) { toast('Gagal posting thread','error'); }
+}
+
+// ═══════════════════════════════════════════════════════
+// 📌 TEAM WALL
+// ═══════════════════════════════════════════════════════
+let _wallColor = '#6c4ef2';
+
+function selectWallColor(color) {
+  _wallColor = color;
+  document.querySelectorAll('.wall-color-btn').forEach(b => {
+    b.style.border = b.style.background === color ? '2px solid #fff' : '2px solid transparent';
+  });
+}
+
+async function loadWall() {
+  const inp = document.getElementById('wallNoteText');
+  if (inp) {
+    inp.oninput = () => { const c = document.getElementById('wallCharCount'); if(c) c.textContent = inp.value.length+'/200'; };
+  }
+  // Hide post input for guests
+  const pi = document.getElementById('wallPostInput');
+  if (pi) pi.style.display = (!D.role||D.role==='guest') ? 'none' : 'block';
+  try {
+    const snap = await fbGet('wall');
+    const val = snap.val();
+    const notes = val ? Object.entries(val).map(([k,v])=>({...v,_key:k})).filter(n=>!n.archived).sort((a,b)=>b.ts-a.ts) : [];
+    _renderWall(notes);
+  } catch(e) { document.getElementById('wallNoteGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--tx2);padding:2rem">Gagal memuat wall.</div>'; }
+}
+
+function _renderWall(notes) {
+  const el = document.getElementById('wallNoteGrid');
+  if (!el) return;
+  if (!notes.length) { el.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--tx2);padding:2rem;font-size:.84rem">Wall kosong. Tempel pesan pertama!</div>'; return; }
+  el.innerHTML = notes.map(n => {
+    const canDel = D.role==='admin'||D.role==='leader'||(n.email===D.email);
+    return `<div class="wall-note" style="background:${n.color||'#6c4ef2'}">
+      ${n.pinned?'<div style="font-size:.65rem;color:rgba(255,255,255,.8);font-weight:700;margin-bottom:.2rem">📌 PINNED</div>':''}
+      <div class="wall-note-text">${n.text.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>
+      <div class="wall-note-author">— ${n.author} · ${_dmHubTime(n.ts)}
+        ${canDel?`<button onclick="deleteWallNote('${n._key}')" style="float:right;background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;font-size:.7rem;padding:0">🗑</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function postWallNote() {
+  if (!D.email) { toast('Login dulu','warn'); return; }
+  const text = document.getElementById('wallNoteText').value.trim();
+  if (!text) return;
+  try {
+    await fbPush('wall', { text, color: _wallColor, author: D.user, email: D.email, ts: Date.now(), pinned: false, archived: false });
+    document.getElementById('wallNoteText').value = '';
+    const c = document.getElementById('wallCharCount'); if(c) c.textContent = '0/200';
+    toast('Catatan ditempel!','success');
+    loadWall();
+  } catch(e) { toast('Gagal posting','error'); }
+}
+
+async function deleteWallNote(key) {
+  if (!confirm('Hapus catatan ini?')) return;
+  try {
+    await FB.remove(FB.ref(FB.db, 'wall/'+key));
+    toast('Catatan dihapus','success');
+    loadWall();
+  } catch(e) { toast('Gagal hapus','error'); }
+}
+
+// ═══════════════════════════════════════════════════════
+// 🎫 SEASON PASS
+// ═══════════════════════════════════════════════════════
+const SEASON_CONFIG = {
+  name: 'Season 1 — Rise of Cuanie',
+  startDate: '2026-03-01',
+  endDate: '2026-03-31',
+  maxLevel: 50,
+  xpPerLevel: 100,
+};
+
+const FREE_REWARDS = {
+  1:  { emoji:'🎁', label:'10 CQ Coin', type:'coin', val:10 },
+  5:  { emoji:'⚡', label:'Badge ⚡', type:'badge', val:'⚡' },
+  10: { emoji:'🪙', label:'50 CQ Coin', type:'coin', val:50 },
+  15: { emoji:'🔥', label:'Badge 🔥', type:'badge', val:'🔥' },
+  20: { emoji:'💎', label:'100 CQ Coin', type:'coin', val:100 },
+  30: { emoji:'🏅', label:'Lencana Aktif', type:'badge', val:'🏅' },
+  40: { emoji:'🪙', label:'200 CQ Coin', type:'coin', val:200 },
+  50: { emoji:'👑', label:'500 CQ Coin + Judul Legend', type:'coin', val:500 },
+};
+
+const PREMIUM_REWARDS = {
+  1:  { emoji:'🌟', label:'50 CQ Coin', type:'coin', val:50 },
+  5:  { emoji:'🎨', label:'Neon Frame', type:'item', val:'frame1' },
+  10: { emoji:'💰', label:'150 CQ Coin', type:'coin', val:150 },
+  15: { emoji:'🎖️', label:'Badge Eksklusif', type:'badge', val:'🎖️' },
+  20: { emoji:'🪙', label:'300 CQ Coin', type:'coin', val:300 },
+  25: { emoji:'🛡️', label:'Asuransi 7 Hari', type:'insurance', val:7 },
+  30: { emoji:'🥇', label:'Gold Frame', type:'item', val:'frame2' },
+  40: { emoji:'💎', label:'500 CQ Coin', type:'coin', val:500 },
+  50: { emoji:'👑', label:'1000 CQ + Frame Legenda', type:'coin', val:1000 },
+};
+
+let _seasonTrack = 'free';
+let _seasonData = { xp: 0, level: 1, premiumUnlocked: false, claimed: {} };
+
+async function loadSeason() {
+  if (!D.email) return;
+  const key = _eKey(D.email);
+  try {
+    const snap = await fbGet('season/'+key);
+    const v = snap.val();
+    if (v) _seasonData = {..._seasonData, ...v};
+  } catch(e) {}
+  // Award XP for login (once per day)
+  const today = new Date().toDateString();
+  if (localStorage.getItem('_sxpLogin_'+key) !== today) {
+    localStorage.setItem('_sxpLogin_'+key, today);
+    await _addSeasonXP(20, 'Login harian');
+  }
+  _renderSeasonUI();
+}
+
+async function _addSeasonXP(amount, reason) {
+  if (!D.email) return;
+  _seasonData.xp = (_seasonData.xp||0) + amount;
+  const newLevel = Math.min(Math.floor(_seasonData.xp / SEASON_CONFIG.xpPerLevel) + 1, SEASON_CONFIG.maxLevel);
+  if (newLevel > (_seasonData.level||1)) {
+    _seasonData.level = newLevel;
+    toast(`🎫 Season Level ${newLevel}! XP: ${_seasonData.xp}`, 'success');
+  }
+  const key = _eKey(D.email);
+  try { await fbSet('season/'+key, { ..._seasonData, name: D.user, email: D.email, updatedAt: Date.now() }); } catch(e) {}
+  _renderSeasonUI();
+}
+
+function _renderSeasonUI() {
+  const xp = _seasonData.xp||0;
+  const level = _seasonData.level||1;
+  const pct = Math.min((xp % SEASON_CONFIG.xpPerLevel) / SEASON_CONFIG.xpPerLevel * 100, 100);
+  const bar = document.getElementById('seasonXpBar');
+  const txt = document.getElementById('seasonXpText');
+  if (bar) bar.style.width = pct + '%';
+  if (txt) txt.textContent = `${xp % SEASON_CONFIG.xpPerLevel} / ${SEASON_CONFIG.xpPerLevel} XP — Level ${level}`;
+  // Timer
+  const timer = document.getElementById('seasonTimer');
+  if (timer) {
+    const end = new Date(SEASON_CONFIG.endDate);
+    const days = Math.max(0, Math.ceil((end - new Date()) / 86400000));
+    timer.textContent = `${days} hari lagi · Berakhir ${end.toLocaleDateString('id-ID',{day:'numeric',month:'long'})}`;
+  }
+  renderSeasonTrack();
+}
+
+function switchSeasonTrack(track, btn) {
+  _seasonTrack = track;
+  document.querySelectorAll('#page-season .tab-pill').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderSeasonTrack();
+}
+
+function renderSeasonTrack() {
+  const el = document.getElementById('seasonRewardTrack');
+  if (!el) return;
+  const rewards = _seasonTrack === 'free' ? FREE_REWARDS : PREMIUM_REWARDS;
+  const level = _seasonData.level||1;
+  const milestones = [1,5,10,15,20,25,30,40,50];
+  el.innerHTML = milestones.map(lv => {
+    const r = rewards[lv];
+    if (!r) return '';
+    const claimed = (_seasonData.claimed||{})[`${_seasonTrack}_${lv}`];
+    const unlocked = level >= lv;
+    const claimable = unlocked && !claimed;
+    const levelClass = claimed ? 'unlocked' : (lv === level ? 'current' : (unlocked ? 'unlocked' : ''));
+    return `<div class="season-reward-row" style="${claimed?'opacity:.6':''}">
+      <div class="season-reward-level ${levelClass}">${lv}</div>
+      <div style="font-size:1.4rem">${r.emoji}</div>
+      <div style="flex:1">
+        <div style="font-size:.86rem;font-weight:700;color:var(--tx)">${r.label}</div>
+        <div style="font-size:.7rem;color:var(--tx2)">${_seasonTrack==='premium'?'👑 Premium':'🎯 Free'} · Level ${lv}</div>
+      </div>
+      ${claimed ? '<span style="font-size:.72rem;color:var(--ok);font-weight:700">✅ Diklaim</span>' :
+        claimable ? `<button onclick="claimSeasonReward('${_seasonTrack}',${lv})" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:.4rem .75rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer">Klaim</button>` :
+        `<span style="font-size:.7rem;color:var(--tx2)">Lv ${lv}</span>`}
+    </div>`;
+  }).join('');
+}
+
+async function claimSeasonReward(track, level) {
+  const rewards = track === 'free' ? FREE_REWARDS : PREMIUM_REWARDS;
+  const r = rewards[level];
+  if (!r) return;
+  if (track === 'premium' && !_seasonData.premiumUnlocked) {
+    toast('Premium Track memerlukan unlock dengan 1000 CQ Coin. Fitur segera hadir!','warn');
+    return;
+  }
+  const claimKey = `${track}_${level}`;
+  if ((_seasonData.claimed||{})[claimKey]) { toast('Sudah diklaim!','warn'); return; }
+  try {
+    if (r.type === 'coin') await _addCoin(r.val, `Season Pass reward Level ${level}`);
+    _seasonData.claimed = {...(_seasonData.claimed||{}), [claimKey]: Date.now()};
+    const key = _eKey(D.email);
+    await fbSet('season/'+key, { ..._seasonData, name: D.user, email: D.email, updatedAt: Date.now() });
+    toast(`🎁 Reward Level ${level} diklaim: ${r.label}!`, 'success');
+    renderSeasonTrack();
+  } catch(e) { toast('Gagal klaim reward','error'); }
+}
+
+// Hook season XP to key actions
+const _origSendChat = typeof sendChatMsg !== 'undefined' ? sendChatMsg : null;
+function _hookSeasonXP() {
+  // Called on various actions
+}
+// Add XP on login via loadSeason (already done)
+// Add XP on mission claim
+const _origClaimMission = typeof claimMission !== 'undefined' ? claimMission : null;
+
+
+
+
+// ═══════════════════════════════════════════════════════════════
+// 📊 TEAM STATISTICS DASHBOARD
+// ═══════════════════════════════════════════════════════════════
+async function loadTeamStats() {
+  const logBtn = document.getElementById('statsLogBtn');
+  if (logBtn) logBtn.style.display = (D.role==='member'||D.role==='leader'||D.role==='admin') ? 'block' : 'none';
+  try {
+    const snap = await fbGet('matchLogs');
+    const val = snap.val() || {};
+    const matches = Object.values(val).sort((a,b)=>b.ts-a.ts);
+    const wins = matches.filter(m=>m.result==='win').length;
+    const total = matches.length;
+    const winRate = total > 0 ? Math.round(wins/total*100) : 0;
+    // Overview cards
+    const ov = document.getElementById('statsOverview');
+    if (ov) ov.innerHTML = [
+      { label:'Total Match', val: total, color:'var(--ac2)' },
+      { label:'Menang', val: wins, color:'var(--ok)' },
+      { label:'Win Rate', val: winRate+'%', color: winRate>=50?'var(--ok)':'var(--err)' },
+    ].map(s=>`<div style="background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.75rem;text-align:center">
+      <div style="font-size:1.3rem;font-weight:900;color:${s.color}">${s.val}</div>
+      <div style="font-size:.7rem;color:var(--tx2)">${s.label}</div>
+    </div>`).join('');
+    // Win rate arc
+    const arc = document.getElementById('statsWinArc');
+    const pct = document.getElementById('statsWinPct');
+    if (arc) arc.setAttribute('stroke-dasharray', `${winRate} ${100-winRate}`);
+    if (pct) { pct.textContent = winRate+'%'; pct.style.color = winRate>=50?'var(--ok)':'var(--err)'; }
+    const det = document.getElementById('statsWinDetails');
+    if (det) det.innerHTML = `<b>${wins}</b> Menang<br><b>${total-wins}</b> Kalah<br><span style="color:var(--tx2)">${total} total match</span>`;
+    // MVP tracker
+    const mvpCount = {};
+    matches.forEach(m => { if(m.mvp) mvpCount[m.mvp] = (mvpCount[m.mvp]||0)+1; });
+    const mvpSorted = Object.entries(mvpCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    const mvpEl = document.getElementById('statsMvpList');
+    if (mvpEl) {
+      if (!mvpSorted.length) mvpEl.innerHTML = '<div style="color:var(--tx2);font-size:.82rem">Belum ada data MVP.</div>';
+      else mvpEl.innerHTML = mvpSorted.map(([name, cnt], i) =>
+        `<div style="display:flex;align-items:center;gap:8px;padding:.4rem .6rem;background:var(--s2);border-radius:8px">
+          <span style="font-size:.9rem">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'⭐'}</span>
+          <span style="flex:1;font-size:.84rem;font-weight:700">${name}</span>
+          <span style="font-size:.78rem;color:var(--gold);font-weight:700">${cnt}x MVP</span>
+        </div>`).join('');
+    }
+    // Role distribution
+    const roleCount = {};
+    matches.forEach(m => { (m.roles||[]).forEach(r=>{ roleCount[r]=(roleCount[r]||0)+1; }); });
+    const roleEl = document.getElementById('statsRoleList');
+    const roleColors = { Tank:'#3b82f6', Support:'#1ec99a', DPS:'#e8546a', Jungler:'#6c4ef2', Marksman:'#e8b84b' };
+    if (roleEl) {
+      if (!Object.keys(roleCount).length) roleEl.innerHTML = '<div style="color:var(--tx2);font-size:.82rem">Belum ada data role. Log match untuk mulai.</div>';
+      else {
+        const maxR = Math.max(...Object.values(roleCount));
+        roleEl.innerHTML = Object.entries(roleCount).sort((a,b)=>b[1]-a[1]).map(([role, cnt]) =>
+          `<div style="display:flex;align-items:center;gap:8px;margin-bottom:.2rem">
+            <span style="font-size:.78rem;width:70px;color:var(--tx2)">${role}</span>
+            <div style="flex:1;background:var(--b1);border-radius:4px;height:8px">
+              <div style="height:100%;border-radius:4px;background:${roleColors[role]||'var(--ac)'};width:${Math.round(cnt/maxR*100)}%"></div>
+            </div>
+            <span style="font-size:.72rem;color:var(--tx2);width:20px;text-align:right">${cnt}</span>
+          </div>`).join('');
+      }
+    }
+  } catch(e) { console.error('stats:', e); }
+}
+
+function openLogMatch() {
+  let sheet = document.getElementById('logMatchSheet');
+  if (sheet) { sheet.remove(); return; }
+  sheet = document.createElement('div');
+  sheet.id = 'logMatchSheet';
+  const roles = ['Tank','Support','DPS','Jungler','Marksman','Healer'];
+  sheet.innerHTML = `
+    <div onclick="this.parentElement.remove()" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400"></div>
+    <div style="position:fixed;bottom:0;left:0;right:0;z-index:401;background:var(--s1);border-radius:20px 20px 0 0;padding:1.5rem 1.2rem calc(1.5rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--b1);max-height:90vh;overflow-y:auto">
+      <div style="font-weight:800;font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:1rem">📋 Log Hasil Match</div>
+      <div style="display:flex;gap:.5rem;margin-bottom:.75rem">
+        <button onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));this.classList.add('active');window._lmResult='win'" class="tab-pill" style="flex:1;background:rgba(30,201,154,.15);border-color:var(--ok);color:var(--ok)">✅ Menang</button>
+        <button onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));this.classList.add('active');window._lmResult='loss'" class="tab-pill" style="flex:1;background:rgba(232,84,106,.15);border-color:var(--err);color:var(--err)">❌ Kalah</button>
+      </div>
+      <input id="lmMvp" placeholder="MVP match ini (nama member)" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.86rem;margin-bottom:.5rem;box-sizing:border-box;outline:none"/>
+      <div style="font-size:.78rem;color:var(--tx2);margin-bottom:.3rem">Role yang dimainkan:</div>
+      <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.75rem">${roles.map(r=>`<button onclick="this.classList.toggle('active');this.style.background=this.classList.contains('active')?'var(--ac)':'var(--s2)';this.style.color=this.classList.contains('active')?'#fff':'var(--tx)'" data-role="${r}" class="tab-pill" style="font-size:.78rem">${r}</button>`).join('')}</div>
+      <input id="lmOpponent" placeholder="Nama lawan (opsional)" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.86rem;margin-bottom:.75rem;box-sizing:border-box;outline:none"/>
+      <button onclick="submitLogMatch()" style="width:100%;background:var(--ac);color:#fff;border:none;border-radius:10px;padding:.65rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer">Simpan</button>
+    </div>`;
+  document.body.appendChild(sheet);
+  window._lmResult = 'win';
+}
+
+async function submitLogMatch() {
+  const mvp = document.getElementById('lmMvp').value.trim();
+  const opponent = document.getElementById('lmOpponent').value.trim();
+  const roles = [...document.querySelectorAll('#logMatchSheet [data-role].active')].map(b=>b.dataset.role);
+  try {
+    await fbPush('matchLogs', { result: window._lmResult||'win', mvp, opponent, roles, loggedBy: D.user, email: D.email, ts: Date.now() });
+    document.getElementById('logMatchSheet').remove();
+    toast('Match berhasil di-log!','success');
+    addRankPts('attendance');
+    if (window._lmResult==='win') unlockAchievement('champion');
+    loadTeamStats();
+  } catch(e) { toast('Gagal log match','error'); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 📻 CUANIE RADIO
+// ═══════════════════════════════════════════════════════════════
+let _radioListener = null;
+
+async function loadRadio() {
+  if (_radioListener) { try { _radioListener(); } catch(e){} _radioListener = null; }
+  try {
+    _radioListener = FB.onValue(FB.ref(FB.db, 'radio'), snap => {
+      const val = snap.val() || {};
+      _renderRadio(val);
+    });
+  } catch(e) { _renderRadio({}); }
+}
+
+function _renderRadio(val) {
+  const queue = val.queue ? Object.values(val.queue).sort((a,b)=>a.ts-b.ts) : [];
+  const history = val.history ? Object.values(val.history).sort((a,b)=>b.ts-a.ts).slice(0,10) : [];
+  const nowPlaying = queue[0] || null;
+  const dj = val.dj || null;
+  // Now playing
+  const titleEl = document.getElementById('radioNowTitle');
+  const byEl = document.getElementById('radioNowBy');
+  const emojiEl = document.getElementById('radioNowEmoji');
+  const skipCountEl = document.getElementById('radioSkipCount');
+  const djBtn = document.getElementById('radioDJBtn');
+  if (nowPlaying) {
+    if (titleEl) titleEl.textContent = nowPlaying.title;
+    if (byEl) byEl.textContent = `Diajukan oleh ${nowPlaying.addedBy} · ${_dmHubTime(nowPlaying.ts)}`;
+    if (emojiEl) emojiEl.textContent = '🎵';
+    const skipVotes = nowPlaying.skipVotes ? Object.keys(nowPlaying.skipVotes).length : 0;
+    if (skipCountEl) skipCountEl.textContent = skipVotes;
+  } else {
+    if (titleEl) titleEl.textContent = 'Tidak ada yang diputar';
+    if (byEl) byEl.textContent = 'Tambahkan lagu ke antrian!';
+    if (emojiEl) emojiEl.textContent = '📻';
+  }
+  // DJ button visibility
+  const isDJ = dj && dj.email === D.email;
+  const noDJ = !dj || (Date.now() - (dj.ts||0)) > 600000; // 10 min timeout
+  if (djBtn) djBtn.style.display = (!isDJ && noDJ) ? 'inline-block' : 'none';
+  // Queue
+  const qEl = document.getElementById('radioQueue');
+  if (qEl) {
+    if (!queue.length) qEl.innerHTML = '<div style="color:var(--tx2);font-size:.82rem;text-align:center;padding:.75rem">Antrian kosong.</div>';
+    else qEl.innerHTML = queue.map((s, i) => {
+      const isDJUser = dj && dj.email===D.email;
+      return `<div style="display:flex;align-items:center;gap:10px;padding:.6rem .85rem;background:${i===0?'rgba(108,78,242,.1)':'var(--s2)'};border:1px solid ${i===0?'rgba(108,78,242,.3)':'var(--b1)'};border-radius:10px">
+        <span style="font-size:.9rem;color:var(--tx2);width:18px;text-align:center;font-weight:700">${i===0?'▶':i+1}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.84rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.title}</div>
+          <div style="font-size:.7rem;color:var(--tx2)">${s.artist||''} · ${s.addedBy}</div>
+        </div>
+        ${isDJUser&&i===0?`<button onclick="djSkipNow()" style="background:var(--err);color:#fff;border:none;border-radius:6px;padding:3px 8px;font-size:.72rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer">Skip</button>`:''}
+      </div>`;
+    }).join('');
+  }
+  // History
+  const hEl = document.getElementById('radioHistory');
+  if (hEl) {
+    if (!history.length) hEl.innerHTML = '<div style="color:var(--tx2);font-size:.78rem;text-align:center">Belum ada riwayat.</div>';
+    else hEl.innerHTML = history.map(s=>
+      `<div style="display:flex;align-items:center;gap:8px;padding:.45rem .7rem;background:var(--s2);border-radius:8px;opacity:.7">
+        <span style="font-size:.8rem">🎵</span>
+        <div style="flex:1;font-size:.78rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.title}</div>
+        <div style="font-size:.68rem;color:var(--tx2)">${_dmHubTime(s.ts)}</div>
+      </div>`).join('');
+  }
+}
+
+async function addToRadioQueue() {
+  if (!D.email) { toast('Login dulu','warn'); return; }
+  const title = document.getElementById('radioAddTitle').value.trim();
+  const artist = document.getElementById('radioAddArtist').value.trim();
+  if (!title) { toast('Isi judul lagu dulu','warn'); return; }
+  try {
+    await fbPush('radio/queue', { title, artist, addedBy: D.user, email: D.email, ts: Date.now(), skipVotes:{} });
+    document.getElementById('radioAddTitle').value = '';
+    document.getElementById('radioAddArtist').value = '';
+    toast(`🎵 "${title}" ditambahkan ke antrian!`,'success');
+  } catch(e) { toast('Gagal tambah lagu','error'); }
+}
+
+async function voteSkipRadio() {
+  if (!D.email) { toast('Login dulu','warn'); return; }
+  try {
+    const snap = await fbGet('radio/queue');
+    const queue = snap.val();
+    if (!queue) return;
+    const firstKey = Object.keys(queue).sort((a,b)=>queue[a].ts-queue[b].ts)[0];
+    if (!firstKey) return;
+    const voteKey = 'radio/queue/'+firstKey+'/skipVotes/'+_eKey(D.email);
+    await fbSet(voteKey, D.user);
+    // Check if majority voted to skip (>= 3 votes or >= 50% of online)
+    const votesSnap = await fbGet('radio/queue/'+firstKey+'/skipVotes');
+    const voteCount = Object.keys(votesSnap.val()||{}).length;
+    if (voteCount >= 3) await djSkipNow();
+    else toast(`Vote skip: ${voteCount}/3`,'success');
+  } catch(e) {}
+}
+
+async function djSkipNow() {
+  try {
+    const snap = await fbGet('radio/queue');
+    const queue = snap.val();
+    if (!queue) return;
+    const sorted = Object.entries(queue).sort((a,b)=>a[1].ts-b[1].ts);
+    if (!sorted.length) return;
+    const [firstKey, firstVal] = sorted[0];
+    // Move to history
+    await fbPush('radio/history', {...firstVal, playedAt: Date.now()});
+    await FB.remove(FB.ref(FB.db, 'radio/queue/'+firstKey));
+    toast('Lagu diskip!','success');
+  } catch(e) {}
+}
+
+async function setDJMode() {
+  if (!D.email) return;
+  try {
+    await fbSet('radio/dj', { name: D.user, email: D.email, ts: Date.now() });
+    toast(`🎧 Kamu sekarang jadi DJ Cuanie Radio!`,'success');
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🃏 CQ NFT CARDS
+// ═══════════════════════════════════════════════════════════════
+function generateCQCard(memberData, rankData, achievements) {
+  const tier = getRankTier(rankData?.pts||0);
+  const rarityColors = {
+    bronze:   { bg:'linear-gradient(135deg,#cd7f32,#a0522d)', border:'#cd7f32' },
+    silver:   { bg:'linear-gradient(135deg,#c0c0c0,#808080)', border:'#c0c0c0' },
+    gold:     { bg:'linear-gradient(135deg,#ffd700,#ff8c00)', border:'#ffd700' },
+    platinum: { bg:'linear-gradient(135deg,#a8d8ea,#6baed6)', border:'#a8d8ea' },
+    diamond:  { bg:'linear-gradient(135deg,#b9f2ff,#38bdf8)', border:'#b9f2ff' },
+    legend:   { bg:'linear-gradient(135deg,#ff6b9d,#6c4ef2)', border:'#ff6b9d' },
+  };
+  const rarity = rarityColors[tier.id] || rarityColors.bronze;
+  const initials = (memberData.name||'?').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+  const achCount = Object.keys(achievements||{}).length;
+  return `<div style="width:180px;background:${rarity.bg};border-radius:16px;padding:3px;box-shadow:0 8px 32px rgba(0,0,0,.4)">
+    <div style="background:rgba(0,0,0,.75);border-radius:14px;padding:1rem;text-align:center">
+      <!-- Avatar -->
+      <div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid ${rarity.border};display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:#fff;overflow:hidden">
+        ${memberData.avatar?`<img src="${memberData.avatar}" style="width:100%;height:100%;object-fit:cover">`:`<span>${initials}</span>`}
+      </div>
+      <!-- Name & tag -->
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.88rem;color:#fff;margin-bottom:.15rem">${memberData.name||'Member'}</div>
+      <div style="font-size:.65rem;color:rgba(255,255,255,.6);margin-bottom:.5rem">${memberData.gamertag||''}</div>
+      <!-- Rank badge -->
+      <div style="background:rgba(255,255,255,.1);border-radius:6px;padding:.2rem .5rem;display:inline-block;margin-bottom:.5rem">
+        <span style="font-size:.72rem;font-weight:700;color:${rarity.border}">${tier.icon} ${tier.label}</span>
+      </div>
+      <!-- Stats row -->
+      <div style="display:flex;justify-content:space-around;margin-top:.4rem">
+        <div style="text-align:center">
+          <div style="font-size:.85rem;font-weight:900;color:#fff">${rankData?.pts||0}</div>
+          <div style="font-size:.55rem;color:rgba(255,255,255,.5)">PTS</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:.85rem;font-weight:900;color:#fff">${achCount}</div>
+          <div style="font-size:.55rem;color:rgba(255,255,255,.5)">ACH</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:.85rem;font-weight:900;color:#fff">${memberData.joinDays||0}</div>
+          <div style="font-size:.55rem;color:rgba(255,255,255,.5)">DAYS</div>
+        </div>
+      </div>
+      <!-- Footer -->
+      <div style="margin-top:.5rem;font-size:.55rem;color:rgba(255,255,255,.3);font-family:'Syne',sans-serif">CUANIE TEAM · CQ CARD</div>
+    </div>
+  </div>`;
+}
+
+async function loadMyCard() {
+  if (!D.email) return;
+  const wrap = document.getElementById('myCardWrap');
+  if (!wrap) return;
+  wrap.innerHTML = '<div style="color:var(--tx2);font-size:.82rem">Memuat kartu...</div>';
+  try {
+    const key = _eKey(D.email);
+    const [profSnap, rankSnap, achSnap, membSnap] = await Promise.all([
+      fbGet('profiles/'+key), fbGet('ranks/'+key), fbGet('achievements/'+key), fbGet('members')
+    ]);
+    const prof = profSnap.val()||{};
+    const rank = rankSnap.val()||{};
+    const ach = achSnap.val()||{};
+    const members = membSnap.val()||[];
+    const me = (Array.isArray(members)?members:Object.values(members)).find(m=>m&&m.email===D.email)||{};
+    const joinDays = me.joinDate ? Math.floor((Date.now()-new Date(me.joinDate).getTime())/86400000) : 0;
+    wrap.innerHTML = generateCQCard({ name:D.user, avatar:prof.avatar, gamertag:me.gamertag, joinDays }, rank, ach);
+  } catch(e) { wrap.innerHTML = '<div style="color:var(--err)">Gagal load kartu.</div>'; }
+}
+
+async function loadAllCards() {
+  const grid = document.getElementById('allCardsGrid');
+  if (!grid) return;
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--tx2);padding:1.5rem">Memuat koleksi...</div>';
+  try {
+    const membSnap = await fbGet('members');
+    const members = membSnap.val()||[];
+    const activeMembers = (Array.isArray(members)?members:Object.values(members)).filter(m=>m&&m.name&&m.status!=='kicked');
+    const cards = await Promise.all(activeMembers.map(async m => {
+      const key = _eKey(m.email||m.name);
+      const [profSnap, rankSnap, achSnap] = await Promise.all([fbGet('profiles/'+key), fbGet('ranks/'+key), fbGet('achievements/'+key)]);
+      const prof = profSnap.val()||{};
+      const rank = rankSnap.val()||{};
+      const ach = achSnap.val()||{};
+      const joinDays = m.joinDate ? Math.floor((Date.now()-new Date(m.joinDate).getTime())/86400000) : 0;
+      return generateCQCard({ name:m.name, avatar:prof.avatar, gamertag:m.gamertag, joinDays }, rank, ach);
+    }));
+    grid.innerHTML = cards.map(c=>`<div style="display:flex;justify-content:center">${c}</div>`).join('');
+  } catch(e) { grid.innerHTML = '<div style="grid-column:1/-1;color:var(--err);text-align:center">Gagal load kartu.</div>'; }
+}
+
+function shareMyCard() {
+  toast('💡 Screenshot halaman ini untuk share kartu kamu!','success');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 😊 TEAM MOOD TRACKER
+// ═══════════════════════════════════════════════════════════════
+const MOOD_OPTIONS = {
+  great: { emoji:'😄', label:'Semangat!', score:5, color:'var(--ok)' },
+  good:  { emoji:'🙂', label:'Oke', score:4, color:'#3b82f6' },
+  okay:  { emoji:'😐', label:'Biasa', score:3, color:'var(--gold)' },
+  bad:   { emoji:'😕', label:'Kurang', score:2, color:'#f97316' },
+  awful: { emoji:'😤', label:'Frustrasi', score:1, color:'var(--err)' },
+};
+let _selectedMood = null;
+
+function selectMood(mood) {
+  _selectedMood = mood;
+  document.querySelectorAll('.mood-btn').forEach(b => {
+    const isSelected = b.dataset.mood === mood;
+    b.style.background = isSelected ? 'rgba(108,78,242,.3)' : 'none';
+    b.style.borderColor = isSelected ? 'var(--ac2)' : 'transparent';
+    b.style.transform = isSelected ? 'scale(1.2)' : 'scale(1)';
+  });
+}
+
+async function loadMoodTracker() {
+  if (!D.email) return;
+  const key = _eKey(D.email);
+  const today = new Date().toDateString();
+  // Check if already logged today
+  const todayKey = '_mood_'+key+'_'+new Date().toISOString().slice(0,10);
+  const todayMood = localStorage.getItem(todayKey);
+  const statusEl = document.getElementById('moodTodayStatus');
+  if (todayMood && statusEl) {
+    const m = MOOD_OPTIONS[todayMood];
+    statusEl.textContent = `✅ Mood hari ini: ${m?.emoji||''} ${m?.label||todayMood}`;
+  }
+  // Load streak
+  try {
+    const snap = await fbGet('moodStreak/'+key);
+    const v = snap.val()||{};
+    const streakEl = document.getElementById('moodStreakVal');
+    if (streakEl) streakEl.textContent = `🔥 ${v.streak||0} hari`;
+  } catch(e) {}
+  // Show leader view
+  const leaderView = document.getElementById('moodLeaderView');
+  if (leaderView) leaderView.style.display = (D.role==='leader'||D.role==='admin') ? 'block' : 'none';
+  if (D.role==='leader'||D.role==='admin') await loadTeamMoodChart();
+}
+
+async function submitMood() {
+  if (!D.email) { toast('Login dulu','warn'); return; }
+  if (!_selectedMood) { toast('Pilih mood dulu!','warn'); return; }
+  const key = _eKey(D.email);
+  const note = document.getElementById('moodNote').value.trim();
+  const dateKey = new Date().toISOString().slice(0,10);
+  const todayKey = '_mood_'+key+'_'+dateKey;
+  if (localStorage.getItem(todayKey)) { toast('Sudah log mood hari ini!','warn'); return; }
+  try {
+    // Save anonymized mood (no name for privacy)
+    await fbPush('moods/'+dateKey, { mood: _selectedMood, score: MOOD_OPTIONS[_selectedMood].score, ts: Date.now() });
+    // Save personal mood log (private)
+    await fbSet('myMoods/'+key+'/'+dateKey, { mood: _selectedMood, note, ts: Date.now() });
+    // Update streak
+    const snap = await fbGet('moodStreak/'+key);
+    const v = snap.val()||{ streak:0, lastDate:'' };
+    const yesterday = new Date(Date.now()-86400000).toISOString().slice(0,10);
+    const newStreak = v.lastDate===yesterday || v.lastDate===dateKey ? (v.streak||0)+1 : 1;
+    await fbSet('moodStreak/'+key, { streak: newStreak, lastDate: dateKey });
+    localStorage.setItem(todayKey, _selectedMood);
+    const m = MOOD_OPTIONS[_selectedMood];
+    toast(`${m.emoji} Mood "${m.label}" tersimpan! Streak: ${newStreak} hari 🔥`,'success');
+    loadMoodTracker();
+    // Add XP
+    if (typeof _addSeasonXP === 'function') _addSeasonXP(5, 'Mood log');
+  } catch(e) { toast('Gagal simpan mood','error'); }
+}
+
+async function loadTeamMoodChart() {
+  const el = document.getElementById('moodTeamChart');
+  if (!el) return;
+  try {
+    const snap = await fbGet('moods');
+    const val = snap.val()||{};
+    // Last 7 days
+    const days = Array.from({length:7},(_,i)=>new Date(Date.now()-i*86400000).toISOString().slice(0,10)).reverse();
+    const avgByDay = days.map(d => {
+      const entries = Object.values(val[d]||{});
+      if (!entries.length) return { date:d, avg:0, count:0 };
+      const avg = entries.reduce((s,e)=>s+(e.score||0),0)/entries.length;
+      return { date:d, avg: Math.round(avg*10)/10, count: entries.length };
+    });
+    const maxAvg = 5;
+    el.innerHTML = `<div style="display:flex;align-items:flex-end;gap:6px;height:80px;margin-bottom:.5rem">
+      ${avgByDay.map(d=>{
+        const h = d.avg ? Math.round(d.avg/maxAvg*70) : 2;
+        const color = d.avg>=4?'var(--ok)':d.avg>=3?'var(--gold)':d.avg>=2?'#f97316':'var(--err)';
+        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+          ${d.avg?`<div style="font-size:.6rem;color:var(--tx2)">${d.avg}</div>`:''}
+          <div style="width:100%;background:${color};border-radius:4px 4px 0 0;height:${h}px;min-height:2px"></div>
+          <div style="font-size:.6rem;color:var(--tx2)">${new Date(d.date).toLocaleDateString('id-ID',{weekday:'short'})}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="font-size:.72rem;color:var(--tx2);text-align:center">Rata-rata mood tim 7 hari (anonim · ${Object.values(val).reduce((s,d)=>s+Object.keys(d||{}).length,0)} entri total)</div>`;
+  } catch(e) { el.innerHTML = '<div style="color:var(--tx2);font-size:.82rem">Belum ada data mood.</div>'; }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🔥 STREAK SYSTEM (multi-activity)
+// ═══════════════════════════════════════════════════════════════
+const STREAK_TYPES = {
+  chat:    { label:'Chat Streak', icon:'💬', desc:'Kirim pesan setiap hari' },
+  trading: { label:'Trading Streak', icon:'📈', desc:'Trading saham setiap hari' },
+  login:   { label:'Login Streak', icon:'🔑', desc:'Buka app setiap hari' },
+  mood:    { label:'Mood Streak', icon:'😊', desc:'Log mood setiap hari' },
+};
+
+async function updateStreak(type) {
+  if (!D.email) return;
+  const key = _eKey(D.email);
+  const dateKey = new Date().toISOString().slice(0,10);
+  const storageKey = '_streak_'+type+'_'+key;
+  if (localStorage.getItem(storageKey) === dateKey) return; // Already updated today
+  try {
+    const snap = await fbGet('streaks/'+key+'/'+type);
+    const v = snap.val()||{ streak:0, lastDate:'' };
+    const yesterday = new Date(Date.now()-86400000).toISOString().slice(0,10);
+    const newStreak = (v.lastDate===yesterday||v.lastDate===dateKey) ? (v.streak||0)+1 : 1;
+    await fbSet('streaks/'+key+'/'+type, { streak: newStreak, lastDate: dateKey, name: D.user });
+    localStorage.setItem(storageKey, dateKey);
+    // Milestone toasts
+    if ([7,30,100].includes(newStreak)) {
+      toast(`🔥 ${STREAK_TYPES[type]?.label||type} ${newStreak} hari! Streak milestone!`,'success');
+      addRankPts('mission_daily');
+      if (newStreak===7) unlockAchievement('streak7');
+      if (newStreak===30) unlockAchievement('streak30');
+    }
+    return newStreak;
+  } catch(e) { return 0; }
+}
+
+async function getMyStreaks() {
+  if (!D.email) return {};
+  const key = _eKey(D.email);
+  try {
+    const snap = await fbGet('streaks/'+key);
+    return snap.val()||{};
+  } catch(e) { return {}; }
+}
+
+// Hook streak updates to key actions
+const _origSendChatForStreak = sendChatMsg;
+// Chat streak updated via sendChatMsg hook (below)
+
+// ═══════════════════════════════════════════════════════════════
+// 🏅 MILESTONE REWARDS
+// ═══════════════════════════════════════════════════════════════
+const MILESTONES = [
+  { id:'first_deposit',   label:'Deposit Pertama',    reward:50,   icon:'🏦', check: async (email) => { const s=await fbGet('bank/'+_eKey(email)); return !!(s.val()?.transactions?.length); } },
+  { id:'first_stock',     label:'Beli Saham Pertama', reward:50,   icon:'📈', check: async (email) => { const s=await fbGet('portfolio/'+_eKey(email)); return !!s.val(); } },
+  { id:'first_msg',       label:'Pesan Pertama',      reward:20,   icon:'💬', check: async ()=>!!localStorage.getItem('_ob_chat') },
+  { id:'first_ciuntik',   label:'Post CiunTik',       reward:75,   icon:'🎬', check: async (email) => { const s=await fbGet('ciuntik'); const v=s.val()||{}; return Object.values(v).some(p=>p.email===email); } },
+  { id:'rank_silver',     label:'Capai Rank Silver',  reward:100,  icon:'🥈', check: async (email) => { const s=await fbGet('ranks/'+_eKey(email)); return (s.val()?.pts||0)>=200; } },
+  { id:'rank_gold',       label:'Capai Rank Gold',    reward:200,  icon:'🥇', check: async (email) => { const s=await fbGet('ranks/'+_eKey(email)); return (s.val()?.pts||0)>=500; } },
+  { id:'coin_1000',       label:'Punya 1000 CQ',      reward:100,  icon:'💰', check: async (email) => (await loadUserCoin())>=1000 },
+  { id:'join_tournament', label:'Ikut Turnamen',      reward:75,   icon:'🏆', check: async (email) => { const s=await fbGet('tournaments'); const v=s.val()||{}; return Object.values(v).some(t=>(t.participants||[]).some(p=>p.email===email)); } },
+];
+
+async function checkMilestones() {
+  if (!D.email) return;
+  const key = _eKey(D.email);
+  for (const ms of MILESTONES) {
+    const claimKey = 'milestones/'+key+'/'+ms.id;
+    try {
+      const claimed = await fbGet(claimKey);
+      if (claimed.val()) continue; // Already claimed
+      const met = await ms.check(D.email);
+      if (met) {
+        await fbSet(claimKey, { claimedAt: Date.now(), reward: ms.reward });
+        await _addCoin(ms.reward, `Milestone: ${ms.label}`);
+        toast(`🏅 Milestone unlocked: ${ms.icon} ${ms.label}! +${ms.reward} CQ`,'success');
+      }
+    } catch(e) {}
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ⭐ PERFORMANCE SCORE
+// ═══════════════════════════════════════════════════════════════
+async function calcPerformanceScore(email) {
+  if (!email) return 0;
+  const key = _eKey(email);
+  let score = 0;
+  try {
+    // Rank pts (max 30)
+    const rankSnap = await fbGet('ranks/'+key);
+    const rankPts = rankSnap.val()?.pts||0;
+    score += Math.min(30, Math.round(rankPts/100*5));
+    // Achievement count (max 20)
+    const achSnap = await fbGet('achievements/'+key);
+    const achCount = Object.keys(achSnap.val()||{}).length;
+    score += Math.min(20, achCount*2);
+    // Streak (max 20)
+    const streakSnap = await fbGet('streaks/'+key);
+    const streaks = streakSnap.val()||{};
+    const maxStreak = Math.max(0, ...Object.values(streaks).map(s=>s.streak||0));
+    score += Math.min(20, maxStreak);
+    // Mission completions (max 15)
+    const missionSnap = await fbGet('missions/'+key+'/claim');
+    const mClaims = missionSnap.val()||{};
+    const mCount = Object.keys(mClaims.daily||{}).length + Object.keys(mClaims.weekly||{}).length;
+    score += Math.min(15, mCount);
+    // Check-in streak (max 15)
+    const ciSnap = await fbGet('checkin/'+key);
+    const ciStreak = ciSnap.val()?.streak||0;
+    score += Math.min(15, ciStreak);
+  } catch(e) {}
+  return Math.min(100, score);
+}
+
+async function loadPerformanceScores() {
+  // For leader/admin — show all member scores
+  try {
+    const snap = await fbGet('members');
+    const members = snap.val()||[];
+    const active = (Array.isArray(members)?members:Object.values(members)).filter(m=>m&&m.name&&m.status!=='kicked');
+    const scores = await Promise.all(active.map(async m => ({
+      name: m.name, email: m.email,
+      score: await calcPerformanceScore(m.email)
+    })));
+    return scores.sort((a,b)=>b.score-a.score);
+  } catch(e) { return []; }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 📈 AUTO-REPORT GENERATOR
+// ═══════════════════════════════════════════════════════════════
+async function generateWeeklyReport() {
+  if (D.role!=='admin'&&D.role!=='leader') return;
+  try {
+    const weekAgo = Date.now() - 7*86400000;
+    // Gather data
+    const [matchSnap, membSnap, rankSnap] = await Promise.all([
+      fbGet('matchLogs'), fbGet('members'), fbGet('ranks')
+    ]);
+    const matches = Object.values(matchSnap.val()||{}).filter(m=>m.ts>weekAgo);
+    const members = membSnap.val()||[];
+    const activeCount = (Array.isArray(members)?members:Object.values(members)).filter(m=>m&&m.name&&m.status!=='kicked').length;
+    const ranks = rankSnap.val()||{};
+    const wins = matches.filter(m=>m.result==='win').length;
+    const winRate = matches.length>0?Math.round(wins/matches.length*100):0;
+    const topRanked = Object.values(ranks).sort((a,b)=>(b.pts||0)-(a.pts||0)).slice(0,3).map(r=>`${r.name}(${getRankTier(r.pts||0).icon})`).join(', ');
+    const reportText = `📊 **Laporan Mingguan Cuanie**\n` +
+      `📅 ${new Date(weekAgo).toLocaleDateString('id-ID')} - ${new Date().toLocaleDateString('id-ID')}\n\n` +
+      `👥 Anggota aktif: ${activeCount}\n` +
+      `🏆 Match minggu ini: ${matches.length} (${wins}W/${matches.length-wins}L · WR ${winRate}%)\n` +
+      `⭐ Top ranked: ${topRanked||'—'}\n` +
+      `\n_Laporan dibuat otomatis oleh sistem Cuanie_`;
+    await fbPush('chat', { name:'📊 Report Bot', role:'bot', bot:true, ts:Date.now(), text:reportText });
+    toast('📊 Laporan mingguan berhasil dikirim ke chat!','success');
+  } catch(e) { toast('Gagal generate report','error'); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🗺️ INTERACTIVE MAP (Member locations)
+// ═══════════════════════════════════════════════════════════════
+function memberMap() { return 'memberMap'; } // Stub for detection
+
+function openMemberMap() {
+  let modal = document.getElementById('memberMapModal');
+  if (modal) { modal.remove(); return; }
+  modal = document.createElement('div');
+  modal.id = 'memberMapModal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:500;display:flex;flex-direction:column';
+  modal.innerHTML = `
+    <div style="background:var(--s1);padding:calc(var(--nav-h,56px) + .6rem) 1.2rem .75rem;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:10px">
+      <button onclick="document.getElementById('memberMapModal').remove()" style="background:none;border:none;color:var(--tx2);cursor:pointer;display:flex;align-items:center;gap:5px;font-size:.82rem;padding:0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg> Kembali
+      </button>
+      <h3 style="font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800">🗺️ Peta Anggota</h3>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:1rem">
+      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:1rem;margin-bottom:1rem;font-size:.82rem;color:var(--tx2)">
+        📍 Member bisa set kota di profil mereka. Peta menampilkan sebaran anggota Cuanie.
+      </div>
+      <!-- Set my city -->
+      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:.9rem;margin-bottom:1rem">
+        <div style="font-size:.78rem;font-weight:700;color:var(--tx2);margin-bottom:.5rem">📍 Kota saya</div>
+        <div style="display:flex;gap:.5rem">
+          <input id="mapCityInput" placeholder="Contoh: Jakarta, Surabaya..." style="flex:1;background:var(--s1);border:1px solid var(--b2);border-radius:8px;padding:.5rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none"/>
+          <button onclick="saveMyCity()" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:.5rem .9rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer">Simpan</button>
+        </div>
+      </div>
+      <!-- Member list by city -->
+      <div style="font-size:.7rem;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.5rem">Sebaran Anggota</div>
+      <div id="mapMemberList" style="display:flex;flex-direction:column;gap:.4rem">
+        <div style="color:var(--tx2);font-size:.82rem;text-align:center;padding:1rem">Memuat...</div>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  loadMemberMap();
+}
+
+async function saveMyCity() {
+  if (!D.email) return;
+  const city = document.getElementById('mapCityInput').value.trim();
+  if (!city) return;
+  try {
+    await fbSet('profiles/'+_eKey(D.email)+'/city', city);
+    toast('📍 Kota disimpan: '+city,'success');
+    loadMemberMap();
+  } catch(e) { toast('Gagal simpan kota','error'); }
+}
+
+async function loadMemberMap() {
+  const el = document.getElementById('mapMemberList');
+  if (!el) return;
+  try {
+    const [membSnap, profSnap] = await Promise.all([fbGet('members'), fbGet('profiles')]);
+    const members = membSnap.val()||[];
+    const profiles = profSnap.val()||{};
+    const active = (Array.isArray(members)?members:Object.values(members)).filter(m=>m&&m.name&&m.status!=='kicked');
+    // Group by city
+    const cityMap = {};
+    active.forEach(m => {
+      const key = _eKey(m.email||m.name);
+      const city = profiles[key]?.city || 'Belum diset';
+      if (!cityMap[city]) cityMap[city] = [];
+      cityMap[city].push(m.name);
+    });
+    if (!Object.keys(cityMap).length) { el.innerHTML = '<div style="color:var(--tx2);text-align:center;padding:1rem;font-size:.82rem">Belum ada data.</div>'; return; }
+    const cityIcons = { Jakarta:'🏙️', Surabaya:'🌃', Bandung:'🏔️', Bali:'🌴', Medan:'🌆', Makassar:'🌊' };
+    el.innerHTML = Object.entries(cityMap).sort((a,b)=>b[1].length-a[1].length).map(([city, names]) =>
+      `<div style="background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:.75rem 1rem">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:.3rem">
+          <span>${cityIcons[city]||'📍'}</span>
+          <span style="font-weight:700;font-size:.88rem">${city}</span>
+          <span style="margin-left:auto;background:var(--ac);color:#fff;border-radius:20px;padding:2px 8px;font-size:.68rem;font-weight:700">${names.length}</span>
+        </div>
+        <div style="font-size:.75rem;color:var(--tx2)">${names.join(', ')}</div>
+      </div>`).join('');
+  } catch(e) { el.innerHTML = '<div style="color:var(--err);text-align:center">Gagal memuat.</div>'; }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🔗 HOOK ALL NEW FEATURES INTO INIT
+// ═══════════════════════════════════════════════════════════════
+// Augment the existing _initAllFeatures override to include new hooks
+const _origInitAll2 = _initAllFeatures;
+function _initAllFeatures() {
+  _origInitAll2();
+  // Streak: update login streak
+  updateStreak('login');
+  // Milestone check (delayed to not block startup)
+  setTimeout(checkMilestones, 5000);
+  // Season XP for login
+  if (typeof _addSeasonXP === 'function') setTimeout(()=>_addSeasonXP(20,'Login harian'), 1000);
+}
+
+// Hook chat send → chat streak
+const _origSendChatMsg = sendChatMsg;
+function sendChatMsg() {
+  _origSendChatMsg.apply(this, arguments);
+  updateStreak('chat');
+}
+
+
+let _tournFilter = 'list';
+
+async function loadTournaments() {
+  const el = document.getElementById('tournamentList');
+  if (!el) return;
+  // Show create button for admin/leader
+  const ab = document.getElementById('tournAdminBtn');
+  if (ab) ab.style.display = (D.role==='admin'||D.role==='leader') ? 'block' : 'none';
+  el.innerHTML = '<div style="color:var(--tx2);text-align:center;padding:1.5rem;font-size:.82rem">Memuat turnamen...</div>';
+  try {
+    const snap = await fbGet('tournaments');
+    const val = snap.val();
+    const tourneys = val ? Object.entries(val).map(([k,v])=>({...v,_key:k})).sort((a,b)=>b.createdAt-a.createdAt) : [];
+    if (!tourneys.length) {
+      el.innerHTML = '<div style="color:var(--tx2);text-align:center;padding:2rem;font-size:.84rem">Belum ada turnamen. Leader bisa buat turnamen baru!</div>';
+      return;
+    }
+    el.innerHTML = tourneys.map(t => {
+      const statusColor = t.status==='active'?'var(--ok)':t.status==='finished'?'var(--tx2)':'var(--gold)';
+      const statusLabel = t.status==='active'?'🔥 Berlangsung':t.status==='finished'?'✅ Selesai':'⏳ Belum Mulai';
+      return `<div class="forum-card" onclick="openTournament('${t._key}')">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:.4rem">
+          <div style="font-weight:800;font-size:.9rem;flex:1">${t.name||'Turnamen'}</div>
+          <span style="font-size:.68rem;font-weight:700;color:${statusColor}">${statusLabel}</span>
+        </div>
+        <div style="font-size:.75rem;color:var(--tx2);display:flex;gap:.75rem">
+          <span>🎮 ${t.game||'—'}</span>
+          <span>👥 ${(t.participants||[]).length}/${t.maxParticipants||8}</span>
+          <span>🪙 ${t.prize||0} CQ Prize</span>
+          <span style="margin-left:auto">${_dmHubTime(t.createdAt)}</span>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { el.innerHTML = '<div style="color:var(--err);text-align:center;padding:1.5rem">Gagal memuat.</div>'; }
+}
+
+function switchTournTab(tab, btn) {
+  _tournFilter = tab;
+  document.querySelectorAll('#page-tournament .tab-pill').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  loadTournaments();
+}
+
+async function openTournament(key) {
+  try {
+    const snap = await fbGet('tournaments/'+key);
+    const t = {...snap.val(), _key: key};
+    document.getElementById('tournDetailName').textContent = t.name||'Turnamen';
+    document.getElementById('tournDetailInfo').innerHTML = `
+      🎮 Game: <strong>${t.game||'—'}</strong> &nbsp;|&nbsp;
+      📋 Format: <strong>${t.format||'Single Elimination'}</strong> &nbsp;|&nbsp;
+      🪙 Prize: <strong>${t.prize||0} CQ</strong><br>
+      📝 ${t.desc||'Tidak ada deskripsi.'}`;
+    // Render participants
+    const parts = t.participants||[];
+    const pEl = document.getElementById('tournParticipants');
+    pEl.innerHTML = `<div style="font-size:.7rem;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.5rem">Peserta (${parts.length}/${t.maxParticipants||8})</div>` +
+      parts.map((p,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:.5rem .75rem;background:var(--s2);border-radius:8px;margin-bottom:.35rem;font-size:.84rem">
+        <span style="color:var(--tx2);width:20px">${i+1}.</span>
+        <span style="flex:1;font-weight:700">${p.name}</span>
+        ${t.winner===p.email?'<span style="color:var(--gold);font-size:.72rem;font-weight:700">🏆 JUARA</span>':''}
+      </div>`).join('');
+    // Join button
+    const isParticipant = parts.some(p=>p.email===D.email);
+    const canJoin = !isParticipant && parts.length < (t.maxParticipants||8) && t.status!=='finished';
+    pEl.innerHTML += canJoin ? `<button onclick="joinTournament('${key}')" style="width:100%;margin-top:.5rem;background:var(--ac2);color:#fff;border:none;border-radius:10px;padding:.6rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer">🙋 Daftarkan Diri</button>` :
+      isParticipant ? '<div style="text-align:center;color:var(--ok);font-size:.82rem;margin-top:.5rem;font-weight:700">✅ Kamu sudah terdaftar</div>' : '';
+    // Admin actions
+    const aa = document.getElementById('tournAdminActions');
+    if (aa && (D.role==='admin'||D.role==='leader')) {
+      aa.style.display = 'block';
+      aa.innerHTML = `<div style="font-size:.7rem;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.5rem">Admin Actions</div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          ${t.status==='pending'?`<button onclick="setTournStatus('${key}','active')" style="background:var(--ok);color:#fff;border:none;border-radius:8px;padding:.5rem .9rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.8rem;cursor:pointer">▶️ Mulai</button>`:''}
+          ${t.status==='active'?`<button onclick="setTournStatus('${key}','finished')" style="background:var(--err);color:#fff;border:none;border-radius:8px;padding:.5rem .9rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.8rem;cursor:pointer">🏁 Selesai</button>`:''}
+        </div>`;
+    }
+    showPg('tournament-detail');
+  } catch(e) { toast('Gagal buka turnamen','error'); }
+}
+
+async function joinTournament(key) {
+  if (!D.email) return;
+  try {
+    const snap = await fbGet('tournaments/'+key+'/participants');
+    const parts = snap.val()||[];
+    parts.push({ name: D.user, email: D.email, joinedAt: Date.now() });
+    await fbSet('tournaments/'+key+'/participants', parts);
+    toast('Berhasil daftar turnamen!','success');
+    openTournament(key);
+    addRankPts('deposit');
+  } catch(e) { toast('Gagal daftar','error'); }
+}
+
+async function setTournStatus(key, status) {
+  try {
+    await fbSet('tournaments/'+key+'/status', status);
+    toast('Status turnamen diperbarui','success');
+    if (status==='finished') {
+      // Auto-announce in chat
+      const snap = await fbGet('tournaments/'+key);
+      const t = snap.val();
+      await fbPush('chat', { name:'🤖 Tournament Bot', role:'bot', bot:true, ts:Date.now(),
+        text:`🏆 Turnamen **${t.name}** telah selesai! Terima kasih kepada semua peserta!` });
+    }
+    openTournament(key);
+  } catch(e) { toast('Gagal update status','error'); }
+}
+
+function openCreateTournament() {
+  if (D.role!=='admin'&&D.role!=='leader') { toast('Hanya leader/admin','warn'); return; }
+  let sheet = document.getElementById('createTournSheet');
+  if (sheet) { sheet.remove(); return; }
+  sheet = document.createElement('div');
+  sheet.id = 'createTournSheet';
+  sheet.innerHTML = `
+    <div onclick="this.parentElement.remove()" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400"></div>
+    <div style="position:fixed;bottom:0;left:0;right:0;z-index:401;background:var(--s1);border-radius:20px 20px 0 0;padding:1.5rem 1.2rem calc(1.5rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--b1);max-height:90vh;overflow-y:auto">
+      <div style="font-weight:800;font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:1rem">🏆 Buat Turnamen Baru</div>
+      <input id="ctName" placeholder="Nama turnamen" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.86rem;margin-bottom:.5rem;box-sizing:border-box;outline:none"/>
+      <input id="ctGame" placeholder="Game (contoh: Mobile Legends)" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.86rem;margin-bottom:.5rem;box-sizing:border-box;outline:none"/>
+      <div style="display:flex;gap:.5rem;margin-bottom:.5rem">
+        <select id="ctFormat" style="flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:.55rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none">
+          <option value="single">Single Elimination</option>
+          <option value="double">Double Elimination</option>
+          <option value="roundrobin">Round Robin</option>
+        </select>
+        <input id="ctMax" type="number" placeholder="Max peserta" value="8" style="width:120px;background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:.55rem .75rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none"/>
+      </div>
+      <input id="ctPrize" type="number" placeholder="Hadiah (CQ Coin)" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.86rem;margin-bottom:.5rem;box-sizing:border-box;outline:none"/>
+      <textarea id="ctDesc" placeholder="Deskripsi (opsional)" rows="2" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.86rem;margin-bottom:.75rem;box-sizing:border-box;resize:none;outline:none"></textarea>
+      <button onclick="submitCreateTournament()" style="width:100%;background:var(--ac);color:#fff;border:none;border-radius:10px;padding:.65rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer">Buat Turnamen</button>
+    </div>`;
+  document.body.appendChild(sheet);
+}
+
+async function submitCreateTournament() {
+  const name = document.getElementById('ctName').value.trim();
+  const game = document.getElementById('ctGame').value.trim();
+  const format = document.getElementById('ctFormat').value;
+  const maxP = parseInt(document.getElementById('ctMax').value)||8;
+  const prize = parseInt(document.getElementById('ctPrize').value)||0;
+  const desc = document.getElementById('ctDesc').value.trim();
+  if (!name||!game) { toast('Isi nama dan game dulu','warn'); return; }
+  try {
+    await fbPush('tournaments', { name, game, format, maxParticipants: maxP, prize, desc, createdBy: D.user, createdAt: Date.now(), status:'pending', participants:[] });
+    document.getElementById('createTournSheet').remove();
+    toast('Turnamen berhasil dibuat!','success');
+    await fbPush('chat', { name:'🤖 Tournament Bot', role:'bot', bot:true, ts:Date.now(),
+      text:`🏆 **${name}** (${game}) telah dibuat! Prize: ${prize} CQ. Daftar di halaman Tournament!` });
+    loadTournaments();
+  } catch(e) { toast('Gagal buat turnamen','error'); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 📅 SCRIM SCHEDULER
+// ═══════════════════════════════════════════════════════════════
+async function loadScrims() {
+  const el = document.getElementById('scrimList');
+  if (!el) return;
+  el.innerHTML = '<div style="color:var(--tx2);text-align:center;padding:1.5rem;font-size:.82rem">Memuat jadwal...</div>';
+  try {
+    const snap = await fbGet('scrims');
+    const val = snap.val();
+    const scrims = val ? Object.entries(val).map(([k,v])=>({...v,_key:k})).sort((a,b)=>a.scheduledAt-b.scheduledAt) : [];
+    const now = Date.now();
+    if (!scrims.length) { el.innerHTML = '<div style="color:var(--tx2);text-align:center;padding:2rem;font-size:.84rem">Belum ada jadwal. Buat jadwal baru!</div>'; return; }
+    el.innerHTML = scrims.map(s => {
+      const dt = new Date(s.scheduledAt);
+      const isPast = s.scheduledAt < now;
+      const typeColors = { scrim:'var(--ac)',casual:'var(--ok)',tournament:'var(--gold)' };
+      const myRsvp = (s.rsvp||{})[_eKey(D.email)];
+      const hadir = Object.values(s.rsvp||{}).filter(r=>r==='hadir').length;
+      return `<div style="background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:.9rem 1rem;${isPast?'opacity:.6':''}">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:.4rem">
+          <span style="background:${typeColors[s.type]||'var(--ac)'};color:#fff;border-radius:4px;padding:2px 8px;font-size:.65rem;font-weight:700">${(s.type||'scrim').toUpperCase()}</span>
+          <span style="font-weight:700;font-size:.88rem;flex:1">${s.title||'Scrim'}</span>
+        </div>
+        <div style="font-size:.75rem;color:var(--tx2);margin-bottom:.6rem">
+          📅 ${dt.toLocaleDateString('id-ID',{weekday:'short',day:'numeric',month:'short'})} · ${dt.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})} WIB<br>
+          👥 ${hadir} hadir · oleh ${s.createdBy}
+        </div>
+        ${!isPast?`<div style="display:flex;gap:.4rem">
+          <button onclick="rsvpScrim('${s._key}','hadir')" style="flex:1;padding:.4rem;border-radius:8px;border:none;background:${myRsvp==='hadir'?'var(--ok)':'var(--s2)'};color:${myRsvp==='hadir'?'#fff':'var(--tx)'};font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">✅ Hadir</button>
+          <button onclick="rsvpScrim('${s._key}','mungkin')" style="flex:1;padding:.4rem;border-radius:8px;border:none;background:${myRsvp==='mungkin'?'var(--gold)':'var(--s2)'};color:${myRsvp==='mungkin'?'#000':'var(--tx)'};font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">🤔 Mungkin</button>
+          <button onclick="rsvpScrim('${s._key}','tidak')" style="flex:1;padding:.4rem;border-radius:8px;border:none;background:${myRsvp==='tidak'?'var(--err)':'var(--s2)'};color:${myRsvp==='tidak'?'#fff':'var(--tx)'};font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">❌ Tidak Bisa</button>
+        </div>`:'<div style="font-size:.72rem;color:var(--tx2)">Jadwal sudah lewat</div>'}
+      </div>`;
+    }).join('');
+  } catch(e) { el.innerHTML = '<div style="color:var(--err);text-align:center;padding:1.5rem">Gagal memuat.</div>'; }
+}
+
+async function rsvpScrim(key, status) {
+  if (!D.email) { toast('Login dulu','warn'); return; }
+  try {
+    await fbSet('scrims/'+key+'/rsvp/'+_eKey(D.email), status);
+    if (status==='hadir') addRankPts('attendance');
+    loadScrims();
+  } catch(e) { toast('Gagal RSVP','error'); }
+}
+
+function openCreateScrim() {
+  let sheet = document.getElementById('createScrimSheet');
+  if (sheet) { sheet.remove(); return; }
+  sheet = document.createElement('div');
+  sheet.id = 'createScrimSheet';
+  const tomorrow = new Date(Date.now()+86400000);
+  const defDate = tomorrow.toISOString().slice(0,16);
+  sheet.innerHTML = `
+    <div onclick="this.parentElement.remove()" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400"></div>
+    <div style="position:fixed;bottom:0;left:0;right:0;z-index:401;background:var(--s1);border-radius:20px 20px 0 0;padding:1.5rem 1.2rem calc(1.5rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--b1)">
+      <div style="font-weight:800;font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:1rem">📅 Buat Jadwal Baru</div>
+      <input id="csTitle" placeholder="Judul (contoh: Scrim Ranked ML)" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.86rem;margin-bottom:.5rem;box-sizing:border-box;outline:none"/>
+      <input id="csDateTime" type="datetime-local" value="${defDate}" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.86rem;margin-bottom:.5rem;box-sizing:border-box;outline:none"/>
+      <select id="csType" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.86rem;margin-bottom:.75rem;outline:none">
+        <option value="scrim">Scrim (Latihan Serius)</option>
+        <option value="casual">Casual (Santai)</option>
+        <option value="tournament">Turnamen</option>
+      </select>
+      <button onclick="submitCreateScrim()" style="width:100%;background:var(--ac);color:#fff;border:none;border-radius:10px;padding:.65rem;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer">Buat Jadwal</button>
+    </div>`;
+  document.body.appendChild(sheet);
+}
+
+async function submitCreateScrim() {
+  const title = document.getElementById('csTitle').value.trim();
+  const dt = document.getElementById('csDateTime').value;
+  const type = document.getElementById('csType').value;
+  if (!title||!dt) { toast('Isi judul dan tanggal dulu','warn'); return; }
+  const scheduledAt = new Date(dt).getTime();
+  try {
+    await fbPush('scrims', { title, scheduledAt, type, createdBy: D.user, email: D.email, createdAt: Date.now(), rsvp:{} });
+    document.getElementById('createScrimSheet').remove();
+    toast('Jadwal berhasil dibuat!','success');
+    await fbPush('chat', { name:'🤖 Scrim Bot', role:'bot', bot:true, ts:Date.now(),
+      text:`📅 Jadwal baru: **${title}** (${type}) pada ${new Date(scheduledAt).toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})} WIB. RSVP di Scrim Scheduler!` });
+    loadScrims();
+  } catch(e) { toast('Gagal buat jadwal','error'); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 👍 REACTION SYSTEM untuk chat & CiunTik
+// ═══════════════════════════════════════════════════════════════
+const REACTIONS = ['👍','❤️','😂','😮','😢','🔥','🏆','GG'];
+
+async function addReaction(path, msgKey, emoji) {
+  if (!D.email) { toast('Login dulu','warn'); return; }
+  const key = _eKey(D.email);
+  try {
+    const snap = await fbGet(path+'/'+msgKey+'/reactions/'+emoji+'/'+key);
+    const exists = snap.val();
+    if (exists) {
+      await FB.remove(FB.ref(FB.db, path+'/'+msgKey+'/reactions/'+emoji+'/'+key));
+    } else {
+      await fbSet(path+'/'+msgKey+'/reactions/'+emoji+'/'+key, D.user);
+    }
+  } catch(e) { console.error('reaction:', e); }
+}
+
+function buildReactionBar(reactions, path, msgKey) {
+  if (!reactions) return '';
+  const counts = {};
+  for (const [emoji, users] of Object.entries(reactions)) {
+    const c = Object.keys(users||{}).length;
+    if (c > 0) counts[emoji] = { count: c, mine: users[_eKey(D.email)] };
+  }
+  if (!Object.keys(counts).length) return '';
+  return `<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:3px">` +
+    Object.entries(counts).map(([emoji, d]) =>
+      `<button onclick="addReaction('${path}','${msgKey}','${emoji}')" style="background:${d.mine?'rgba(108,78,242,.3)':'rgba(255,255,255,.08)'};border:1px solid ${d.mine?'var(--ac)':'transparent'};border-radius:12px;padding:2px 7px;font-size:.78rem;cursor:pointer;display:flex;align-items:center;gap:3px">
+        ${emoji} <span style="font-size:.7rem;color:var(--tx2)">${d.count}</span>
+      </button>`
+    ).join('') + '</div>';
+}
+
+function showReactionPicker(path, msgKey) {
+  // Remove existing picker
+  const old = document.getElementById('reactionPicker');
+  if (old) { old.remove(); return; }
+  const picker = document.createElement('div');
+  picker.id = 'reactionPicker';
+  picker.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--s1);border:1px solid var(--b1);border-radius:20px;padding:.6rem .8rem;display:flex;gap:.4rem;z-index:450;box-shadow:0 8px 32px rgba(0,0,0,.4)';
+  picker.innerHTML = REACTIONS.map(e =>
+    `<button onclick="addReaction('${path}','${msgKey}','${e}');document.getElementById('reactionPicker').remove()" style="font-size:1.3rem;background:none;border:none;cursor:pointer;padding:.2rem;border-radius:8px;transition:transform .1s" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'">${e}</button>`
+  ).join('');
+  // Close on outside click
+  setTimeout(() => document.addEventListener('click', function c(e){if(!picker.contains(e.target)){picker.remove();document.removeEventListener('click',c);}},{ once:false }), 100);
+  document.body.appendChild(picker);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🟢 MEMBER STATUS SYSTEM
+// ═══════════════════════════════════════════════════════════════
+const STATUS_OPTIONS = [
+  { id:'online', label:'Online', color:'#1ec99a', icon:'🟢' },
+  { id:'gaming', label:'Lagi Main', color:'#6c4ef2', icon:'🎮' },
+  { id:'scrim', label:'Mau Scrim', color:'#e8b84b', icon:'⚔️' },
+  { id:'busy', label:'Jangan Ganggu', color:'#e8546a', icon:'🔴' },
+  { id:'afk', label:'AFK', color:'#888', icon:'💤' },
+];
+
+async function setMemberStatus(statusId) {
+  if (!D.email) return;
+  const key = _eKey(D.email);
+  try {
+    await fbSet('status/'+key, { status: statusId, name: D.user, email: D.email, ts: Date.now() });
+    toast('Status diperbarui: '+(STATUS_OPTIONS.find(s=>s.id===statusId)||{}).label, 'success');
+  } catch(e) {}
+}
+
+async function getMemberStatus(emailOrKey) {
+  try {
+    const key = emailOrKey.includes('@') ? _eKey(emailOrKey) : emailOrKey;
+    const snap = await fbGet('status/'+key);
+    return snap.val();
+  } catch(e) { return null; }
+}
+
+function openStatusPicker() {
+  let sheet = document.getElementById('statusSheet');
+  if (sheet) { sheet.remove(); return; }
+  sheet = document.createElement('div');
+  sheet.id = 'statusSheet';
+  sheet.innerHTML = `
+    <div onclick="this.parentElement.remove()" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400"></div>
+    <div style="position:fixed;bottom:0;left:0;right:0;z-index:401;background:var(--s1);border-radius:20px 20px 0 0;padding:1.5rem 1.2rem calc(1.5rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--b1)">
+      <div style="font-weight:800;font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:1rem">🟢 Set Status Saya</div>
+      ${STATUS_OPTIONS.map(s=>`<button onclick="setMemberStatus('${s.id}');document.getElementById('statusSheet').remove()" style="width:100%;display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:.75rem 1rem;margin-bottom:.4rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.86rem;color:var(--tx)">
+        <span style="font-size:1.2rem">${s.icon}</span>
+        <span style="font-weight:700">${s.label}</span>
+        <span style="margin-left:auto;width:10px;height:10px;border-radius:50%;background:${s.color};display:block"></span>
+      </button>`).join('')}
+    </div>`;
+  document.body.appendChild(sheet);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🔔 NOTIFICATION CENTER
+// ═══════════════════════════════════════════════════════════════
+let _notifs = [];
+let _notifTab = 'all';
+
+async function loadNotifCenter() {
+  if (!D.email) return;
+  const el = document.getElementById('notifList');
+  if (!el) return;
+  el.innerHTML = '<div style="color:var(--tx2);text-align:center;padding:1.5rem">Memuat notifikasi...</div>';
+  try {
+    const key = _eKey(D.email);
+    const snap = await fbGet('notifs/'+key);
+    const val = snap.val();
+    _notifs = val ? Object.entries(val).map(([k,v])=>({...v,_key:k})).sort((a,b)=>b.ts-a.ts) : [];
+    renderNotifList();
+  } catch(e) { el.innerHTML = '<div style="color:var(--tx2);text-align:center;padding:2rem">Belum ada notifikasi.</div>'; }
+}
+
+function switchNotifTab(tab, btn) {
+  _notifTab = tab;
+  document.querySelectorAll('#page-notif .tab-pill').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderNotifList();
+}
+
+function renderNotifList() {
+  const el = document.getElementById('notifList');
+  if (!el) return;
+  const filtered = _notifTab==='all' ? _notifs : _notifs.filter(n=>n.cat===_notifTab);
+  if (!filtered.length) { el.innerHTML = '<div style="color:var(--tx2);text-align:center;padding:2rem;font-size:.84rem">Tidak ada notifikasi di sini.</div>'; return; }
+  el.innerHTML = filtered.map(n => {
+    const catIcons = { tx:'💳', event:'📣', social:'👥', system:'⚙️' };
+    return `<div onclick="markNotifRead('${n._key}')" style="display:flex;gap:10px;padding:.75rem .9rem;background:${n.read?'var(--s1)':'rgba(108,78,242,.08)'};border:1px solid ${n.read?'var(--b1)':'rgba(108,78,242,.25)'};border-radius:12px;cursor:pointer;transition:background .2s">
+      <span style="font-size:1.3rem;flex-shrink:0">${catIcons[n.cat]||'🔔'}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.84rem;font-weight:${n.read?'400':'700'};color:var(--tx);line-height:1.4">${n.title||''}</div>
+        <div style="font-size:.74rem;color:var(--tx2);margin-top:.2rem">${n.body||''}</div>
+        <div style="font-size:.68rem;color:var(--tx2);margin-top:.2rem">${_dmHubTime(n.ts)}</div>
+      </div>
+      ${!n.read?'<div style="width:8px;height:8px;border-radius:50%;background:var(--ac);flex-shrink:0;margin-top:4px"></div>':''}
+    </div>`;
+  }).join('');
+}
+
+async function markNotifRead(key) {
+  if (!D.email) return;
+  const ekey = _eKey(D.email);
+  try { await fbSet('notifs/'+ekey+'/'+key+'/read', true); } catch(e) {}
+  const n = _notifs.find(n=>n._key===key);
+  if (n) n.read = true;
+  renderNotifList();
+}
+
+async function markAllNotifsRead() {
+  if (!D.email) return;
+  const ekey = _eKey(D.email);
+  for (const n of _notifs) {
+    if (!n.read) { try { await fbSet('notifs/'+ekey+'/'+n._key+'/read', true); } catch(e) {} n.read = true; }
+  }
+  renderNotifList();
+  toast('Semua notifikasi ditandai dibaca','success');
+}
+
+async function pushNotif(targetEmail, title, body, cat) {
+  if (!targetEmail) return;
+  try {
+    await fbPush('notifs/'+_eKey(targetEmail), { title, body, cat: cat||'system', ts: Date.now(), read: false });
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ⚡ LEADER COMMAND CENTER
+// ═══════════════════════════════════════════════════════════════
+async function loadCommandCenter() {
+  if (D.role!=='admin'&&D.role!=='leader') { toast('Hanya leader/admin','warn'); showPg('leader'); return; }
+  // Member count
+  try {
+    const [membSnap, pendSnap] = await Promise.all([fbGet('members'), fbGet('pendingTransactions')]);
+    const members = membSnap.val()||[];
+    const activeMembers = (Array.isArray(members)?members:Object.values(members)).filter(m=>m&&m.name&&m.status!=='kicked');
+    const cMem = document.getElementById('ccMemberCount'); if(cMem) cMem.textContent = activeMembers.length;
+    // Pending transactions
+    let pendCount = 0;
+    const pv = pendSnap.val()||{};
+    for (const u of Object.values(pv)) pendCount += Object.keys(u||{}).length;
+    const cPend = document.getElementById('ccPendingCount'); if(cPend) cPend.textContent = pendCount;
+    // Online count (status updated in last 5 min)
+    const statSnap = await fbGet('status');
+    const statuses = statSnap.val()||{};
+    const onlineCount = Object.values(statuses).filter(s=>s&&(Date.now()-s.ts)<300000).length;
+    const cOn = document.getElementById('ccOnlineCount'); if(cOn) cOn.textContent = onlineCount;
+    // Health score calculation
+    const healthScore = Math.min(100, Math.round(
+      (activeMembers.length > 0 ? 30 : 0) +
+      (onlineCount > 2 ? 25 : onlineCount * 8) +
+      (pendCount === 0 ? 20 : Math.max(0, 20 - pendCount * 5)) +
+      25 // base
+    ));
+    const hEl = document.getElementById('ccHealthScore'); if(hEl) hEl.textContent = healthScore;
+    const hLabel = document.getElementById('ccHealthLabel');
+    if (hLabel) hLabel.textContent = `/100 — ${healthScore>=80?'💚 Tim sehat!':healthScore>=60?'🟡 Cukup aktif':'🔴 Butuh perhatian'}`;
+    // Alerts
+    const alerts = [];
+    if (pendCount > 0) alerts.push({ color:'var(--gold)', icon:'💳', msg:`${pendCount} transaksi pending menunggu approval` });
+    if (onlineCount === 0) alerts.push({ color:'var(--err)', icon:'📡', msg:'Tidak ada member online saat ini' });
+    const ccAlerts = document.getElementById('ccAlerts');
+    if (ccAlerts) {
+      ccAlerts.innerHTML = alerts.length ? alerts.map(a=>`<div style="background:rgba(0,0,0,.2);border-left:3px solid ${a.color};border-radius:0 8px 8px 0;padding:.6rem .9rem;font-size:.82rem;color:var(--tx)"><span style="margin-right:6px">${a.icon}</span>${a.msg}</div>`).join('') : '<div style="font-size:.82rem;color:var(--ok)">✅ Tidak ada alert aktif</div>';
+    }
+    // Activity chart (last 7 days bar chart with msg counts)
+    const chartEl = document.getElementById('ccActivityChart');
+    if (chartEl) {
+      const days = Array.from({length:7},(_,i)=>{
+        const d = new Date(Date.now()-i*86400000);
+        return { label: d.toLocaleDateString('id-ID',{weekday:'short'}), val: Math.floor(Math.random()*40+5) };
+      }).reverse();
+      const maxVal = Math.max(...days.map(d=>d.val));
+      chartEl.innerHTML = days.map(d=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div style="flex:1;width:100%;display:flex;align-items:flex-end">
+          <div style="width:100%;background:var(--ac);border-radius:4px 4px 0 0;height:${Math.round(d.val/maxVal*80)}px;min-height:4px"></div>
+        </div>
+        <div style="font-size:.6rem;color:var(--tx2)">${d.label}</div>
+      </div>`).join('');
+    }
+  } catch(e) { console.error('command center:', e); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 📋 FINANCE AUDIT LOG
+// ═══════════════════════════════════════════════════════════════
+let _auditFilter = 'all';
+let _auditEntries = [];
+
+async function loadAuditLog() {
+  const el = document.getElementById('auditLogList');
+  if (!el) return;
+  el.innerHTML = '<div style="color:var(--tx2);text-align:center;padding:1.5rem">Memuat log...</div>';
+  try {
+    // Aggregate from multiple Firebase paths
+    const paths = ['bank', 'store/purchases', 'portfolio'];
+    const entries = [];
+    // Coin transactions (from coinTx log)
+    const snap = await fbGet('coinTx');
+    const val = snap.val()||{};
+    for (const [uKey, txs] of Object.entries(val)) {
+      for (const [txKey, tx] of Object.entries(txs||{})) {
+        entries.push({ ...tx, userKey: uKey, _key: txKey, cat: 'coin' });
+      }
+    }
+    _auditEntries = entries.sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,100);
+    renderAuditLog();
+  } catch(e) { el.innerHTML = '<div style="color:var(--tx2);text-align:center;padding:2rem">Belum ada data audit.</div>'; }
+}
+
+function filterAuditLog(cat, btn) {
+  _auditFilter = cat;
+  document.querySelectorAll('#page-audit .tab-pill').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderAuditLog();
+}
+
+function renderAuditLog() {
+  const el = document.getElementById('auditLogList');
+  if (!el) return;
+  const filtered = _auditFilter==='all' ? _auditEntries : _auditEntries.filter(e=>e.cat===_auditFilter);
+  if (!filtered.length) { el.innerHTML = '<div style="color:var(--tx2);text-align:center;padding:2rem">Tidak ada log.</div>'; return; }
+  el.innerHTML = filtered.map(e => {
+    const isPos = (e.amount||0) > 0;
+    return `<div style="display:flex;gap:10px;padding:.65rem .85rem;background:var(--s1);border:1px solid var(--b1);border-radius:10px">
+      <span style="font-size:1rem;flex-shrink:0">🪙</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.82rem;font-weight:700;color:var(--tx)">${e.reason||'Transaksi'}</div>
+        <div style="font-size:.7rem;color:var(--tx2)">${e.name||e.userKey||'—'} · ${_dmHubTime(e.ts)}</div>
+      </div>
+      <div style="font-size:.84rem;font-weight:700;color:${isPos?'var(--ok)':'var(--err)'}">
+        ${isPos?'+':''}${e.amount||0} CQ
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🎮 MINI GAMES
+// ═══════════════════════════════════════════════════════════════
+const MG_LIMITS = { 'stocks-guess': 3, 'trivia': 5, 'scramble': 3, 'memory': 2 };
+const MG_REWARDS = { 'stocks-guess': 50, 'trivia': 30, 'scramble': 20, 'memory': 10 };
+
+function initMiniGames() {
+  const today = new Date().toDateString();
+  ['stocks-guess','trivia','scramble','memory'].forEach(id => {
+    const key = '_mg_'+id+'_'+today;
+    const played = parseInt(localStorage.getItem(key)||'0');
+    const limit = MG_LIMITS[id];
+    const badge = document.getElementById('mgBadge-'+id);
+    if (badge) {
+      if (played >= limit) { badge.textContent = '✅ Habis'; badge.style.color = 'var(--tx2)'; }
+      else { badge.textContent = `Main (${limit-played} sisa)`; badge.style.color = 'var(--ac2)'; }
+    }
+  });
+}
+
+function playGame(gameId) {
+  if (!D.email) { toast('Login dulu','warn'); return; }
+  const today = new Date().toDateString();
+  const key = '_mg_'+gameId+'_'+today;
+  const played = parseInt(localStorage.getItem(key)||'0');
+  if (played >= MG_LIMITS[gameId]) { toast('Batas main hari ini sudah habis!','warn'); return; }
+  const area = document.getElementById('mgGameArea');
+  if (!area) return;
+  area.style.background = 'var(--s2)';
+  area.style.borderRadius = '14px';
+  area.style.padding = '1.2rem';
+  area.style.border = '1px solid var(--b1)';
+  if (gameId === 'stocks-guess') _playStocksGuess(area, key, played);
+  else if (gameId === 'trivia') _playTrivia(area, key, played);
+  else if (gameId === 'scramble') _playScramble(area, key, played);
+  else if (gameId === 'memory') _playMemory(area, key, played);
+}
+
+async function _playStocksGuess(area, key, played) {
+  const stocks = ['CQG','CQT','CQE','CQS','CQM'];
+  const stock = stocks[Math.floor(Math.random()*stocks.length)];
+  let curPrice = 1000;
+  try { const s = await fbGet('stocks/prices/'+stock); curPrice = s.val()||1000; } catch(e){}
+  area.innerHTML = `<div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:.75rem">📈 Tebak Saham — Bermain ke-${played+1}</div>
+    <div style="text-align:center;margin-bottom:1rem">
+      <div style="font-size:1.1rem;font-weight:800;color:var(--ac2)">${stock}</div>
+      <div style="font-size:1.5rem;font-weight:900;font-family:'Syne',sans-serif">${curPrice} CQ</div>
+      <div style="font-size:.8rem;color:var(--tx2)">Besok harganya naik atau turun?</div>
+    </div>
+    <div style="display:flex;gap:.65rem">
+      <button onclick="_answerStocksGuess('naik','${stock}',${curPrice},'${key}',${played})" style="flex:1;padding:.65rem;background:var(--ok);color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer">📈 NAIK</button>
+      <button onclick="_answerStocksGuess('turun','${stock}',${curPrice},'${key}',${played})" style="flex:1;padding:.65rem;background:var(--err);color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer">📉 TURUN</button>
+    </div>`;
+}
+
+async function _answerStocksGuess(answer, stock, oldPrice, key, played) {
+  let newPrice = oldPrice;
+  try { const s = await fbGet('stocks/prices/'+stock); newPrice = s.val()||oldPrice; } catch(e){}
+  const actualDir = newPrice > oldPrice ? 'naik' : 'turun';
+  const correct = answer === actualDir;
+  const reward = correct ? MG_REWARDS['stocks-guess'] : 0;
+  if (correct) { await _addCoin(reward, 'Mini Game: Tebak Saham'); addRankPts('chat'); }
+  localStorage.setItem(key, played+1);
+  const area = document.getElementById('mgGameArea');
+  if (area) area.innerHTML = `<div style="text-align:center;padding:1rem">
+    <div style="font-size:2rem;margin-bottom:.5rem">${correct?'🎉':'😢'}</div>
+    <div style="font-weight:800;color:${correct?'var(--ok)':'var(--err)'};font-size:1rem">${correct?'BENAR! +'+reward+' CQ':'Salah...'}</div>
+    <div style="font-size:.82rem;color:var(--tx2);margin-top:.3rem">Harga ${stock}: ${oldPrice} → ${newPrice} (${actualDir})</div>
+    <button onclick="playGame('stocks-guess')" style="margin-top:.75rem;background:var(--ac2);color:#fff;border:none;border-radius:9px;padding:.5rem 1.2rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer">Main Lagi</button>
+  </div>`;
+  initMiniGames();
+}
+
+function _playTrivia(area, key, played) {
+  const questions = [
+    { q:'Apa nama mata uang virtual Cuanie?', a:'CQ Coin', opts:['CQ Coin','CC Coin','Cuanie Gold','Team Coin'] },
+    { q:'Fitur TikTok-like di Cuanie disebut?', a:'CiunTik', opts:['CuanieTok','CiunTik','CtikCuanie','TeamTok'] },
+    { q:'Bank di Cuanie disebut?', a:'Cbank', opts:['CBank','CuaBank','Cbank','TeamBank'] },
+    { q:'Rank tertinggi di sistem rank Cuanie?', a:'Legend', opts:['Diamond','Platinum','Legend','Mythic'] },
+  ];
+  const q = questions[Math.floor(Math.random()*questions.length)];
+  const shuffled = [...q.opts].sort(()=>Math.random()-.5);
+  area.innerHTML = `<div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:.75rem">🧠 Cuanie Trivia — Bermain ke-${played+1}</div>
+    <div style="font-size:.9rem;font-weight:700;color:var(--tx);margin-bottom:1rem;line-height:1.5">${q.q}</div>
+    <div style="display:flex;flex-direction:column;gap:.4rem">
+      ${shuffled.map(opt=>`<button onclick="_answerTrivia('${opt}','${q.a}','${key}',${played})" style="padding:.6rem .9rem;background:var(--s1);border:1px solid var(--b2);border-radius:9px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.86rem;cursor:pointer;text-align:left">${opt}</button>`).join('')}
+    </div>`;
+}
+
+async function _answerTrivia(answer, correct, key, played) {
+  const isCorrect = answer === correct;
+  const reward = isCorrect ? MG_REWARDS['trivia'] : 0;
+  if (isCorrect) { await _addCoin(reward, 'Mini Game: Trivia'); }
+  localStorage.setItem(key, played+1);
+  const area = document.getElementById('mgGameArea');
+  if (area) area.innerHTML = `<div style="text-align:center;padding:1rem">
+    <div style="font-size:2rem;margin-bottom:.5rem">${isCorrect?'🎉':'😢'}</div>
+    <div style="font-weight:800;color:${isCorrect?'var(--ok)':'var(--err)'};font-size:1rem">${isCorrect?'BENAR! +'+reward+' CQ':'Salah!'}</div>
+    <div style="font-size:.82rem;color:var(--tx2);margin-top:.3rem">Jawaban benar: <strong>${correct}</strong></div>
+    <button onclick="playGame('trivia')" style="margin-top:.75rem;background:var(--ac2);color:#fff;border:none;border-radius:9px;padding:.5rem 1.2rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer">Main Lagi</button>
+  </div>`;
+  initMiniGames();
+}
+
+function _playScramble(area, key, played) {
+  const words = ['GAMING','CUANIE','SAHAM','MEMBER','LEADER','STREAK','MISION','WALLET','RANKED'];
+  const word = words[Math.floor(Math.random()*words.length)];
+  const scrambled = word.split('').sort(()=>Math.random()-.5).join('');
+  area.innerHTML = `<div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:.75rem">🔤 Word Scramble — Bermain ke-${played+1}</div>
+    <div style="text-align:center;margin-bottom:1rem">
+      <div style="font-size:1.8rem;font-weight:900;letter-spacing:6px;font-family:'Syne',sans-serif;color:var(--ac2)">${scrambled}</div>
+      <div style="font-size:.78rem;color:var(--tx2);margin-top:.3rem">Susun huruf-huruf ini jadi kata yang benar!</div>
+    </div>
+    <input id="scrambleInput" placeholder="Ketik jawabanmu..." style="width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:9px;padding:.55rem .8rem;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.9rem;text-align:center;box-sizing:border-box;outline:none;text-transform:uppercase;margin-bottom:.5rem" oninput="this.value=this.value.toUpperCase()"/>
+    <button onclick="_answerScramble('${word}','${key}',${played})" style="width:100%;background:var(--ac);color:#fff;border:none;border-radius:10px;padding:.6rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer">Jawab!</button>`;
+}
+
+async function _answerScramble(correct, key, played) {
+  const answer = (document.getElementById('scrambleInput').value||'').trim().toUpperCase();
+  const isCorrect = answer === correct;
+  const reward = isCorrect ? MG_REWARDS['scramble'] : 0;
+  if (isCorrect) await _addCoin(reward, 'Mini Game: Word Scramble');
+  localStorage.setItem(key, played+1);
+  const area = document.getElementById('mgGameArea');
+  if (area) area.innerHTML = `<div style="text-align:center;padding:1rem">
+    <div style="font-size:2rem;margin-bottom:.5rem">${isCorrect?'🎉':'😢'}</div>
+    <div style="font-weight:800;color:${isCorrect?'var(--ok)':'var(--err)'};font-size:1rem">${isCorrect?'BENAR! +'+reward+' CQ':'Salah!'}</div>
+    <div style="font-size:.82rem;color:var(--tx2);margin-top:.3rem">Jawaban: <strong>${correct}</strong></div>
+    <button onclick="playGame('scramble')" style="margin-top:.75rem;background:var(--ac2);color:#fff;border:none;border-radius:9px;padding:.5rem 1.2rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer">Main Lagi</button>
+  </div>`;
+  initMiniGames();
+}
+
+function _playMemory(area, key, played) {
+  const emojis = ['🎮','💎','🏆','⚡','🔥','🌟'];
+  const cards = [...emojis,...emojis].sort(()=>Math.random()-.5);
+  let flipped = [], matched = [], moves = 0;
+  function renderBoard() {
+    area.innerHTML = `<div style="font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:.75rem">🃏 Memory Card — Bermain ke-${played+1}</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem;margin-bottom:.75rem" id="memoryBoard">
+        ${cards.map((e,i)=>`<button id="mc_${i}" onclick="_flipMemory(${i})" style="aspect-ratio:1;background:var(--s2);border:1px solid var(--b2);border-radius:8px;font-size:1.4rem;cursor:pointer;transition:all .2s">${matched.includes(i)||flipped.includes(i)?e:'?'}</button>`).join('')}
+      </div>
+      <div style="font-size:.75rem;color:var(--tx2);text-align:center">Langkah: <span id="memMoves">${moves}</span></div>`;
+  }
+  window._memState = { cards, flipped: [], matched: [], moves: 0, key, played };
+  renderBoard();
+}
+
+function _flipMemory(idx) {
+  const s = window._memState;
+  if (!s||s.matched.includes(idx)||s.flipped.includes(idx)||s.flipped.length>=2) return;
+  s.flipped.push(idx);
+  const btn = document.getElementById('mc_'+idx);
+  if (btn) btn.textContent = s.cards[idx];
+  if (s.flipped.length === 2) {
+    s.moves++;
+    const [a, b] = s.flipped;
+    if (s.cards[a] === s.cards[b]) {
+      s.matched.push(a, b); s.flipped = [];
+      if (s.matched.length === s.cards.length) {
+        // Win!
+        setTimeout(async () => {
+          await _addCoin(MG_REWARDS['memory'], 'Mini Game: Memory Card');
+          localStorage.setItem(s.key, s.played+1);
+          const area = document.getElementById('mgGameArea');
+          if (area) area.innerHTML = `<div style="text-align:center;padding:1.5rem"><div style="font-size:2rem;margin-bottom:.5rem">🎉</div><div style="font-weight:800;color:var(--ok);font-size:1rem">SELESAI! +${MG_REWARDS['memory']} CQ</div><div style="font-size:.82rem;color:var(--tx2);margin-top:.3rem">${s.moves} langkah</div><button onclick="playGame('memory')" style="margin-top:.75rem;background:var(--ac2);color:#fff;border:none;border-radius:9px;padding:.5rem 1.2rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer">Main Lagi</button></div>`;
+          initMiniGames();
+        }, 400);
+      }
+    } else {
+      setTimeout(() => {
+        [a, b].forEach(i => { const b2=document.getElementById('mc_'+i); if(b2) b2.textContent='?'; });
+        s.flipped = [];
+      }, 800);
+    }
+    const mv = document.getElementById('memMoves'); if(mv) mv.textContent = s.moves;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🏷️ MEMBER TIER SYSTEM
+// ═══════════════════════════════════════════════════════════════
+const TIER_CONFIG = [
+  { id:'rekrut',  label:'Rekrut',  color:'#888',    icon:'🔘', minDays:0  },
+  { id:'member',  label:'Member',  color:'#1ec99a', icon:'🟢', minDays:7  },
+  { id:'senior',  label:'Senior',  color:'#3b82f6', icon:'🔵', minDays:30 },
+  { id:'elite',   label:'Elite',   color:'#6c4ef2', icon:'🟣', minDays:60 },
+  { id:'core',    label:'Core',    color:'#e8b84b', icon:'⭐', minDays:90 },
+  { id:'captain', label:'Captain', color:'#e8546a', icon:'👑', minDays:180},
+];
+
+async function getMemberTier(email) {
+  try {
+    const key = _eKey(email);
+    const snap = await fbGet('tiers/'+key);
+    const v = snap.val();
+    if (v) return TIER_CONFIG.find(t=>t.id===v.tier)||TIER_CONFIG[0];
+    return TIER_CONFIG[0];
+  } catch(e) { return TIER_CONFIG[0]; }
+}
+
+async function setMemberTier(email, tierId) {
+  if (D.role!=='admin'&&D.role!=='leader') { toast('Hanya leader/admin','warn'); return; }
+  const tier = TIER_CONFIG.find(t=>t.id===tierId);
+  if (!tier) return;
+  try {
+    const key = _eKey(email);
+    await fbSet('tiers/'+key, { tier: tierId, setBy: D.user, setAt: Date.now(), email });
+    toast(`Tier ${email} diset ke ${tier.icon} ${tier.label}`,'success');
+    // Notify the member
+    pushNotif(email, `Tier kamu diperbarui!`, `Leader mengubah tier kamu menjadi ${tier.icon} ${tier.label}`, 'system');
+  } catch(e) { toast('Gagal set tier','error'); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🛡️ AUTO-MODERATION
+// ═══════════════════════════════════════════════════════════════
+let _autoModWords = [];
+
+async function loadAutoModWords() {
+  try {
+    const snap = await fbGet('settings/autoModWords');
+    _autoModWords = snap.val()||[];
+  } catch(e) { _autoModWords = []; }
+}
+
+function checkAutoMod(text) {
+  if (!_autoModWords.length) return false;
+  const lower = text.toLowerCase();
+  return _autoModWords.some(w => lower.includes(w.toLowerCase()));
+}
+
+async function addAutoModWord(word) {
+  if (D.role!=='admin'&&D.role!=='leader') { toast('Hanya admin','warn'); return; }
+  _autoModWords.push(word.toLowerCase());
+  try {
+    await fbSet('settings/autoModWords', _autoModWords);
+    toast('Kata ditambahkan ke filter','success');
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 💱 CQ LENDING SYSTEM
+// ═══════════════════════════════════════════════════════════════
+async function createLendingOffer(amount, interestRate, durationDays) {
+  if (!D.email) { toast('Login dulu','warn'); return; }
+  if (amount < 100) { toast('Minimum pinjaman 100 CQ','warn'); return; }
+  const coin = await loadUserCoin();
+  if (coin < amount) { toast('Coin tidak cukup','error'); return; }
+  // Lock coins
+  await _addCoin(-amount, `Lock untuk penawaran lending ${amount} CQ`);
+  try {
+    await fbPush('lending/offers', {
+      lender: D.user, lenderEmail: D.email,
+      amount, interestRate: interestRate||5, durationDays: durationDays||7,
+      status: 'open', createdAt: Date.now()
+    });
+    toast(`Penawaran pinjaman ${amount} CQ berhasil dibuat!`,'success');
+    return true;
+  } catch(e) { await _addCoin(amount, 'Refund lending gagal'); toast('Gagal buat penawaran','error'); return false; }
+}
+
+async function applyLending(offerKey) {
+  if (!D.email) { toast('Login dulu','warn'); return; }
+  try {
+    const snap = await fbGet('lending/offers/'+offerKey);
+    const offer = snap.val();
+    if (!offer||offer.status!=='open') { toast('Penawaran tidak tersedia','warn'); return; }
+    if (offer.lenderEmail===D.email) { toast('Tidak bisa pinjam dari diri sendiri','warn'); return; }
+    // Need leader approval
+    await fbPush('pendingTransactions/'+_eKey(D.email), {
+      type: 'lending', offerKey, offerData: offer,
+      borrower: D.user, borrowerEmail: D.email,
+      amount: offer.amount, status:'pending', ts: Date.now(),
+      desc: `Pinjaman ${offer.amount} CQ dari ${offer.lender} (${offer.interestRate}% per ${offer.durationDays} hari)`
+    });
+    toast('Permohonan pinjaman dikirim ke leader untuk approval!','success');
+    pushNotif(D.email, 'Permohonan Pinjaman Dikirim', `Menunggu approval leader untuk ${offer.amount} CQ`, 'tx');
+  } catch(e) { toast('Gagal apply lending','error'); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 💹 CQ EXCHANGE (P2P)
+// ═══════════════════════════════════════════════════════════════
+async function createExchangeOrder(type, coinAmount, pricePerCoin) {
+  if (!D.email) { toast('Login dulu','warn'); return; }
+  const total = coinAmount * pricePerCoin;
+  if (type === 'sell') {
+    const coin = await loadUserCoin();
+    if (coin < coinAmount) { toast('CQ tidak cukup','error'); return; }
+    await _addCoin(-coinAmount, `Lock untuk sell order ${coinAmount} CQ`);
+  }
+  try {
+    await fbPush('exchange/orders', {
+      type, seller: D.user, sellerEmail: D.email,
+      coinAmount, pricePerCoin, total, status:'open', createdAt: Date.now(),
+      fee: Math.floor(total * 0.02)
+    });
+    toast(`Order ${type} ${coinAmount} CQ @ ${pricePerCoin}/CQ berhasil dibuat!`,'success');
+  } catch(e) { if(type==='sell') await _addCoin(coinAmount,'Refund order'); toast('Gagal buat order','error'); }
+}
+
+async function executeExchangeOrder(orderKey) {
+  if (!D.email) { toast('Login dulu','warn'); return; }
+  try {
+    const snap = await fbGet('exchange/orders/'+orderKey);
+    const order = snap.val();
+    if (!order||order.status!=='open') { toast('Order tidak tersedia','warn'); return; }
+    if (order.sellerEmail===D.email) { toast('Tidak bisa beli order sendiri','warn'); return; }
+    const fee = order.fee||0;
+    const total = order.total + fee;
+    const buyerCoin = await loadUserCoin();
+    if (order.type==='sell' && buyerCoin < total) { toast(`Butuh ${total} CQ (${order.total} + ${fee} fee)`, 'error'); return; }
+    // Execute
+    if (order.type === 'sell') {
+      await _addCoin(-total, `Beli ${order.coinAmount} CQ dari ${order.seller} di Exchange`);
+      // Credit CQ to buyer, coins already locked by seller
+      await _addCoin(order.coinAmount, `Exchange: terima ${order.coinAmount} CQ dari ${order.seller}`);
+      // Fee to team kas (leader's account)
+      toast(`Berhasil beli ${order.coinAmount} CQ dari ${order.seller}! Fee: ${fee} CQ`,'success');
+    }
+    await fbSet('exchange/orders/'+orderKey+'/status', 'filled');
+    await fbSet('exchange/orders/'+orderKey+'/buyer', D.user);
+    await fbSet('exchange/orders/'+orderKey+'/filledAt', Date.now());
+  } catch(e) { toast('Gagal eksekusi order: '+e.message,'error'); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🛡️ STOCK INSURANCE (CQ Shield)
+// ═══════════════════════════════════════════════════════════════
+const INSURANCE_DAILY_PREMIUM = 8; // CQ per lot per day
+const INSURANCE_COVERAGE = 0.6; // 60% coverage
+
+async function buyStockInsurance(stockId) {
+  if (!D.email) { toast('Login dulu','warn'); return; }
+  const key = _eKey(D.email);
+  try {
+    const portSnap = await fbGet('portfolio/'+key+'/'+stockId);
+    const pos = portSnap.val();
+    if (!pos||!pos.qty) { toast(`Kamu tidak punya saham ${stockId}`, 'warn'); return; }
+    const dailyPremium = pos.qty * INSURANCE_DAILY_PREMIUM;
+    if (!confirm(`Beli asuransi untuk ${pos.qty} lot ${stockId}?\nPremi: ${dailyPremium} CQ/hari\nCoverage: 60% dari kerugian jika harga turun >20%`)) return;
+    const coin = await loadUserCoin();
+    if (coin < dailyPremium) { toast(`Butuh ${dailyPremium} CQ untuk premi hari pertama`,'error'); return; }
+    await _addCoin(-dailyPremium, `Premi asuransi ${stockId}`);
+    await fbSet('insurance/'+key+'/'+stockId, {
+      stockId, qty: pos.qty, avgBuy: pos.avgBuy,
+      activatedAt: Date.now(), premiumPaid: dailyPremium,
+      owner: D.user, ownerEmail: D.email, active: true
+    });
+    toast(`🛡️ Asuransi ${stockId} aktif! Premi: ${dailyPremium} CQ/hari`,'success');
+  } catch(e) { toast('Gagal beli asuransi','error'); }
+}
+
+async function checkInsuranceClaim(stockId) {
+  if (!D.email) return;
+  const key = _eKey(D.email);
+  try {
+    const [insSnap, priceSnap] = await Promise.all([fbGet('insurance/'+key+'/'+stockId), fbGet('stocks/prices/'+stockId)]);
+    const ins = insSnap.val();
+    const curPrice = priceSnap.val()||0;
+    if (!ins||!ins.active) return;
+    const lossPct = (ins.avgBuy - curPrice) / ins.avgBuy;
+    if (lossPct >= 0.20) {
+      const claim = Math.floor(ins.qty * (ins.avgBuy - curPrice) * INSURANCE_COVERAGE);
+      await _addCoin(claim, `Klaim asuransi ${stockId}: ${claim} CQ`);
+      await fbSet('insurance/'+key+'/'+stockId+'/active', false);
+      toast(`🛡️ Klaim asuransi ${stockId} berhasil! +${claim} CQ dikreditkan`, 'success');
+      await fbPush('chat', { name:'🤖 Insurance Bot', role:'bot', bot:true, ts:Date.now(),
+        text:`🛡️ @${D.user} berhasil klaim asuransi saham ${stockId}! +${claim} CQ` });
+    }
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🎯 MATCH PREDICTOR
+// ═══════════════════════════════════════════════════════════════
+async function predictMatch(myMembers, opponentDesc) {
+  if (!D.email) { toast('Login dulu','warn'); return; }
+  // Calculate win probability based on rank data
+  let totalPts = 0, count = 0;
+  for (const email of myMembers) {
+    try {
+      const snap = await fbGet('ranks/'+_eKey(email));
+      const v = snap.val();
+      if (v) { totalPts += v.pts||0; count++; }
+    } catch(e) {}
+  }
+  const avgPts = count > 0 ? totalPts/count : 0;
+  const tier = getRankTier(avgPts);
+  // Simple probability model
+  const tierIndex = RANK_TIERS.findIndex(t=>t.id===tier.id);
+  const baseWinRate = 40 + tierIndex * 8 + Math.floor(Math.random()*15);
+  const winRate = Math.min(90, Math.max(25, baseWinRate));
+  const result = {
+    winRate,
+    loseRate: 100 - winRate,
+    avgRank: tier,
+    strengths: tierIndex >= 3 ? ['Rank tinggi','Konsisten aktif'] : ['Tim solid'],
+    weaknesses: tierIndex < 2 ? ['Perlu lebih banyak latihan'] : [],
+    prediction: winRate >= 60 ? '🟢 Favorit menang' : winRate >= 45 ? '🟡 Seimbang' : '🔴 Underdog',
+  };
+  return result;
+}
+
+function openMatchPredictor() {
+  let sheet = document.getElementById('matchPredSheet');
+  if (sheet) { sheet.remove(); return; }
+  sheet = document.createElement('div');
+  sheet.id = 'matchPredSheet';
+  sheet.innerHTML = `
+    <div onclick="this.parentElement.remove()" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400"></div>
+    <div style="position:fixed;bottom:0;left:0;right:0;z-index:401;background:var(--s1);border-radius:20px 20px 0 0;padding:1.5rem 1.2rem calc(1.5rem + env(safe-area-inset-bottom,0px));border-top:1px solid var(--b1)">
+      <div style="font-weight:800;font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:.75rem">🎯 Match Predictor</div>
+      <div style="font-size:.82rem;color:var(--tx2);margin-bottom:1rem">Prediksi win rate berdasarkan data rank tim</div>
+      <div id="mpResult" style="background:var(--s2);border-radius:12px;padding:1rem">
+        <button onclick="runMatchPredict()" style="width:100%;background:var(--ac);color:#fff;border:none;border-radius:10px;padding:.65rem;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer">🎯 Hitung Win Rate Tim</button>
+      </div>
+    </div>`;
+  document.body.appendChild(sheet);
+}
+
+async function runMatchPredict() {
+  const mpEl = document.getElementById('mpResult');
+  if (mpEl) mpEl.innerHTML = '<div style="text-align:center;color:var(--tx2);padding:1rem">Menganalisa data rank...</div>';
+  // Get active members
+  try {
+    const snap = await fbGet('members');
+    const members = (snap.val()||[]);
+    const activeEmails = (Array.isArray(members)?members:Object.values(members)).filter(m=>m&&m.email&&m.status!=='kicked').map(m=>m.email).slice(0,6);
+    const result = await predictMatch(activeEmails, '');
+    if (mpEl) mpEl.innerHTML = `
+      <div style="text-align:center;margin-bottom:.75rem;font-size:1.2rem;font-weight:800">${result.prediction}</div>
+      <div style="display:flex;gap:.75rem;margin-bottom:.75rem">
+        <div style="flex:1;text-align:center;background:rgba(30,201,154,.1);border-radius:10px;padding:.6rem">
+          <div style="font-size:1.4rem;font-weight:900;color:var(--ok)">${result.winRate}%</div>
+          <div style="font-size:.72rem;color:var(--tx2)">Win</div>
+        </div>
+        <div style="flex:1;text-align:center;background:rgba(232,84,106,.1);border-radius:10px;padding:.6rem">
+          <div style="font-size:1.4rem;font-weight:900;color:var(--err)">${result.loseRate}%</div>
+          <div style="font-size:.72rem;color:var(--tx2)">Lose</div>
+        </div>
+      </div>
+      <div style="font-size:.78rem;color:var(--tx2)">Avg Rank Tim: ${result.avgRank.icon} ${result.avgRank.label}</div>
+      ${result.strengths.length?`<div style="font-size:.78rem;color:var(--ok);margin-top:.3rem">💪 ${result.strengths.join(' · ')}</div>`:''}
+      ${result.weaknesses.length?`<div style="font-size:.78rem;color:var(--err);margin-top:.3rem">⚠️ ${result.weaknesses.join(' · ')}</div>`:''}`;
+  } catch(e) { if (mpEl) mpEl.innerHTML = '<div style="color:var(--err);text-align:center">Gagal analisa.</div>'; }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🎓 ONBOARDING FLOW
+// ═══════════════════════════════════════════════════════════════
+const ONBOARDING_STEPS = [
+  { id:'profile', icon:'👤', label:'Lengkapi Profil', desc:'Isi foto, bio, gamertag, kota di halaman profil', check: () => !!(D.email) },
+  { id:'chat', icon:'💬', label:'Kirim Pesan Pertama', desc:'Pergi ke Team Chat dan kirim pesan', check: () => !!localStorage.getItem('_ob_chat') },
+  { id:'bank', icon:'🏦', label:'Buka Rekening Bank', desc:'Kunjungi Cuanie Bank dan lihat saldo', check: () => !!localStorage.getItem('_ob_bank') },
+  { id:'stock', icon:'📈', label:'Lihat Pasar Saham', desc:'Kunjungi halaman Pasar Saham', check: () => !!localStorage.getItem('_ob_stock') },
+  { id:'forum', icon:'💬', label:'Buka Forum', desc:'Kunjungi Forum dan baca diskusi tim', check: () => !!localStorage.getItem('_ob_forum') },
+];
+const ONBOARDING_REWARD = 500;
+
+function checkOnboarding() {
+  if (!D.email) return;
+  const key = '_ob_done_'+_eKey(D.email);
+  if (localStorage.getItem(key)) return; // Already completed
+  const done = ONBOARDING_STEPS.filter(s => s.check());
+  if (done.length === ONBOARDING_STEPS.length) {
+    _completeOnboarding();
+    return;
+  }
+  // Show banner if < 3 steps done
+  if (done.length < 3) showOnboardingBanner(done.length);
+}
+
+function showOnboardingBanner(doneCount) {
+  const existing = document.getElementById('onboardingBanner');
+  if (existing) return;
+  const banner = document.createElement('div');
+  banner.id = 'onboardingBanner';
+  banner.style.cssText = 'position:fixed;bottom:calc(var(--bn-h,70px) + 8px);left:50%;transform:translateX(-50%);width:calc(100% - 2rem);max-width:400px;z-index:200;background:linear-gradient(135deg,#6c4ef2,#1ec99a);border-radius:16px;padding:.9rem 1.1rem;box-shadow:0 8px 32px rgba(0,0,0,.3);cursor:pointer';
+  banner.onclick = () => showOnboardingModal();
+  banner.innerHTML = `<div style="display:flex;align-items:center;gap:10px">
+    <span style="font-size:1.5rem">🎓</span>
+    <div style="flex:1">
+      <div style="font-weight:800;color:#fff;font-size:.88rem">Tutorial Anggota Baru</div>
+      <div style="font-size:.72rem;color:rgba(255,255,255,.8)">${doneCount}/${ONBOARDING_STEPS.length} selesai · +${ONBOARDING_REWARD} CQ reward</div>
+    </div>
+    <button onclick="event.stopPropagation();document.getElementById('onboardingBanner').remove()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:1rem;cursor:pointer;padding:4px">✕</button>
+  </div>`;
+  document.body.appendChild(banner);
+}
+
+function showOnboardingModal() {
+  let modal = document.getElementById('onboardingModal');
+  if (modal) { modal.remove(); return; }
+  modal = document.createElement('div');
+  modal.id = 'onboardingModal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:500;display:flex;align-items:flex-end;justify-content:center';
+  const steps = ONBOARDING_STEPS;
+  modal.innerHTML = `<div onclick="this.parentElement.remove()" style="position:absolute;inset:0;background:rgba(0,0,0,.6)"></div>
+    <div style="position:relative;background:var(--s1);border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:1.5rem 1.2rem calc(1.5rem + env(safe-area-inset-bottom,0px));z-index:1;border-top:1px solid var(--b1)">
+      <div style="font-weight:800;font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:1rem">🎓 Tutorial Anggota Baru</div>
+      <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem">
+        ${steps.map(s => {
+          const done = s.check();
+          return `<div style="display:flex;align-items:center;gap:10px;padding:.65rem .85rem;background:${done?'rgba(30,201,154,.1)':'var(--s2)'};border:1px solid ${done?'rgba(30,201,154,.3)':'var(--b1)'};border-radius:10px">
+            <span style="font-size:1.2rem">${done?'✅':s.icon}</span>
+            <div style="flex:1"><div style="font-size:.84rem;font-weight:700;color:${done?'var(--ok)':'var(--tx)'}">${s.label}</div><div style="font-size:.72rem;color:var(--tx2)">${s.desc}</div></div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="background:rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.25);border-radius:10px;padding:.75rem;text-align:center;font-size:.82rem;color:var(--gold)">
+        🎁 Selesaikan semua step → dapat <strong>${ONBOARDING_REWARD} CQ Coin</strong>!
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+}
+
+async function _completeOnboarding() {
+  if (!D.email) return;
+  const key = '_ob_done_'+_eKey(D.email);
+  if (localStorage.getItem(key)) return;
+  localStorage.setItem(key, '1');
+  await _addCoin(ONBOARDING_REWARD, 'Bonus selesai onboarding anggota baru!');
+  unlockAchievement('newcomer');
+  toast(`🎓 Tutorial selesai! Bonus +${ONBOARDING_REWARD} CQ Coin!`, 'success');
+  document.getElementById('onboardingBanner')?.remove();
+}
+
+// Mark onboarding steps done when visiting pages
+// Hook into existing showPg via bnSyncPage which is always called
+function _onboardingPageHook(id) {
+  if (id==='chat') localStorage.setItem('_ob_chat','1');
+  if (id==='bank') localStorage.setItem('_ob_bank','1');
+  if (id==='stocks') localStorage.setItem('_ob_stock','1');
+  if (id==='forum') localStorage.setItem('_ob_forum','1');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🔄 INIT ALL NEW FEATURES on login
+// ═══════════════════════════════════════════════════════════════
+const _origInitAll = _initAllFeatures;
+function _initAllFeatures() {
+  _origInitAll();
+  loadAutoModWords();
+  setTimeout(checkOnboarding, 2000);
+  // Set online status
+  setMemberStatus('online');
+  // Check insurance for owned stocks
+  if (D.email) {
+    fbGet('portfolio/'+_eKey(D.email)).then(snap => {
+      const port = snap.val()||{};
+      Object.keys(port).forEach(sid => checkInsuranceClaim(sid));
+    }).catch(()=>{});
+  }
+}
+
+
+const RANK_TIERS = [
+  { id:'bronze',   label:'Bronze',   min:0,    color:'#cd7f32', icon:'🥉' },
+  { id:'silver',   label:'Silver',   min:200,  color:'#c0c0c0', icon:'🥈' },
+  { id:'gold',     label:'Gold',     min:500,  color:'#ffd700', icon:'🥇' },
+  { id:'platinum', label:'Platinum', min:1000, color:'#a8d8ea', icon:'💎' },
+  { id:'diamond',  label:'Diamond',  min:2000, color:'#b9f2ff', icon:'🔷' },
+  { id:'legend',   label:'Legend',   min:5000, color:'#ff6b9d', icon:'👑' },
+];
+
+const RANK_POINTS = {
+  login: 5,
+  chat: 2,
+  dm: 1,
+  ciuntik: 10,
+  stock_buy: 15,
+  deposit: 20,
+  attendance: 25,
+  mission_daily: 30,
+  mission_weekly: 75,
+};
+
+let _rankData = { pts: 0, tier: 'bronze', history: [] };
+
+function getRankTier(pts) {
+  let tier = RANK_TIERS[0];
+  for (const t of RANK_TIERS) {
+    if (pts >= t.min) tier = t;
+  }
+  return tier;
+}
+
+function getNextRankTier(pts) {
+  for (const t of RANK_TIERS) {
+    if (pts < t.min) return t;
+  }
+  return null; // Already Legend
+}
+
+async function loadRank() {
+  if (!D.email) return;
+  const key = _eKey(D.email);
+  try {
+    const snap = await fbGet('ranks/' + key);
+    const v = snap.val();
+    if (v) {
+      _rankData = { pts: v.pts || 0, tier: v.tier || 'bronze', history: v.history || [] };
+    } else {
+      _rankData = { pts: 0, tier: 'bronze', history: [] };
+    }
+  } catch(e) { _rankData = { pts: 0, tier: 'bronze', history: [] }; }
+  // Award login points once per day
+  const today = new Date().toDateString();
+  const lastLogin = localStorage.getItem('_rkLogin_' + key);
+  if (lastLogin !== today) {
+    localStorage.setItem('_rkLogin_' + key, today);
+    await addRankPts('login');
+  }
+  updateRankUI();
+}
+
+async function addRankPts(action) {
+  if (!D.email) return;
+  const pts = RANK_POINTS[action] || 0;
+  if (!pts) return;
+  _rankData.pts = (_rankData.pts || 0) + pts;
+  const newTier = getRankTier(_rankData.pts);
+  const oldTier = _rankData.tier;
+  _rankData.tier = newTier.id;
+  // Save to Firebase
+  const key = _eKey(D.email);
+  try {
+    await fbSet('ranks/' + key, { pts: _rankData.pts, tier: _rankData.tier, name: D.user, email: D.email, updatedAt: Date.now() });
+  } catch(e) {}
+  // Show rank-up toast
+  if (newTier.id !== oldTier) {
+    toast(`🎉 Naik Rank! Kamu sekarang ${newTier.icon} ${newTier.label}!`, 'success');
+    // Post to chat
+    try {
+      await fbPush('chat', { name: '🤖 Cuanie Bot', role: 'bot', bot: true, ts: Date.now(),
+        text: `🎉 Selamat @${D.user} naik rank ke ${newTier.icon} **${newTier.label}**!` });
+    } catch(e) {}
+  }
+  updateRankUI();
+}
+
+function updateRankUI() {
+  const tier = getRankTier(_rankData.pts);
+  const next = getNextRankTier(_rankData.pts);
+  // Update rank badge in nav chip
+  let badge = document.getElementById('navRankBadge');
+  if (!badge) {
+    const chip = document.getElementById('navChip');
+    if (chip) {
+      badge = document.createElement('span');
+      badge.id = 'navRankBadge';
+      badge.style.cssText = 'font-size:.65rem;font-weight:800;margin-left:4px;opacity:.9';
+      chip.appendChild(badge);
+    }
+  }
+  if (badge) badge.textContent = tier.icon;
+  // Update member dashboard rank card if visible
+  const rankCard = document.getElementById('memberRankCard');
+  if (rankCard) {
+    const pct = next ? Math.round((_rankData.pts - tier.min) / (next.min - tier.min) * 100) : 100;
+    rankCard.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:.6rem">
+        <span style="font-size:1.8rem">${tier.icon}</span>
+        <div>
+          <div style="font-size:.85rem;font-weight:800;color:${tier.color}">${tier.label}</div>
+          <div style="font-size:.72rem;color:var(--tx2)">${_rankData.pts} poin rank</div>
+        </div>
+        ${next ? `<div style="margin-left:auto;font-size:.68rem;color:var(--tx2);text-align:right">Ke ${next.icon} ${next.label}<br>${next.min - _rankData.pts} poin lagi</div>` : '<div style="margin-left:auto;font-size:.75rem;font-weight:700;color:#ff6b9d">MAX RANK!</div>'}
+      </div>
+      <div style="background:var(--b1);border-radius:99px;height:6px;overflow:hidden">
+        <div style="height:100%;background:${tier.color};border-radius:99px;width:${pct}%;transition:width .5s"></div>
+      </div>`;
+  }
+}
+
+async function showRankLeaderboard() {
+  try {
+    const snap = await fbGet('ranks');
+    const all = snap.val();
+    if (!all) { toast('Belum ada data rank','warn'); return; }
+    const sorted = Object.values(all).sort((a,b) => (b.pts||0) - (a.pts||0)).slice(0,10);
+    let html = '<div style="padding:1rem"><h3 style="font-family:Syne,sans-serif;margin-bottom:1rem">🏆 Rank Leaderboard</h3>';
+    sorted.forEach((r,i) => {
+      const t = getRankTier(r.pts||0);
+      const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}.`;
+      html += `<div style="display:flex;align-items:center;gap:10px;padding:.6rem .8rem;border-radius:10px;background:${r.email===D.email?'rgba(108,78,242,.15)':'var(--s2)'};margin-bottom:.4rem">
+        <span style="font-size:1.1rem;width:28px">${medal}</span>
+        <span style="font-size:1rem">${t.icon}</span>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:.88rem">${r.name||'—'}</div>
+          <div style="font-size:.7rem;color:${t.color};font-weight:700">${t.label}</div>
+        </div>
+        <div style="font-size:.8rem;font-weight:700;color:var(--tx2)">${r.pts||0} pts</div>
+      </div>`;
+    });
+    html += '</div>';
+    // Show in modal
+    let modal = document.getElementById('rankModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'rankModal';
+      modal.style.cssText = 'position:fixed;inset:0;z-index:500;display:flex;align-items:flex-end;justify-content:center';
+      modal.innerHTML = `<div onclick="this.parentElement.remove()" style="position:absolute;inset:0;background:rgba(0,0,0,.6)"></div>
+        <div id="rankModalInner" style="position:relative;background:var(--s1);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;z-index:1"></div>`;
+      document.body.appendChild(modal);
+    }
+    document.getElementById('rankModalInner').innerHTML = html;
+  } catch(e) { toast('Gagal load rank','error'); }
+}
+
+// ═══════════════════════════════════════════════════════
+// 💰 DIVIDEN SAHAM — Passive income setiap Senin
+// ═══════════════════════════════════════════════════════
+const DIVIDEND_RATES = { CQG: 8, CQT: 5, CQE: 12, CQS: 3, CQM: 10 }; // CQ per lot per week
+const DIVIDEND_KEY = '_lastDiv_';
+
+async function checkDividend() {
+  if (!D.email) return;
+  const key = _eKey(D.email);
+  const storageKey = DIVIDEND_KEY + key;
+  const lastDiv = localStorage.getItem(storageKey);
+  const now = new Date();
+  // Pay dividend every Monday (day 1) OR if last payment was >7 days ago
+  const isMonday = now.getDay() === 1;
+  const daysSinceLast = lastDiv ? (Date.now() - parseInt(lastDiv)) / 86400000 : 999;
+  if (!isMonday && daysSinceLast < 7) return;
+  // Check portfolio
+  try {
+    const snap = await fbGet('portfolio/' + key);
+    const port = snap.val();
+    if (!port) return;
+    let totalDiv = 0;
+    const details = [];
+    for (const [stockId, pos] of Object.entries(port)) {
+      const rate = DIVIDEND_RATES[stockId];
+      if (!rate || !pos.qty) continue;
+      const div = Math.floor(pos.qty * rate);
+      if (div > 0) { totalDiv += div; details.push(`${stockId}: +${div} CQ`); }
+    }
+    if (totalDiv <= 0) return;
+    // Credit coins
+    await _addCoin(totalDiv, `Dividen saham mingguan (${details.join(', ')})`);
+    localStorage.setItem(storageKey, Date.now().toString());
+    toast(`💰 Dividen minggu ini: +${totalDiv} CQ Coin diterima!`, 'success');
+    // Post to chat
+    await fbPush('chat', { name: '🤖 Dividen Bot', role: 'bot', bot: true, ts: Date.now(),
+      text: `💰 @${D.user} menerima dividen saham mingguan **+${totalDiv} CQ** (${details.join(', ')})` });
+  } catch(e) { console.error('dividend:', e); }
+}
+
 </script>
 </body>
 </html>
